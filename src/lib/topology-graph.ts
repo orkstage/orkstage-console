@@ -1,9 +1,9 @@
-import type { PreviewDto, ResourceDto } from '@co/contracts';
-import { buildDependencyGraph, environmentTemplate } from '@co/templates';
+import type { PreviewDto, ResourceDto } from '@orkstage/contracts';
+import { buildDependencyGraph, environmentTemplate } from '@orkstage/templates';
 
 /**
  * Topology edges for an instance. Imported lazily (diagram chunk / "Copy as Mermaid" click) so
- * @co/templates stays out of the instance page's initial bundle.
+ * @orkstage/templates stays out of the instance page's initial bundle.
  */
 export interface TopologyEdge {
   id: string;

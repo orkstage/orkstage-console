@@ -1,7 +1,7 @@
 'use client';
 
-import { CLOUD_PROVIDERS, PLAN_CODES } from '@co/domain/core';
-import { parseTemplate, type ValidationIssue } from '@co/templates';
+import { CLOUD_PROVIDERS, PLAN_CODES } from '@orkstage/domain/core';
+import { parseTemplate, type ValidationIssue } from '@orkstage/templates';
 import { ArrowRight, Trash2 } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslations } from 'use-intl';

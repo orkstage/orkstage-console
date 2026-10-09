@@ -1,7 +1,7 @@
 'use client';
 
 import '@xyflow/react/dist/style.css';
-import type { PreviewDto, ResourceDto } from '@co/contracts';
+import type { PreviewDto, ResourceDto } from '@orkstage/contracts';
 import { Graph, layout } from '@dagrejs/dagre';
 import { Background, Controls, Handle, MarkerType, Position, ReactFlow, type Edge, type Node, type NodeProps } from '@xyflow/react';
 import { memo, useMemo } from 'react';

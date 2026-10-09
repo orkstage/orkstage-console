@@ -1,6 +1,6 @@
 'use client';
 
-import { API_KEY_SCOPE_VALUES, WEBHOOK_EVENTS, type ApiKeyDto, type WebhookDeliveryDto, type WebhookDto } from '@co/contracts';
+import { API_KEY_SCOPE_VALUES, WEBHOOK_EVENTS, type ApiKeyDto, type WebhookDeliveryDto, type WebhookDto } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { KeyRound, Plus, Send, Trash2, Webhook } from 'lucide-react';
 import { useId, useState, type FormEvent } from 'react';

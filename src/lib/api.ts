@@ -1,4 +1,4 @@
-import type { ApiErrorBody, Page } from '@co/contracts';
+import type { ApiErrorBody, Page } from '@orkstage/contracts';
 
 /**
  * Thin typed client for the control API. The browser always calls the relative `/api/v1`

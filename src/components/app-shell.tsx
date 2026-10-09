@@ -1,6 +1,6 @@
 'use client';
 
-import type { MeResponse } from '@co/contracts';
+import type { MeResponse } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Activity,

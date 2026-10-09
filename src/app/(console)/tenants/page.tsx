@@ -1,6 +1,6 @@
 'use client';
 
-import { createTenantSchema, type CreateTenantInput, type TenantDto } from '@co/contracts';
+import { createTenantSchema, type CreateTenantInput, type TenantDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Building2, Plus } from 'lucide-react';
 import Link from 'next/link';

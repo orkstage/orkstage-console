@@ -1,6 +1,6 @@
 'use client';
 
-import type { InstanceDto, PreviewDto } from '@co/contracts';
+import type { InstanceDto, PreviewDto } from '@orkstage/contracts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ClipboardCheck, FileSearch, Rocket, Trash2, ArrowUpCircle } from 'lucide-react';
 import Link from 'next/link';

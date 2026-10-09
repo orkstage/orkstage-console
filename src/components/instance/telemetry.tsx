@@ -1,6 +1,6 @@
 'use client';
 
-import type { ResourceDto } from '@co/contracts';
+import type { ResourceDto } from '@orkstage/contracts';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { RefreshCw } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -32,7 +32,7 @@ interface ChartPoint {
   v: number;
 }
 
-/* The logs/metrics endpoints are not typed in @co/contracts; accept the adapter shapes
+/* The logs/metrics endpoints are not typed in @orkstage/contracts; accept the adapter shapes
  * (LogLine[] / MetricPoint[]) either bare or wrapped in { items | lines | points }. */
 
 interface LogLine {

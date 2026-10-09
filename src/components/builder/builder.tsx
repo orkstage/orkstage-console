@@ -1,9 +1,9 @@
 'use client';
 
 import '@xyflow/react/dist/style.css';
-import { cloneTemplateSchema, type PlanDto, type TemplateDto, type TemplateVersionDto } from '@co/contracts';
-import type { Entitlements, PlanCode } from '@co/domain/core';
-import { validateTemplate, type ValidationIssue, type ValidationReport } from '@co/templates';
+import { cloneTemplateSchema, type PlanDto, type TemplateDto, type TemplateVersionDto } from '@orkstage/contracts';
+import type { Entitlements, PlanCode } from '@orkstage/domain/core';
+import { validateTemplate, type ValidationIssue, type ValidationReport } from '@orkstage/templates';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Background,

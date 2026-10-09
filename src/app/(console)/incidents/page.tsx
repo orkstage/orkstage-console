@@ -1,6 +1,6 @@
 'use client';
 
-import { createIncidentSchema, STATUS_STATES, type CreateIncidentInput, type IncidentDto, type Page } from '@co/contracts';
+import { createIncidentSchema, STATUS_STATES, type CreateIncidentInput, type IncidentDto, type Page } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Siren } from 'lucide-react';
 import Link from 'next/link';

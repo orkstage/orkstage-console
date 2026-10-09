@@ -1,6 +1,6 @@
 'use client';
 
-import type { InstanceDto, PreviewDto, ResourceDto } from '@co/contracts';
+import type { InstanceDto, PreviewDto, ResourceDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClipboardCopy, FlaskConical, Layers, LayoutList, Workflow } from 'lucide-react';
 import dynamic from 'next/dynamic';

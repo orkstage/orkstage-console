@@ -1,6 +1,6 @@
 'use client';
 
-import { createCloudTargetSchema, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page } from '@co/contracts';
+import { createCloudTargetSchema, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Cloud, ListChecks, Plus, ShieldCheck } from 'lucide-react';
 import { useMemo, useState } from 'react';

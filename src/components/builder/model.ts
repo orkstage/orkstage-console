@@ -13,7 +13,7 @@ import {
   RESOURCE_TYPES,
   type ResourceType,
   type ValidationIssue,
-} from '@co/templates';
+} from '@orkstage/templates';
 
 /*
  * The builder edits the template document as plain data (the same shape the YAML has). It is

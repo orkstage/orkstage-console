@@ -8,7 +8,7 @@ import type {
   PlanDto,
   TemplateDto,
   TenantDto,
-} from '@co/contracts';
+} from '@orkstage/contracts';
 import { apiGet, asItems, qs } from './api';
 
 /** Shared list queries. Lists accept either a bare array or `Page<T>` from the API. */

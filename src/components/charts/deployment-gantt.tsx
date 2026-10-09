@@ -1,6 +1,6 @@
 'use client';
 
-import type { DeploymentStepDto } from '@co/contracts';
+import type { DeploymentStepDto } from '@orkstage/contracts';
 import type { CustomSeriesRenderItem, EChartsOption } from 'echarts';
 import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'use-intl';

@@ -1,6 +1,6 @@
 'use client';
 
-import type { NotificationDto, Page } from '@co/contracts';
+import type { NotificationDto, Page } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Bell } from 'lucide-react';
 import { useRouter } from 'next/navigation';

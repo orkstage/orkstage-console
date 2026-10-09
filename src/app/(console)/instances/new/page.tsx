@@ -9,7 +9,7 @@ import {
   type TemplateDto,
   type TemplateVersionDto,
   type TenantDto,
-} from '@co/contracts';
+} from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, Check, Copy } from 'lucide-react';
 import Link from 'next/link';

@@ -1,6 +1,6 @@
 'use client';
 
-import { destroyInstanceSchema, upgradeInstanceSchema, type DeploymentSummaryDto, type InstanceDto } from '@co/contracts';
+import { destroyInstanceSchema, upgradeInstanceSchema, type DeploymentSummaryDto, type InstanceDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';

@@ -1,6 +1,6 @@
 'use client';
 
-import type { AuditEventDto } from '@co/contracts';
+import type { AuditEventDto } from '@orkstage/contracts';
 import { useTranslations } from 'use-intl';
 import { useFormat } from '@/i18n/format';
 import { MonoValue } from './ui/copy-button';

@@ -9,7 +9,7 @@ import type { z } from 'zod';
 type Issue = z.core.$ZodIssue;
 type ValidationT = ReturnType<typeof useTranslations<'validation'>>;
 
-/** Slug-like patterns from @co/contracts (instances, tenants, template names). */
+/** Slug-like patterns from @orkstage/contracts (instances, tenants, template names). */
 const SLUG_PATTERN = /^\^\[a-z\]\[a-z0-9-\]\{1,(\d+)\}\$$/;
 const SECRET_REF_SOURCE = '^(env|aws-sm):\\/\\/\\S+$';
 

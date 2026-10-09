@@ -1,6 +1,6 @@
 'use client';
 
-import { devLoginSchema } from '@co/contracts';
+import { devLoginSchema } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Activity, KeyRound, ShieldCheck, Workflow, type LucideIcon } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';

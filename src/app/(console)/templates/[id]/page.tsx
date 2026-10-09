@@ -1,6 +1,6 @@
 'use client';
 
-import { cloneTemplateSchema, PLAN_CODES, type TemplateDto, type TemplateVersionDto, type ValidationIssueDto } from '@co/contracts';
+import { cloneTemplateSchema, PLAN_CODES, type TemplateDto, type TemplateVersionDto, type ValidationIssueDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Copy, FilePlus2, Send, Workflow } from 'lucide-react';
 import Link from 'next/link';

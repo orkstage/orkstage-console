@@ -1,6 +1,6 @@
 'use client';
 
-import type { ImportDto, ScanReport } from '@co/contracts';
+import type { ImportDto, ScanReport } from '@orkstage/contracts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FileUp, Import } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';

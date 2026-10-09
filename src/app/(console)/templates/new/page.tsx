@@ -1,6 +1,6 @@
 'use client';
 
-import { createTemplateSchema, type TemplateDto, type ValidationIssueDto } from '@co/contracts';
+import { createTemplateSchema, type TemplateDto, type ValidationIssueDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

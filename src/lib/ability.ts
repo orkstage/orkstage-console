@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { abilityFromRules, subject, type Action, type AppAbility, type AppRule, type SubjectName } from '@co/authorization';
-import type { MeResponse } from '@co/contracts';
+import { abilityFromRules, subject, type Action, type AppAbility, type AppRule, type SubjectName } from '@orkstage/authorization';
+import type { MeResponse } from '@orkstage/contracts';
 import { apiGet } from './api';
 
 /**

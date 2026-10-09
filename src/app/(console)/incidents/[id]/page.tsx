@@ -1,6 +1,6 @@
 'use client';
 
-import { INCIDENT_STATUSES, incidentUpdateSchema, STATUS_STATES, type IncidentDto, type IncidentUpdateInput } from '@co/contracts';
+import { INCIDENT_STATUSES, incidentUpdateSchema, STATUS_STATES, type IncidentDto, type IncidentUpdateInput } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';

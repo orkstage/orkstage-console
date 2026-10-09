@@ -1,6 +1,6 @@
 'use client';
 
-import type { DeploymentDto, DeploymentEventDto, DeploymentStepDto, DeploymentSummaryDto, Page } from '@co/contracts';
+import type { DeploymentDto, DeploymentEventDto, DeploymentStepDto, DeploymentSummaryDto, Page } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Ban, Check, Circle, Redo2, RotateCcw, ShieldCheck, X, XCircle } from 'lucide-react';
 import dynamic from 'next/dynamic';

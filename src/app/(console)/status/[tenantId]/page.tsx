@@ -1,6 +1,6 @@
 'use client';
 
-import type { IncidentDto, StatusPageDto } from '@co/contracts';
+import type { IncidentDto, StatusPageDto } from '@orkstage/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle, CheckCircle2, HelpCircle, OctagonAlert, Wrench, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';

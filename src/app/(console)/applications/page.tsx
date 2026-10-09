@@ -1,6 +1,6 @@
 'use client';
 
-import type { ApplicationDto, Page } from '@co/contracts';
+import type { ApplicationDto, Page } from '@orkstage/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { AppWindow } from 'lucide-react';
 import { Fragment } from 'react';

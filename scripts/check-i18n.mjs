@@ -8,7 +8,7 @@
  *      allowlist below are fine), no filler words (seamless, leverage, robust...);
  *   4. source files (src/**) contain none of the forbidden characters outside comments.
  *
- * Run: pnpm --filter @co/web check:i18n
+ * Run: pnpm --filter @orkstage/web check:i18n
  */
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';

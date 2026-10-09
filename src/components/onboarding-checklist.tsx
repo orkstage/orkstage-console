@@ -1,6 +1,6 @@
 'use client';
 
-import type { DeploymentSummaryDto, Page } from '@co/contracts';
+import type { DeploymentSummaryDto, Page } from '@orkstage/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Check, X } from 'lucide-react';
 import Link from 'next/link';

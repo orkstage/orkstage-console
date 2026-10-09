@@ -1,6 +1,6 @@
 'use client';
 
-import type { OverviewDto } from '@co/contracts';
+import type { OverviewDto } from '@orkstage/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Cloud, ScrollText, Users } from 'lucide-react';
 import Link from 'next/link';

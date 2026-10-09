@@ -1,6 +1,6 @@
 'use client';
 
-import type { AuditEventDto, Page } from '@co/contracts';
+import type { AuditEventDto, Page } from '@orkstage/contracts';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { ScrollText } from 'lucide-react';
 import { useState } from 'react';

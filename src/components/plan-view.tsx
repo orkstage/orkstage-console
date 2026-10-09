@@ -1,6 +1,6 @@
 'use client';
 
-import type { PreviewDto, ValidationIssueDto } from '@co/contracts';
+import type { PreviewDto, ValidationIssueDto } from '@orkstage/contracts';
 import { ArrowRight, Globe2 } from 'lucide-react';
 import { useTranslations } from 'use-intl';
 import { useFormat } from '@/i18n/format';
