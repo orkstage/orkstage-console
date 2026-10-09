@@ -19,8 +19,21 @@ updates:
         patterns: ['next', 'react', 'react-dom', '@types/react', '@types/react-dom']
       dev-tooling:
         dependency-type: development
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
