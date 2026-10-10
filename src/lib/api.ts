@@ -49,7 +49,7 @@ async function request<T>(method: Method, path: string, body?: unknown, opts: Re
   const headers: Record<string, string> = { accept: 'application/json', ...opts.headers };
   if (mutating) {
     headers['content-type'] = 'application/json';
-    headers['x-co-csrf'] = '1';
+    headers['x-orkstage-csrf'] = '1';
   }
 
   let res: Response;
