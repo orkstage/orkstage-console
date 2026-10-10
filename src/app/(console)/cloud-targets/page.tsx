@@ -1,6 +1,7 @@
 'use client';
 
-import { createCloudTargetSchema, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page } from '@orkstage/contracts';
+import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page } from '@orkstage/contracts';
+import { PROVIDER_INFO } from '@orkstage/domain/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Cloud, ListChecks, Plus, ShieldCheck } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -285,14 +286,7 @@ function CapabilitiesPanel({ target }: { target: CloudTargetDto }) {
   );
 }
 
-const SIMULATED = ['aws', 'azure', 'oci'] as const;
-const REGION_HINT: Record<string, string> = {
-  aws: 'us-east-1, eu-west-1',
-  azure: 'eastus, westeurope',
-  gcp: 'us-central1, europe-west1',
-  oci: 'us-ashburn-1, eu-frankfurt-1',
-  mock: 'us-east-1, eu-west-1',
-};
+const SIMULATED = PROVIDERS.filter((p) => p !== 'mock') as Exclude<(typeof PROVIDERS)[number], 'mock'>[];
 
 type FormT = ReturnType<typeof useTranslations<'cloudTargets.form'>>;
 
@@ -304,19 +298,20 @@ function registerFormSchema(t: FormT) {
       name: z.string().min(2).max(80),
       environment: z.string().min(1),
       tenantId: z.string(),
-      accountId: z.string(),
-      roleArn: z.string(),
+      config: z.record(z.string(), z.string()),
       credentialRef: z.string(),
-      simulate: z.enum(SIMULATED),
+      simulate: z.enum(SIMULATED as [Exclude<(typeof PROVIDERS)[number], 'mock'>, ...Exclude<(typeof PROVIDERS)[number], 'mock'>[]]),
       regions: z.string(),
       defaultRegion: z.string(),
       maxConcurrentDeployments: z.number().int().min(1).max(20),
       extraConfig: z.string(),
     })
     .superRefine((v, ctx) => {
-      if (v.provider === 'aws') {
-        if (!/^\d{12}$/.test(v.accountId)) ctx.addIssue({ code: 'custom', path: ['accountId'], message: t('accountId') });
-        if (!/^arn:aws[a-z-]*:iam::\d{12}:role\/.+$/.test(v.roleArn)) ctx.addIssue({ code: 'custom', path: ['roleArn'], message: t('roleArn') });
+      // Same fields and formats the adapter checks again when it validates the target.
+      for (const f of PROVIDER_FORMS[v.provider].config) {
+        const value = (v.config[f.key] ?? '').trim();
+        if (!value && f.required) ctx.addIssue({ code: 'custom', path: ['config', f.key], message: t('fieldRequired') });
+        else if (value && f.pattern && !new RegExp(f.pattern).test(value)) ctx.addIssue({ code: 'custom', path: ['config', f.key], message: t('fieldFormat', { example: f.example }) });
       }
       if (v.credentialRef && !SECRET_REF_PATTERN.test(v.credentialRef)) {
         ctx.addIssue({ code: 'custom', path: ['credentialRef'], message: t('credentialRef') });
@@ -352,8 +347,7 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
       name: '',
       environment: 'production',
       tenantId: '',
-      accountId: '',
-      roleArn: '',
+      config: {},
       credentialRef: '',
       simulate: 'aws',
       regions: 'us-east-1, eu-west-1',
@@ -365,6 +359,8 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
   const { errors } = form.formState;
   const provider = form.watch('provider');
   const regions = splitList(form.watch('regions'));
+  const spec = PROVIDER_FORMS[provider];
+  const info = PROVIDER_INFO[provider];
 
   const create = useMutation({
     mutationFn: (body: unknown) => apiSend<CloudTargetDto>('POST', '/cloud/targets', body),
@@ -378,8 +374,12 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
     setRequestError(null);
     const allowedRegions = splitList(v.regions);
     const extra = v.extraConfig.trim() ? (JSON.parse(v.extraConfig) as Record<string, unknown>) : {};
-    const config: Record<string, unknown> =
-      v.provider === 'aws' ? { ...extra, accountId: v.accountId, roleArn: v.roleArn } : v.provider === 'mock' ? { ...extra, simulate: v.simulate } : extra;
+    const fields = Object.fromEntries(
+      PROVIDER_FORMS[v.provider].config
+        .map((f) => [f.key, (v.config[f.key] ?? '').trim() || f.defaultValue || ''] as const)
+        .filter(([, value]) => value),
+    );
+    const config: Record<string, unknown> = v.provider === 'mock' ? { ...extra, simulate: v.simulate } : { ...extra, ...fields };
     const parsed = createCloudTargetSchema.safeParse({
       provider: v.provider,
       name: v.name,
@@ -405,7 +405,7 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
           <Select id="ct-provider" {...form.register('provider')}>
             {PROVIDERS.map((p) => (
               <option key={p} value={p}>
-                {p === 'mock' ? t('mockOption') : p}
+                {p === 'mock' ? t('mockOption') : PROVIDER_INFO[p].displayName}
               </option>
             ))}
           </Select>
@@ -420,40 +420,46 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
           <Select id="ct-simulate" {...describedBy('ct-simulate', { hint: true })} {...form.register('simulate')}>
             {SIMULATED.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {PROVIDER_INFO[s].displayName}
               </option>
             ))}
           </Select>
         </Field>
-      ) : null}
-
-      {provider === 'aws' ? (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={t('accountIdLabel')} htmlFor="ct-account" error={errors.accountId?.message} required>
-            <Input id="ct-account" inputMode="numeric" className="font-mono" placeholder="123456789012" {...describedBy('ct-account', { error: errors.accountId })} {...form.register('accountId')} />
-          </Field>
-          <Field label={t('roleArnLabel')} htmlFor="ct-role" error={errors.roleArn?.message} required>
-            <Input id="ct-role" className="font-mono" placeholder="arn:aws:iam::123456789012:role/orkstage-deploy" {...describedBy('ct-role', { error: errors.roleArn })} {...form.register('roleArn')} />
-          </Field>
-          <Field
-            label={t('externalId')}
-            htmlFor="ct-cred"
-            className="sm:col-span-2"
-            hint={t.rich('externalIdHint', { code: (chunks) => <code className="font-mono">{chunks}</code> })}
-            error={errors.credentialRef?.message}
-          >
-            <Input id="ct-cred" className="font-mono" autoComplete="off" placeholder="env://NAME" {...describedBy('ct-cred', { hint: true, error: errors.credentialRef })} {...form.register('credentialRef')} />
-          </Field>
-        </div>
-      ) : null}
-
-      {provider === 'azure' || provider === 'gcp' || provider === 'oci' ? (
-        <Notice tone="info">{t('noAdapterFields', { provider })}</Notice>
-      ) : null}
+      ) : (
+        <>
+          {info.kind === 'platform' ? <Notice tone="info">{t('platformNotice', { provider: info.displayName })}</Notice> : null}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {spec.config.map((f) => {
+              const id = `ct-cfg-${f.key}`;
+              const error = errors.config?.[f.key];
+              return (
+                <Field key={`${provider}-${f.key}`} label={<code className="font-mono">{f.key}</code>} htmlFor={id} error={error?.message} required={f.required}>
+                  <Input id={id} className="font-mono" autoComplete="off" placeholder={f.example} {...describedBy(id, { error })} {...form.register(`config.${f.key}`)} />
+                </Field>
+              );
+            })}
+            {spec.credentialFields.length ? (
+              <Field
+                label={t('credential')}
+                htmlFor="ct-cred"
+                className="sm:col-span-2"
+                hint={t.rich(spec.credentialFields.length === 1 ? 'credentialSingle' : 'credentialJson', {
+                  fields: spec.credentialFields.join(', '),
+                  code: (chunks) => <code className="font-mono">{chunks}</code>,
+                })}
+                error={errors.credentialRef?.message}
+                required
+              >
+                <Input id="ct-cred" className="font-mono" autoComplete="off" placeholder="env://NAME" {...describedBy('ct-cred', { hint: true, error: errors.credentialRef })} {...form.register('credentialRef')} />
+              </Field>
+            ) : null}
+          </div>
+        </>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label={t('regions')} htmlFor="ct-regions" hint={t('regionsHint')} error={errors.regions?.message} required>
-          <Input id="ct-regions" className="font-mono" placeholder={REGION_HINT[provider]} {...describedBy('ct-regions', { hint: true, error: errors.regions })} {...form.register('regions')} />
+          <Input id="ct-regions" className="font-mono" placeholder={spec.regionsExample} {...describedBy('ct-regions', { hint: true, error: errors.regions })} {...form.register('regions')} />
         </Field>
         <Field label={t('defaultRegion')} htmlFor="ct-default" error={errors.defaultRegion?.message}>
           <Select id="ct-default" {...form.register('defaultRegion')}>
@@ -485,11 +491,6 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
           <Field label={t('maxConcurrent')} htmlFor="ct-max" error={errors.maxConcurrentDeployments?.message}>
             <Input id="ct-max" type="number" min={1} max={20} {...form.register('maxConcurrentDeployments', { valueAsNumber: true })} />
           </Field>
-          {provider !== 'aws' ? (
-            <Field label={t('credential')} htmlFor="ct-cred2" hint={t('credentialHint')} error={errors.credentialRef?.message}>
-              <Input id="ct-cred2" className="font-mono" autoComplete="off" {...form.register('credentialRef')} />
-            </Field>
-          ) : null}
         </div>
         <Field label={t('extra')} htmlFor="ct-extra" hint={t('extraHint')} error={errors.extraConfig?.message}>
           <Textarea id="ct-extra" className="font-mono text-xs" placeholder='{ "seed": "demo" }' {...form.register('extraConfig')} />

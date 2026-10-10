@@ -11,6 +11,7 @@ import { DeploymentsList } from '@/components/deployments-table';
 import { DeployDialog, DestroyDialog, UpgradeDialog } from '@/components/instance/action-dialogs';
 import { LogsPanel, MetricsPanel } from '@/components/instance/telemetry';
 import { Topology } from '@/components/instance/topology';
+import { TriggersPanel } from '@/components/instance/triggers';
 import { PreviewReport } from '@/components/plan-view';
 import { Badge, SimulatedBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -29,8 +30,8 @@ import { useEnvironmentLabel, useStatusLabel } from '@/i18n/labels';
 import { useDocumentTitle } from '@/lib/hooks';
 import { shortId } from '@/lib/utils';
 
-type TabId = 'overview' | 'plan' | 'deployments' | 'logs' | 'metrics';
-const TAB_IDS: TabId[] = ['overview', 'plan', 'deployments', 'logs', 'metrics'];
+type TabId = 'overview' | 'plan' | 'deployments' | 'triggers' | 'logs' | 'metrics';
+const TAB_IDS: TabId[] = ['overview', 'plan', 'deployments', 'triggers', 'logs', 'metrics'];
 
 export default function InstancePage() {
   return (
@@ -252,6 +253,16 @@ function InstanceView() {
         <TabPanel id="deployments" idPrefix="inst">
           <Card>
             <DeploymentsList basePath={`/instances/${inst.id}/deployments`} showInstance={false} />
+          </Card>
+        </TabPanel>
+      ) : null}
+
+      {tab === 'triggers' ? (
+        <TabPanel id="triggers" idPrefix="inst">
+          <Card>
+            <CardBody>
+              <TriggersPanel instanceId={inst.id} canRun={canDeploy} />
+            </CardBody>
           </Card>
         </TabPanel>
       ) : null}

@@ -11,6 +11,7 @@ import {
   redisResource,
   registryResource,
   RESOURCE_TYPES,
+  webFrontendResource,
   type ResourceType,
   type ValidationIssue,
 } from '@orkstage/templates';
@@ -68,6 +69,7 @@ export const RESOURCE_SCHEMAS = {
   'object-storage': objectStorageResource,
   ingress: ingressResource,
   dns: dnsResource,
+  'web.frontend': webFrontendResource,
 } as const;
 export { RESOURCE_TYPES, type ResourceType };
 
@@ -143,6 +145,7 @@ export function newResource(doc: Draft, type: ResourceType, id: string, placemen
   if (type === 'compute.container-service') Object.assign(minimal, { image: 'catalog://sample-api', port: 8080, healthCheckPath: '/health' });
   if (type === 'ingress') minimal.routes = [{ service: services[0] ?? 'api' }];
   if (type === 'dns') minimal.target = ingresses[0] ?? 'ingress';
+  if (type === 'web.frontend') Object.assign(minimal, { source: { repository: 'acme/website' }, framework: 'nextjs' });
   const parsed = RESOURCE_SCHEMAS[type].safeParse(minimal);
   return (parsed.success ? parsed.data : minimal) as Res;
 }
@@ -164,6 +167,7 @@ function defaultIdFor(type: ResourceType): string {
       'object-storage': 'storage',
       ingress: 'ingress',
       dns: 'dns',
+      'web.frontend': 'web',
     } as const
   )[type];
 }

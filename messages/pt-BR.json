@@ -660,7 +660,8 @@
       "plan": "Plano e custo",
       "deployments": "Deploys",
       "logs": "Logs",
-      "metrics": "Métricas"
+      "metrics": "Métricas",
+      "triggers": "Gatilhos"
     },
     "unavailable": "Instância indisponível",
     "breadcrumb": "Instâncias",
@@ -932,7 +933,8 @@
     "queue": "Fila",
     "objectStorage": "Armazenamento de objetos",
     "ingress": "Ingress",
-    "dns": "DNS"
+    "dns": "DNS",
+    "webFrontend": "Frontend web"
   },
   "schemaFields": {
     "strategy": "Estratégia",
@@ -975,7 +977,20 @@
     "metrics": "Métricas",
     "traces": "Traces",
     "uptime": "Uptime",
-    "alerts": "Alertas"
+    "alerts": "Alertas",
+    "source": "Origem",
+    "repository": "Repositório (dono/nome)",
+    "branch": "Branch",
+    "rootDirectory": "Diretório raiz",
+    "gitProvider": "Provedor Git",
+    "framework": "Framework",
+    "buildCommand": "Comando de build",
+    "installCommand": "Comando de instalação",
+    "outputDirectory": "Diretório de saída",
+    "nodeVersion": "Versão do Node.js",
+    "environment": "Variáveis de ambiente",
+    "domains": "Domínios",
+    "previewDeployments": "Deploys de prévia"
   },
   "builder": {
     "breadcrumbTemplates": "Templates",
@@ -1264,8 +1279,6 @@
     "default": "padrão",
     "form": {
       "regionsRequired": "Informe pelo menos uma região.",
-      "accountId": "Informe o id de conta AWS com 12 dígitos.",
-      "roleArn": "Informe o ARN de uma role IAM, por exemplo arn:aws:iam::123456789012:role/orkstage-deploy",
       "credentialRef": "Use uma referência como env://NOME ou aws-sm://nome. Nunca cole o valor do secret.",
       "defaultRegionInvalid": "Precisa ser uma das regiões permitidas.",
       "secretKeys": "Chaves que parecem secrets não são permitidas na configuração: {keys}",
@@ -1276,11 +1289,6 @@
       "namePlaceholder": "AWS de produção da Acme",
       "simulate": "Simular",
       "simulateHint": "O catálogo de nuvem que o provider mock imita. Nada real é criado.",
-      "accountIdLabel": "Id da conta",
-      "roleArnLabel": "ARN da role de deploy",
-      "externalId": "Referência do external id",
-      "externalIdHint": "Uma referência como <code>env://ACME_AWS_EXTERNAL_ID</code> ou <code>aws-sm://orkstage/acme-external-id</code>, resolvida no uso. Nunca cole o valor do secret.",
-      "noAdapterFields": "O console ainda não tem campos específicos para {provider}. Informe a configuração (nada secreto) em Configurações avançadas.",
       "regions": "Regiões permitidas",
       "regionsHint": "Separe com vírgulas.",
       "defaultRegion": "Região padrão",
@@ -1291,11 +1299,15 @@
       "scopeHint": "Todos os tenants podem usar destinos compartilhados.",
       "sharedOption": "Compartilhado (plataforma)",
       "maxConcurrent": "Máximo de deploys simultâneos",
-      "credential": "Referência de credencial",
-      "credentialHint": "Opcional, por exemplo env://NOME ou aws-sm://nome.",
+      "credential": "Referência da credencial",
       "extra": "Configuração extra (JSON)",
       "extraHint": "Só configurações que não são secretas. Chaves que parecem secrets são recusadas.",
-      "submit": "Registrar destino"
+      "submit": "Registrar destino",
+      "fieldRequired": "Obrigatório.",
+      "fieldFormat": "Formato inesperado. Exemplo: {example}",
+      "platformNotice": "{provider} é uma plataforma de aplicações: o OrkStage cria projetos e serviços pela API dela, conecta as configurações e executa gatilhos. Não há rede nem bucket de estado para preparar.",
+      "credentialSingle": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para o {fields}. É resolvida no momento do uso; nunca cole o valor.",
+      "credentialJson": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para um objeto JSON com: <code>{fields}</code>. É resolvida no momento do uso; nunca cole o valor."
     }
   },
   "applications": {
@@ -1460,5 +1472,33 @@
       "nextTry": "Próxima tentativa {when}",
       "redeliver": "Reenviar"
     }
+  },
+  "triggers": {
+    "emptyTitle": "Nenhum gatilho",
+    "emptyBody": "Adicione uma seção triggers ao template para refazer deploys, reiniciar serviços ou limpar caches por aqui, pelo CI ou em horários agendados.",
+    "name": "Gatilho",
+    "action": "Ação",
+    "runsOn": "Executa por",
+    "lastRun": "Última execução",
+    "run": "Executar",
+    "manual": "manual",
+    "webhook": "chave de API",
+    "scheduleUtc": "Agenda cron em UTC",
+    "never": "nunca",
+    "recentRuns": "Execuções recentes",
+    "source": "Origem",
+    "status": "Status",
+    "message": "Resultado",
+    "when": "Quando",
+    "sources": {
+      "MANUAL": "Manual",
+      "SCHEDULE": "Agenda",
+      "WEBHOOK": "Chave de API"
+    },
+    "runTitle": "Executar {name}",
+    "defaults": "Padrões do template:",
+    "noOverrides": "Este gatilho executa apenas com os parâmetros do template.",
+    "webhookTitle": "Executar pelo CI",
+    "webhookBody": "Gatilhos liberados para chaves de API aceitam chamadas de uma chave com o escopo instances:deploy. Só os parâmetros que o template marca como sobrescrevíveis são aceitos."
   }
 }

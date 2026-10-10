@@ -18,6 +18,10 @@ const ICONS = [
   'azure-icon',
   'google-cloud',
   'oracle',
+  'digital-ocean-icon',
+  'vultr-icon',
+  'vercel-icon',
+  'supabase-icon',
   // AWS services
   'aws-vpc',
   'aws-ecs',
@@ -32,6 +36,7 @@ const ICONS = [
   'postgresql',
   'redis',
   'docker',
+  'nextjs-icon',
 ];
 
 const here = dirname(fileURLToPath(import.meta.url));
