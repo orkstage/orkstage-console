@@ -24,7 +24,8 @@
       "statusPage": "Página de status",
       "audit": "Log de auditoria",
       "integrations": "Integrações",
-      "featureFlags": "Feature flags"
+      "featureFlags": "Feature flags",
+      "marketplace": "Marketplace de templates"
     }
   },
   "common": {
@@ -222,7 +223,8 @@
       "audit": "Auditoria",
       "integrations": "Integrações",
       "statusPage": "Página de status",
-      "featureFlags": "Feature flags"
+      "featureFlags": "Feature flags",
+      "marketplace": "Marketplace"
     },
     "home": "Início do OrkStage",
     "skipToContent": "Pular para o conteúdo",
@@ -1522,5 +1524,101 @@
     "default": "Padrão ({value})",
     "override": "Definido aqui",
     "reset": "Remover este ajuste"
+  },
+  "marketplace": {
+    "title": "Marketplace de templates",
+    "description": "Arquiteturas prontas para implantar nos seus próprios alvos. Listagens revisadas têm selos; todo template passa pelo seu plano e pelas suas políticas antes do deploy.",
+    "submit": "Enviar um template",
+    "tabs": {
+      "label": "Seções do marketplace",
+      "browse": "Explorar",
+      "review": "Fila de revisão",
+      "mine": "Meus envios"
+    },
+    "reviewEmpty": "Nada aguardando revisão.",
+    "mineEmpty": "Você ainda não enviou nenhum template.",
+    "browseEmpty": "Nenhuma listagem corresponde a esses filtros.",
+    "search": "Buscar",
+    "searchPlaceholder": "pagamentos, entregas, backups",
+    "category": "Categoria",
+    "provider": "Provedor",
+    "badge": "Selo",
+    "sort": "Ordenar",
+    "any": "Qualquer",
+    "sorts": {
+      "popular": "Mais usados",
+      "new": "Mais recentes",
+      "name": "Nome"
+    },
+    "categories": {
+      "disasterRecovery": "Recuperação de desastres",
+      "payments": "Pagamentos",
+      "fintech": "Fintech",
+      "ecommerce": "Ecommerce",
+      "logistics": "Logística",
+      "delivery": "Entregas",
+      "web": "Aplicações web",
+      "saas": "SaaS",
+      "data": "Dados",
+      "aiMl": "IA e ML",
+      "internalTools": "Ferramentas internas",
+      "security": "Segurança",
+      "observability": "Observabilidade"
+    },
+    "badges": {
+      "VERIFIED": "Verificado",
+      "DEVOPS": "Revisado por DevOps"
+    },
+    "badgeHelp": {
+      "VERIFIED": "Revisado pela equipe da plataforma: políticas, padrões de segurança e custo.",
+      "DEVOPS": "Revisado para operação: backups, health checks, observabilidade e padrões seguros."
+    },
+    "providers": "Provedores",
+    "anyProvider": "Qualquer provedor",
+    "fromCost": "Cerca de {cost} por mês",
+    "costUnknown": "Custo não estimado",
+    "stars": "Estrelas",
+    "uses": "{count, plural, one {# uso} other {# usos}}",
+    "by": "Por {publisher}",
+    "submitTitle": "Enviar um template",
+    "submitDescription": "O template precisa de uma versão publicada. A revisão acontece antes de ele aparecer no marketplace.",
+    "template": "Template",
+    "slug": "Slug",
+    "titleField": "Título",
+    "summary": "Resumo",
+    "descriptionField": "Descrição",
+    "descriptionHint": "Texto simples; separe parágrafos com uma linha em branco.",
+    "categoriesField": "Categorias (de uma a quatro)",
+    "tags": "Tags",
+    "tagsHint": "Separadas por vírgula, em minúsculas.",
+    "submitForReview": "Enviar para revisão",
+    "version": "Versão {version}",
+    "star": "Favoritar",
+    "starred": "Favorito",
+    "clone": "Clonar e personalizar",
+    "use": "Usar este template",
+    "reviewNotes": "Notas da revisão: {notes}",
+    "about": "Sobre",
+    "resources": "Recursos ({count})",
+    "resource": "Recurso",
+    "type": "Tipo",
+    "slot": "Slot",
+    "monthly": "Por mês",
+    "notPriced": "sem preço",
+    "source": "Código do template",
+    "estimate": "Custo estimado",
+    "estimateHint": "No primeiro provedor que cada slot permite, a preço de tabela. Seus alvos e escolhas mudam o valor.",
+    "perMonth": "por mês, aproximado",
+    "placements": "Slots de alocação",
+    "plans": "Planos: {plans}",
+    "triggers": "Gatilhos",
+    "reviewTitle": "Revisão",
+    "reviewHint": "Publicar torna a listagem visível para todos. Edições do autor voltam para esta fila.",
+    "badgesField": "Selos",
+    "notes": "Notas para o autor",
+    "reject": "Rejeitar",
+    "unlist": "Despublicar",
+    "approve": "Aprovar e publicar",
+    "saveReview": "Salvar revisão"
   }
 }
