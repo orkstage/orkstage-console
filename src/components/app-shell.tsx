@@ -18,6 +18,7 @@ import {
   Plug,
   Sun,
   Siren,
+  ToggleLeft,
   X,
   type LucideIcon,
 } from 'lucide-react';
@@ -62,6 +63,7 @@ function navFor(me: MeResponse): NavItem[] {
       { href: '/incidents', label: 'incidents', icon: Siren },
       { href: '/audit', label: 'audit', icon: ScrollText },
       { href: '/settings/integrations', label: 'integrations', icon: Plug },
+      { href: '/settings/feature-flags', label: 'featureFlags', icon: ToggleLeft },
     ];
   }
   const first = me.memberships[0]?.tenantId;

@@ -23,7 +23,8 @@
       "incidentDetail": "Detalhes do incidente",
       "statusPage": "Página de status",
       "audit": "Log de auditoria",
-      "integrations": "Integrações"
+      "integrations": "Integrações",
+      "featureFlags": "Feature flags"
     }
   },
   "common": {
@@ -220,7 +221,8 @@
       "incidents": "Incidentes",
       "audit": "Auditoria",
       "integrations": "Integrações",
-      "statusPage": "Página de status"
+      "statusPage": "Página de status",
+      "featureFlags": "Feature flags"
     },
     "home": "Início do OrkStage",
     "skipToContent": "Pular para o conteúdo",
@@ -1307,7 +1309,9 @@
       "fieldFormat": "Formato inesperado. Exemplo: {example}",
       "platformNotice": "{provider} é uma plataforma de aplicações: o OrkStage cria projetos e serviços pela API dela, conecta as configurações e executa gatilhos. Não há rede nem bucket de estado para preparar.",
       "credentialSingle": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para o {fields}. É resolvida no momento do uso; nunca cole o valor.",
-      "credentialJson": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para um objeto JSON com: <code>{fields}</code>. É resolvida no momento do uso; nunca cole o valor."
+      "credentialJson": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para um objeto JSON com: <code>{fields}</code>. É resolvida no momento do uso; nunca cole o valor.",
+      "providerDisabled": "desativado",
+      "providerDisabledHint": "{provider} está desativado nesta plataforma. Um owner da plataforma pode ativar o provedor em Feature flags; enquanto isso, um alvo de simulação pode imitar esse provedor."
     }
   },
   "applications": {
@@ -1500,5 +1504,23 @@
     "noOverrides": "Este gatilho executa apenas com os parâmetros do template.",
     "webhookTitle": "Executar pelo CI",
     "webhookBody": "Gatilhos liberados para chaves de API aceitam chamadas de uma chave com o escopo instances:deploy. Só os parâmetros que o template marca como sobrescrevíveis são aceitos."
+  },
+  "featureFlags": {
+    "title": "Feature flags",
+    "description": "Ative ou desative provedores e recursos para toda a plataforma ou para um tenant. Provedores marcados como prévia ainda não foram testados em contas reais.",
+    "readOnly": "Só owners da plataforma podem alterar feature flags.",
+    "scope": "Vale para",
+    "platform": "Toda a plataforma",
+    "flag": "Flag",
+    "source": "Origem",
+    "enabled": "Ativo",
+    "preview": "prévia",
+    "tenantOverrides": "Ajustes por tenant: {list}",
+    "on": "ativo",
+    "off": "inativo",
+    "inherited": "Valor da plataforma",
+    "default": "Padrão ({value})",
+    "override": "Definido aqui",
+    "reset": "Remover este ajuste"
   }
 }
