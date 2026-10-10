@@ -18,6 +18,7 @@ import {
   Plug,
   Sun,
   Siren,
+  Store,
   ToggleLeft,
   X,
   type LucideIcon,
@@ -58,6 +59,7 @@ function navFor(me: MeResponse): NavItem[] {
       { href: '/instances', label: 'instances', icon: Boxes },
       { href: '/deployments', label: 'deployments', icon: Rocket },
       { href: '/templates', label: 'templates', icon: FileCode2 },
+      { href: '/marketplace', label: 'marketplace', icon: Store },
       { href: '/applications', label: 'applications', icon: AppWindow },
       { href: '/cloud-targets', label: 'cloudTargets', icon: Cloud },
       { href: '/incidents', label: 'incidents', icon: Siren },
@@ -72,6 +74,7 @@ function navFor(me: MeResponse): NavItem[] {
     { href: '/instances', label: 'instances', icon: Boxes },
     { href: '/deployments', label: 'deployments', icon: Rocket },
     { href: '/incidents', label: 'incidents', icon: Siren },
+    { href: '/marketplace', label: 'marketplace', icon: Store },
   ];
   if (first) items.push({ href: `/status/${first}`, label: 'statusPage', icon: Activity, match: ['/status'] });
   if (me.memberships.some((m) => m.role === 'CustomerOwner' || m.role === 'CustomerAdmin')) {

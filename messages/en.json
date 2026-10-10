@@ -24,7 +24,8 @@
       "statusPage": "Status page",
       "audit": "Audit log",
       "integrations": "Integrations",
-      "featureFlags": "Feature flags"
+      "featureFlags": "Feature flags",
+      "marketplace": "Template marketplace"
     }
   },
   "common": {
@@ -222,7 +223,8 @@
       "audit": "Audit log",
       "integrations": "Integrations",
       "statusPage": "Status page",
-      "featureFlags": "Feature flags"
+      "featureFlags": "Feature flags",
+      "marketplace": "Marketplace"
     },
     "home": "OrkStage home",
     "skipToContent": "Skip to content",
@@ -1522,5 +1524,101 @@
     "default": "Default ({value})",
     "override": "Set here",
     "reset": "Remove this override"
+  },
+  "marketplace": {
+    "title": "Template marketplace",
+    "description": "Ready made architectures you can deploy on your own targets. Reviewed listings carry badges; every template is checked against your plan and policies before it deploys.",
+    "submit": "Submit a template",
+    "tabs": {
+      "label": "Marketplace sections",
+      "browse": "Browse",
+      "review": "Review queue",
+      "mine": "My submissions"
+    },
+    "reviewEmpty": "Nothing waiting for review.",
+    "mineEmpty": "You have not submitted any template yet.",
+    "browseEmpty": "No listing matches these filters.",
+    "search": "Search",
+    "searchPlaceholder": "payments, delivery, backups",
+    "category": "Category",
+    "provider": "Provider",
+    "badge": "Badge",
+    "sort": "Sort",
+    "any": "Any",
+    "sorts": {
+      "popular": "Most used",
+      "new": "Newest",
+      "name": "Name"
+    },
+    "categories": {
+      "disasterRecovery": "Disaster recovery",
+      "payments": "Payments",
+      "fintech": "Fintech",
+      "ecommerce": "Ecommerce",
+      "logistics": "Logistics",
+      "delivery": "Delivery",
+      "web": "Web apps",
+      "saas": "SaaS",
+      "data": "Data",
+      "aiMl": "AI and ML",
+      "internalTools": "Internal tools",
+      "security": "Security",
+      "observability": "Observability"
+    },
+    "badges": {
+      "VERIFIED": "Verified",
+      "DEVOPS": "DevOps reviewed"
+    },
+    "badgeHelp": {
+      "VERIFIED": "Reviewed by platform staff: policies, security defaults and cost.",
+      "DEVOPS": "Reviewed for operations: backups, health checks, observability and safe defaults."
+    },
+    "providers": "Providers",
+    "anyProvider": "Any provider",
+    "fromCost": "About {cost} a month",
+    "costUnknown": "Cost not estimated",
+    "stars": "Stars",
+    "uses": "{count, plural, one {# use} other {# uses}}",
+    "by": "By {publisher}",
+    "submitTitle": "Submit a template",
+    "submitDescription": "The template needs a published version. Reviewers check it before it appears in the marketplace.",
+    "template": "Template",
+    "slug": "Slug",
+    "titleField": "Title",
+    "summary": "Summary",
+    "descriptionField": "Description",
+    "descriptionHint": "Plain text; separate paragraphs with a blank line.",
+    "categoriesField": "Categories (one to four)",
+    "tags": "Tags",
+    "tagsHint": "Comma separated, lowercase.",
+    "submitForReview": "Submit for review",
+    "version": "Version {version}",
+    "star": "Star",
+    "starred": "Starred",
+    "clone": "Clone and customize",
+    "use": "Use this template",
+    "reviewNotes": "Review notes: {notes}",
+    "about": "About",
+    "resources": "Resources ({count})",
+    "resource": "Resource",
+    "type": "Type",
+    "slot": "Slot",
+    "monthly": "Per month",
+    "notPriced": "not priced",
+    "source": "Template source",
+    "estimate": "Estimated cost",
+    "estimateHint": "On the first provider each slot allows, at list prices. Your targets and choices change it.",
+    "perMonth": "per month, approximate",
+    "placements": "Placement slots",
+    "plans": "Plans: {plans}",
+    "triggers": "Triggers",
+    "reviewTitle": "Review",
+    "reviewHint": "Publishing makes the listing visible to everyone. Edits by the author send it back here.",
+    "badgesField": "Badges",
+    "notes": "Notes for the author",
+    "reject": "Reject",
+    "unlist": "Unlist",
+    "approve": "Approve and publish",
+    "saveReview": "Save review"
   }
 }

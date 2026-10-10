@@ -13,8 +13,8 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, Check, Copy } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
 import { Badge, SimulatedBadge } from '@/components/ui/badge';
@@ -47,6 +47,14 @@ interface Details {
 }
 
 export default function NewInstancePage() {
+  return (
+    <Suspense fallback={<PageSpinner />}>
+      <NewInstanceWizard />
+    </Suspense>
+  );
+}
+
+function NewInstanceWizard() {
   const t = useTranslations('wizard');
   const tc = useTranslations('common');
   const router = useRouter();
@@ -57,8 +65,10 @@ export default function NewInstancePage() {
 
   const [step, setStep] = useState<StepId>('tenant');
   const [tenantId, setTenantId] = useState('');
-  const [templateId, setTemplateId] = useState('');
-  const [versionId, setVersionId] = useState('');
+  // ?template=&version= (from the marketplace) preselect the template step.
+  const search = useSearchParams();
+  const [templateId, setTemplateId] = useState(search.get('template') ?? '');
+  const [versionId, setVersionId] = useState(search.get('version') ?? '');
   const [bindings, setBindings] = useState<Record<string, Binding>>({});
   const [variables, setVariables] = useState<Record<string, VarValue>>({});
   const [details, setDetails] = useState<Details>({ name: '', slug: '', environment: 'production' });
