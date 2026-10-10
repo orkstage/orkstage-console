@@ -1,6 +1,6 @@
 'use client';
 
-import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page } from '@orkstage/contracts';
+import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page, type ProviderDto } from '@orkstage/contracts';
 import { PROVIDER_INFO } from '@orkstage/domain/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Cloud, ListChecks, Plus, ShieldCheck } from 'lucide-react';
@@ -361,6 +361,8 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
   const regions = splitList(form.watch('regions'));
   const spec = PROVIDER_FORMS[provider];
   const info = PROVIDER_INFO[provider];
+  const providers = useQuery({ queryKey: ['cloud-providers'], queryFn: ({ signal }) => apiGet<ProviderDto[]>('/cloud/providers', { signal }) });
+  const disabled = new Set((providers.data ?? []).filter((p) => !p.enabled).map((p) => p.provider));
 
   const create = useMutation({
     mutationFn: (body: unknown) => apiSend<CloudTargetDto>('POST', '/cloud/targets', body),
@@ -404,8 +406,9 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
         <Field label={t('provider')} htmlFor="ct-provider" required>
           <Select id="ct-provider" {...form.register('provider')}>
             {PROVIDERS.map((p) => (
-              <option key={p} value={p}>
+              <option key={p} value={p} disabled={disabled.has(p)}>
                 {p === 'mock' ? t('mockOption') : PROVIDER_INFO[p].displayName}
+                {disabled.has(p) ? ` (${t('providerDisabled')})` : ''}
               </option>
             ))}
           </Select>
@@ -414,6 +417,8 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
           <Input id="ct-name" placeholder={t('namePlaceholder')} {...describedBy('ct-name', { error: errors.name })} {...form.register('name')} />
         </Field>
       </div>
+
+      {disabled.has(provider) ? <Notice tone="warn">{t('providerDisabledHint', { provider: info.displayName })}</Notice> : null}
 
       {provider === 'mock' ? (
         <Field label={t('simulate')} htmlFor="ct-simulate" hint={t('simulateHint')} required>
