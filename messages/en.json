@@ -660,7 +660,8 @@
       "plan": "Plan and cost",
       "deployments": "Deployments",
       "logs": "Logs",
-      "metrics": "Metrics"
+      "metrics": "Metrics",
+      "triggers": "Triggers"
     },
     "unavailable": "Instance unavailable",
     "breadcrumb": "Instances",
@@ -932,7 +933,8 @@
     "queue": "Queue",
     "objectStorage": "Object storage",
     "ingress": "Ingress",
-    "dns": "DNS"
+    "dns": "DNS",
+    "webFrontend": "Web frontend"
   },
   "schemaFields": {
     "strategy": "Strategy",
@@ -975,7 +977,20 @@
     "metrics": "Metrics",
     "traces": "Traces",
     "uptime": "Uptime",
-    "alerts": "Alerts"
+    "alerts": "Alerts",
+    "source": "Source",
+    "repository": "Repository (owner/name)",
+    "branch": "Branch",
+    "rootDirectory": "Root directory",
+    "gitProvider": "Git provider",
+    "framework": "Framework",
+    "buildCommand": "Build command",
+    "installCommand": "Install command",
+    "outputDirectory": "Output directory",
+    "nodeVersion": "Node.js version",
+    "environment": "Environment variables",
+    "domains": "Domains",
+    "previewDeployments": "Preview deployments"
   },
   "builder": {
     "breadcrumbTemplates": "Templates",
@@ -1264,8 +1279,6 @@
     "default": "default",
     "form": {
       "regionsRequired": "Enter at least one region.",
-      "accountId": "Enter the 12 digit AWS account id.",
-      "roleArn": "Enter an IAM role ARN, for example arn:aws:iam::123456789012:role/orkstage-deploy",
       "credentialRef": "Use a reference such as env://NAME or aws-sm://name. Never paste the secret value itself.",
       "defaultRegionInvalid": "Must be one of the allowed regions.",
       "secretKeys": "Keys that look like secrets are not allowed in config: {keys}",
@@ -1276,11 +1289,6 @@
       "namePlaceholder": "Acme production AWS",
       "simulate": "Simulate",
       "simulateHint": "The cloud catalog the mock provider imitates. Nothing real is created.",
-      "accountIdLabel": "Account id",
-      "roleArnLabel": "Deployment role ARN",
-      "externalId": "External id reference",
-      "externalIdHint": "A reference such as <code>env://ACME_AWS_EXTERNAL_ID</code> or <code>aws-sm://orkstage/acme-external-id</code>, resolved when used. Never paste the secret value.",
-      "noAdapterFields": "The console has no specific fields for {provider} yet. Provide its configuration (nothing secret) under Advanced settings.",
       "regions": "Allowed regions",
       "regionsHint": "Separate with commas.",
       "defaultRegion": "Default region",
@@ -1292,10 +1300,14 @@
       "sharedOption": "Shared (platform)",
       "maxConcurrent": "Max concurrent deployments",
       "credential": "Credential reference",
-      "credentialHint": "Optional, for example env://NAME or aws-sm://name.",
       "extra": "Extra configuration (JSON)",
       "extraHint": "Only settings that are not secret. Keys that look like secrets are rejected.",
-      "submit": "Register target"
+      "submit": "Register target",
+      "fieldRequired": "Required.",
+      "fieldFormat": "Unexpected format. Example: {example}",
+      "platformNotice": "{provider} is an application platform: OrkStage creates projects and services through its API, wires their settings and runs triggers. There is no network or state bucket to prepare.",
+      "credentialSingle": "A reference such as <code>env://NAME</code> or <code>aws-sm://name</code> to the {fields}. Resolved when used; never paste the value.",
+      "credentialJson": "A reference such as <code>env://NAME</code> or <code>aws-sm://name</code> to a JSON object with: <code>{fields}</code>. Resolved when used; never paste the value."
     }
   },
   "applications": {
@@ -1460,5 +1472,33 @@
       "nextTry": "Next try {when}",
       "redeliver": "Redeliver"
     }
+  },
+  "triggers": {
+    "emptyTitle": "No triggers",
+    "emptyBody": "Add a triggers section to the template to redeploy, restart or purge caches from here, from CI or on a schedule.",
+    "name": "Trigger",
+    "action": "Action",
+    "runsOn": "Runs on",
+    "lastRun": "Last run",
+    "run": "Run",
+    "manual": "manual",
+    "webhook": "API key",
+    "scheduleUtc": "Cron schedule in UTC",
+    "never": "never",
+    "recentRuns": "Recent runs",
+    "source": "Source",
+    "status": "Status",
+    "message": "Result",
+    "when": "When",
+    "sources": {
+      "MANUAL": "Manual",
+      "SCHEDULE": "Schedule",
+      "WEBHOOK": "API key"
+    },
+    "runTitle": "Run {name}",
+    "defaults": "Template defaults:",
+    "noOverrides": "This trigger runs with its template parameters only.",
+    "webhookTitle": "Run from CI",
+    "webhookBody": "Triggers marked for API keys accept calls from an API key with the instances:deploy scope. Only the parameters the template lists as overridable are accepted."
   }
 }

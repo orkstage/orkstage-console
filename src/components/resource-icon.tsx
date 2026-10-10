@@ -1,7 +1,7 @@
 'use client';
 
 import { Icon, type IconifyIcon } from '@iconify/react/offline';
-import { Archive, Box, Container, Database, Globe, ListOrdered, Network, Package, Waypoints, Zap, type LucideIcon } from 'lucide-react';
+import { AppWindow, Archive, Box, Container, Database, Globe, ListOrdered, Network, Package, Waypoints, Zap, type LucideIcon } from 'lucide-react';
 import cloudIcons from '@/lib/cloud-icons.json';
 import { useCallback } from 'react';
 import { useTranslations } from 'use-intl';
@@ -27,6 +27,7 @@ export const RESOURCE_TYPE_META: Record<string, { labelKey: ResourceTypeKey; gly
   'object-storage': { labelKey: 'objectStorage', glyph: Archive, short: 'storage' },
   ingress: { labelKey: 'ingress', glyph: Waypoints, short: 'ingress' },
   dns: { labelKey: 'dns', glyph: Globe, short: 'dns' },
+  'web.frontend': { labelKey: 'webFrontend', glyph: AppWindow, short: 'web' },
 };
 
 /** Translated name of a resource type; unknown types are shown as their raw type string. */
@@ -62,17 +63,41 @@ const AWS_BY_TYPE: Record<string, string> = {
   dns: 'aws-route53',
 };
 /** Providers without per-service icons in the set: provider logo + a resource-kind glyph. */
-const PROVIDER_LOGO: Record<string, string> = { aws: 'aws', azure: 'azure-icon', gcp: 'google-cloud', oci: 'oracle' };
+const PROVIDER_LOGO: Record<string, string> = {
+  aws: 'aws',
+  azure: 'azure-icon',
+  gcp: 'google-cloud',
+  oci: 'oracle',
+  digitalocean: 'digital-ocean-icon',
+  vultr: 'vultr-icon',
+  vercel: 'vercel-icon',
+  supabase: 'supabase-icon',
+};
+/** Providers missing from the logo set get a lettered mark instead. */
+const PROVIDER_MONOGRAM: Record<string, string> = { coreweave: 'CW', magalu: 'MC', render: 'R' };
 /** Provider-neutral technology logos (templates, unknown providers). */
 const TECH_BY_TYPE: Record<string, string> = {
   'database.postgresql': 'postgresql',
   'cache.redis': 'redis',
   'compute.container-service': 'docker',
+  'web.frontend': 'nextjs-icon',
 };
 
 export function ProviderLogo({ provider, size = 16, className }: { provider: string; size?: number; className?: string }) {
   const name = PROVIDER_LOGO[provider];
   const data = name ? ICONS[name] : undefined;
+  const monogram = PROVIDER_MONOGRAM[provider];
+  if (!data && monogram) {
+    return (
+      <span
+        aria-hidden
+        className={cn('inline-flex items-center justify-center rounded-sm bg-foreground font-semibold leading-none text-background', className)}
+        style={{ width: size, height: size, fontSize: Math.max(7, Math.round(size * 0.45)) }}
+      >
+        {monogram}
+      </span>
+    );
+  }
   if (!data) return null;
   return <Icon icon={data} width={size} height={size} className={className} aria-hidden />;
 }
