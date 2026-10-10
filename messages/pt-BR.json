@@ -1265,7 +1265,7 @@
     "form": {
       "regionsRequired": "Informe pelo menos uma região.",
       "accountId": "Informe o id de conta AWS com 12 dígitos.",
-      "roleArn": "Informe o ARN de uma role IAM, por exemplo arn:aws:iam::123456789012:role/co-deploy",
+      "roleArn": "Informe o ARN de uma role IAM, por exemplo arn:aws:iam::123456789012:role/orkstage-deploy",
       "credentialRef": "Use uma referência como env://NOME ou aws-sm://nome. Nunca cole o valor do secret.",
       "defaultRegionInvalid": "Precisa ser uma das regiões permitidas.",
       "secretKeys": "Chaves que parecem secrets não são permitidas na configuração: {keys}",

@@ -433,7 +433,7 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
             <Input id="ct-account" inputMode="numeric" className="font-mono" placeholder="123456789012" {...describedBy('ct-account', { error: errors.accountId })} {...form.register('accountId')} />
           </Field>
           <Field label={t('roleArnLabel')} htmlFor="ct-role" error={errors.roleArn?.message} required>
-            <Input id="ct-role" className="font-mono" placeholder="arn:aws:iam::123456789012:role/co-deploy" {...describedBy('ct-role', { error: errors.roleArn })} {...form.register('roleArn')} />
+            <Input id="ct-role" className="font-mono" placeholder="arn:aws:iam::123456789012:role/orkstage-deploy" {...describedBy('ct-role', { error: errors.roleArn })} {...form.register('roleArn')} />
           </Field>
           <Field
             label={t('externalId')}
