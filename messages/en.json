@@ -25,7 +25,9 @@
       "audit": "Audit log",
       "integrations": "Integrations",
       "featureFlags": "Feature flags",
-      "marketplace": "Template marketplace"
+      "marketplace": "Template marketplace",
+      "team": "Team",
+      "invite": "Invitation"
     }
   },
   "common": {
@@ -224,7 +226,8 @@
       "integrations": "Integrations",
       "statusPage": "Status page",
       "featureFlags": "Feature flags",
-      "marketplace": "Marketplace"
+      "marketplace": "Marketplace",
+      "team": "Team"
     },
     "home": "OrkStage home",
     "skipToContent": "Skip to content",
@@ -1622,5 +1625,43 @@
     "unlist": "Unlist",
     "approve": "Approve and publish",
     "saveReview": "Save review"
+  },
+  "team": {
+    "title": "Team",
+    "description": "People with access to this tenant and their roles. Owners invite new members and change roles.",
+    "tenant": "Tenant",
+    "noTenant": "You are not a member of any tenant.",
+    "readOnly": "Only owners can invite people or change roles.",
+    "members": "Members ({count})",
+    "person": "Person",
+    "role": "Role",
+    "joined": "Joined",
+    "actions": "Actions",
+    "you": "you",
+    "roleFor": "Role for {name}",
+    "leave": "Leave this tenant",
+    "remove": "Remove {name}",
+    "pending": "Pending invitations ({count})",
+    "email": "Email",
+    "expires": "Expires",
+    "expired": "expired",
+    "revoke": "Revoke the invitation for {email}",
+    "invite": "Invite someone",
+    "inviteHint": "They receive an email with a link that works once for 7 days, and sign in with that address to join.",
+    "invalidEmail": "Enter a valid email address.",
+    "send": "Send invitation",
+    "sent": "Invitation sent to {email}.",
+    "copyLink": "Copy link",
+    "linkOnce": "This link is shown only now. You can share it yourself if the email does not arrive."
+  },
+  "invite": {
+    "title": "Invitation",
+    "notFound": "This invitation link is not valid.",
+    "used": "This invitation was already accepted.",
+    "expired": "This invitation expired. Ask for a new one.",
+    "summary": "You are invited to {tenant} as {role}.",
+    "forEmail": "The invitation is for {email}; sign in with that address.",
+    "accept": "Join {tenant}",
+    "signIn": "Sign in to accept"
   }
 }

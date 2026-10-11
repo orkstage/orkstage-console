@@ -25,7 +25,9 @@
       "audit": "Log de auditoria",
       "integrations": "Integrações",
       "featureFlags": "Feature flags",
-      "marketplace": "Marketplace de templates"
+      "marketplace": "Marketplace de templates",
+      "team": "Equipe",
+      "invite": "Convite"
     }
   },
   "common": {
@@ -224,7 +226,8 @@
       "integrations": "Integrações",
       "statusPage": "Página de status",
       "featureFlags": "Feature flags",
-      "marketplace": "Marketplace"
+      "marketplace": "Marketplace",
+      "team": "Equipe"
     },
     "home": "Início do OrkStage",
     "skipToContent": "Pular para o conteúdo",
@@ -1622,5 +1625,43 @@
     "unlist": "Despublicar",
     "approve": "Aprovar e publicar",
     "saveReview": "Salvar revisão"
+  },
+  "team": {
+    "title": "Equipe",
+    "description": "Pessoas com acesso a este tenant e seus papéis. Owners convidam novos membros e alteram papéis.",
+    "tenant": "Tenant",
+    "noTenant": "Você não é membro de nenhum tenant.",
+    "readOnly": "Só owners podem convidar pessoas ou alterar papéis.",
+    "members": "Membros ({count})",
+    "person": "Pessoa",
+    "role": "Papel",
+    "joined": "Entrou",
+    "actions": "Ações",
+    "you": "você",
+    "roleFor": "Papel de {name}",
+    "leave": "Sair deste tenant",
+    "remove": "Remover {name}",
+    "pending": "Convites pendentes ({count})",
+    "email": "Email",
+    "expires": "Expira",
+    "expired": "expirado",
+    "revoke": "Revogar o convite para {email}",
+    "invite": "Convidar alguém",
+    "inviteHint": "A pessoa recebe um email com um link que funciona uma vez por 7 dias e entra usando esse endereço.",
+    "invalidEmail": "Informe um email válido.",
+    "send": "Enviar convite",
+    "sent": "Convite enviado para {email}.",
+    "copyLink": "Copiar link",
+    "linkOnce": "Este link aparece só agora. Você pode compartilhar se o email não chegar."
+  },
+  "invite": {
+    "title": "Convite",
+    "notFound": "Este link de convite não é válido.",
+    "used": "Este convite já foi aceito.",
+    "expired": "Este convite expirou. Peça um novo.",
+    "summary": "Você recebeu um convite para {tenant} como {role}.",
+    "forEmail": "O convite é para {email}; entre com esse endereço.",
+    "accept": "Entrar em {tenant}",
+    "signIn": "Entrar para aceitar"
   }
 }
