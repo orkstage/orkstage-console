@@ -1,7 +1,7 @@
 'use client';
 
-import { destroyInstanceSchema, upgradeInstanceSchema, type DeploymentSummaryDto, type InstanceDto } from '@orkstage/contracts';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { destroyInstanceSchema, upgradeInstanceSchema, type DeploymentSummaryDto, type InstanceDto, type PreviewDto } from '@orkstage/contracts';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
@@ -138,7 +138,7 @@ function DestroyBody({ instance, onClose }: { instance: InstanceDto; onClose: ()
   );
 }
 
-export function UpgradeDialog({ instance, open, onClose, onUpgraded }: { instance: InstanceDto; open: boolean; onClose: () => void; onUpgraded: (version: string) => void }) {
+export function UpgradeDialog({ instance, open, onClose, onUpgraded }: { instance: InstanceDto; open: boolean; onClose: () => void; onUpgraded: (deploymentId: string) => void }) {
   const t = useTranslations('instanceDialogs');
   return (
     <Dialog open={open} onClose={onClose} title={t('upgradeTitle')} description={t('upgradeDescription')}>
@@ -147,7 +147,7 @@ export function UpgradeDialog({ instance, open, onClose, onUpgraded }: { instanc
   );
 }
 
-function UpgradeBody({ instance, onClose, onUpgraded }: { instance: InstanceDto; onClose: () => void; onUpgraded: (version: string) => void }) {
+function UpgradeBody({ instance, onClose, onUpgraded }: { instance: InstanceDto; onClose: () => void; onUpgraded: (deploymentId: string) => void }) {
   const t = useTranslations('instanceDialogs');
   const tc = useTranslations('common');
   const fmt = useFormat();
@@ -155,11 +155,18 @@ function UpgradeBody({ instance, onClose, onUpgraded }: { instance: InstanceDto;
   const template = useTemplate(instance.template.id);
   const versions = (template.data?.versions ?? []).filter((v) => v.status === 'PUBLISHED' && v.id !== instance.template.versionId);
   const form = useForm({ resolver: useZodResolver(upgradeInstanceSchema), defaultValues: { templateVersionId: '' } });
+  const selected = form.watch('templateVersionId');
+  // The plan from what runs now to the chosen version, before anything starts.
+  const preview = useQuery({
+    queryKey: ['instance', instance.id, 'upgrade-preview', selected],
+    queryFn: () => apiSend<PreviewDto>('POST', `/instances/${instance.id}/preview?templateVersionId=${selected}`),
+    enabled: Boolean(selected),
+  });
   const upgrade = useMutation({
-    mutationFn: (templateVersionId: string) => apiSend<InstanceDto>('POST', `/instances/${instance.id}/upgrade`, { templateVersionId }),
-    onSuccess: (_res, templateVersionId) => {
+    mutationFn: (templateVersionId: string) => apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/upgrade`, { templateVersionId }),
+    onSuccess: (deployment) => {
       void qc.invalidateQueries({ queryKey: ['instance', instance.id] });
-      onUpgraded(versions.find((v) => v.id === templateVersionId)?.version ?? '');
+      onUpgraded(deployment.id);
       onClose();
     },
   });
@@ -184,6 +191,8 @@ function UpgradeBody({ instance, onClose, onUpgraded }: { instance: InstanceDto;
     );
   }
   const err = form.formState.errors.templateVersionId?.message;
+  const plan = preview.data?.plan;
+  const deletions = plan ? plan.groups.flatMap((g) => g.changes.filter((c) => c.action === 'DELETE').map((c) => c.resourceId)) : [];
   return (
     <form onSubmit={form.handleSubmit((v) => upgrade.mutate(v.templateVersionId))} className="space-y-4" noValidate>
       <p className="text-sm text-fg-muted">
@@ -199,10 +208,24 @@ function UpgradeBody({ instance, onClose, onUpgraded }: { instance: InstanceDto;
           ))}
         </Select>
       </Field>
+      {selected && preview.isPending ? <PageSpinner /> : null}
+      {preview.error ? <ErrorNotice error={preview.error} /> : null}
+      {preview.data && !preview.data.valid ? <Notice tone="warn">{t('upgradeInvalid', { count: preview.data.issues.filter((i) => i.severity === 'error').length })}</Notice> : null}
+      {plan ? (
+        <div className="rounded border border-border p-3 text-sm">
+          <p>{t('upgradePlan', { create: plan.counts.CREATE, update: plan.counts.UPDATE, remove: plan.counts.DELETE, risk: plan.risk })}</p>
+          {deletions.length ? (
+            <Notice tone="warn" className="mt-2">
+              {t('upgradeDeletes', { list: deletions.join(', ') })}
+            </Notice>
+          ) : null}
+        </div>
+      ) : null}
+      <p className="text-xs text-fg-muted">{t('upgradeHow')}</p>
       {upgrade.error ? <ErrorNotice error={upgrade.error} /> : null}
       <div className="flex justify-end gap-2 border-t border-border pt-3">
         <Button onClick={onClose}>{tc('cancel')}</Button>
-        <Button type="submit" variant="primary" loading={upgrade.isPending}>
+        <Button type="submit" variant="primary" loading={upgrade.isPending} disabled={!preview.data?.valid}>
           {t('changeVersion')}
         </Button>
       </div>

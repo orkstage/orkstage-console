@@ -4,7 +4,7 @@ import type { InstanceDto, PreviewDto } from '@orkstage/contracts';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { ClipboardCheck, FileSearch, Rocket, Trash2, ArrowUpCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'use-intl';
 import { DeploymentsList } from '@/components/deployments-table';
@@ -52,8 +52,8 @@ function InstanceView() {
   const initialTab = TAB_IDS.includes(search.get('tab') as TabId) ? (search.get('tab') as TabId) : 'overview';
   const [tab, setTab] = useState<TabId>(initialTab);
   const [dialog, setDialog] = useState<'deploy' | 'destroy' | 'upgrade' | null>(null);
-  const [upgradedTo, setUpgradedTo] = useState<string | null>(null);
   const can = useCan();
+  const router = useRouter();
 
   const q = useQuery({
     queryKey: ['instance', id],
@@ -162,11 +162,6 @@ function InstanceView() {
           <Link href={`/deployments/${inst.lastDeployment.id}`} className="font-medium text-accent-ink underline">
             {t('followProgress')}
           </Link>
-        </Notice>
-      ) : null}
-      {upgradedTo !== null ? (
-        <Notice tone="ok" className="mb-4">
-          {upgradedTo ? t('upgradedTo', { version: upgradedTo }) : t('upgraded')}
         </Notice>
       ) : null}
 
@@ -293,11 +288,7 @@ function InstanceView() {
         instance={inst}
         open={dialog === 'upgrade'}
         onClose={() => setDialog(null)}
-        onUpgraded={(v) => {
-          setUpgradedTo(v);
-          preview.reset();
-          setTab('plan');
-        }}
+        onUpgraded={(deploymentId) => router.push(`/deployments/${deploymentId}`)}
       />
     </>
   );
