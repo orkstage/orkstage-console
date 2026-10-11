@@ -19,6 +19,7 @@ import {
   Sun,
   Siren,
   Store,
+  UsersRound,
   ToggleLeft,
   X,
   type LucideIcon,
@@ -65,6 +66,7 @@ function navFor(me: MeResponse): NavItem[] {
       { href: '/incidents', label: 'incidents', icon: Siren },
       { href: '/audit', label: 'audit', icon: ScrollText },
       { href: '/settings/integrations', label: 'integrations', icon: Plug },
+      { href: '/settings/team', label: 'team', icon: UsersRound },
       { href: '/settings/feature-flags', label: 'featureFlags', icon: ToggleLeft },
     ];
   }
@@ -80,6 +82,7 @@ function navFor(me: MeResponse): NavItem[] {
   if (me.memberships.some((m) => m.role === 'CustomerOwner' || m.role === 'CustomerAdmin')) {
     items.push({ href: '/settings/integrations', label: 'integrations', icon: Plug });
   }
+  if (me.memberships.length) items.push({ href: '/settings/team', label: 'team', icon: UsersRound });
   return items;
 }
 
