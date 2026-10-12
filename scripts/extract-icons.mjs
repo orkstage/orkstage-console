@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Extracts only the brand/service icons the console uses from @iconify-json/logos (CC0, a
  * devDependency) into src/lib/cloud-icons.json, which is committed. The app renders them

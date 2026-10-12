@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Read-only view of a compiled template document (`TemplateVersionDto.document`). The contract
  * types it as an open record, so every field is read defensively.

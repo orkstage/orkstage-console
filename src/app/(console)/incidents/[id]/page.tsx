@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
 import { INCIDENT_STATUSES, incidentUpdateSchema, STATUS_STATES, type IncidentDto, type IncidentUpdateInput } from '@orkstage/contracts';

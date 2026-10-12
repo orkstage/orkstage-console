@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 /* eslint-disable @next/next/no-img-element -- static brand assets, pre-sized in /public/brand */
 import { cn } from '@/lib/utils';
 

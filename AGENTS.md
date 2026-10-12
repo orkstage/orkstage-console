@@ -73,6 +73,16 @@ After changing a core package, build it first (`pnpm -C orkstage/packages/<name>
 - Prose in both languages: plain, no em or en dashes, no " - " as punctuation, no emoji,
   sentence case.
 
+## License headers
+
+Every source file starts with an SPDX header, `AGPL-3.0-only`. Future `ee/` directories use
+`LicenseRef-OrkStage-Enterprise`, and code outside them never imports from them. CI runs the check;
+to add missing headers:
+
+```bash
+bash scripts/spdx.sh --fix
+```
+
 ## Git workflow
 
 Branch, pull request, squash merge when CI (`typecheck-build`) is green; then bump the pin in

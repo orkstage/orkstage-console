@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { Metadata } from 'next';
 import { cookies, headers } from 'next/headers';
 import { createTranslator } from 'use-intl/core';
