@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
 import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page, type ProviderDto } from '@orkstage/contracts';

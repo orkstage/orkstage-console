@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import type { Metadata, Viewport } from 'next';

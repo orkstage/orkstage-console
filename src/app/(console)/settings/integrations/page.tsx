@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
 import { API_KEY_SCOPE_VALUES, WEBHOOK_EVENTS, type ApiKeyDto, type WebhookDeliveryDto, type WebhookDto } from '@orkstage/contracts';

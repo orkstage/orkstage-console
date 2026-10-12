@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
 import { LISTING_BADGES, type ListingDetailDto, type UseListingResultDto } from '@orkstage/contracts';

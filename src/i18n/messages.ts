@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import en from '../../messages/en.json';
 import ptBR from '../../messages/pt-BR.json';
 import type { AppLocale } from './config';

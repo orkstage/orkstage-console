@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Checks the console dictionaries (messages/*.json):
  *   1. every locale has exactly the keys of en.json, all values are non-empty strings;

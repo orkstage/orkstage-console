@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import Link from 'next/link';
 import { Logo } from '@/components/brand/logo';
 import { buttonClass } from '@/components/ui/button';

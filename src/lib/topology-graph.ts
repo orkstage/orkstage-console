@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { PreviewDto, ResourceDto } from '@orkstage/contracts';
 import { buildDependencyGraph, environmentTemplate } from '@orkstage/templates';
 

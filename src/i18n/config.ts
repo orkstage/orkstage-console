@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 /**
  * Console languages. English is the default; Brazilian Portuguese is the second language.
  * There is no locale in URLs (the console is an authenticated app): the choice lives in the

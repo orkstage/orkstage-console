@@ -9,7 +9,8 @@
     "start": "next start --port 3000",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "node scripts/check-i18n.mjs",
-    "check:i18n": "node scripts/check-i18n.mjs"
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check:spdx": "bash scripts/spdx.sh"
   },
   "dependencies": {
     "@orkstage/authorization": "^0.1.0",

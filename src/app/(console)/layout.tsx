@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-only
 import type { ReactNode } from 'react';
 import { AppShell } from '@/components/app-shell';
 import { pageMetadata } from '@/i18n/server';
