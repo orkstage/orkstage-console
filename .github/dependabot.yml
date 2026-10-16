@@ -10,7 +10,7 @@ updates:
     directory: /
     registries: [github-packages]
     schedule:
-      interval: monthly
+      interval: weekly
     open-pull-requests-limit: 10
     groups:
       orkstage:
@@ -33,7 +33,7 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: monthly
+      interval: weekly
     groups:
       actions:
         patterns:
