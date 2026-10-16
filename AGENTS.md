@@ -75,9 +75,9 @@ After changing a core package, build it first (`pnpm -C orkstage/packages/<name>
 
 ## License headers
 
-Every source file starts with an SPDX header, `AGPL-3.0-only`. Future `ee/` directories use
-`LicenseRef-OrkStage-Enterprise`, and code outside them never imports from them. CI runs the check;
-to add missing headers:
+Every source file starts with an SPDX header, `AGPL-3.0-only`. Enterprise code does not live here:
+it is in the private `orkstage-ee` repository (see `docs/OPEN_CORE.md` in orkstage), so everything
+in this repository is AGPL. CI runs the check; to add missing headers:
 
 ```bash
 bash scripts/spdx.sh --fix
