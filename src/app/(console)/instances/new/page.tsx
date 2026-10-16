@@ -18,6 +18,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
+import { LimitsSummary } from '@/components/tenant-limits';
 import { Badge, SimulatedBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardBody, CardHeader } from '@/components/ui/card';
@@ -302,7 +303,7 @@ function TenantStep({ tenants, value, onChange, error }: { tenants: TenantDto[];
               <span className="block font-medium">{tenant.name}</span>
               <span className="block font-mono text-[11px] text-fg-subtle">{tenant.slug}</span>
               <span className="mt-1 flex gap-1.5">
-                <Badge tone="info">{tenant.plan.name}</Badge>
+                <LimitsSummary limits={tenant.limits} />
                 <Badge>{t('tenant.instanceCount', { count: tenant.instanceCount })}</Badge>
               </span>
             </span>
@@ -724,7 +725,7 @@ function ReviewStep({
           <CardBody>
             <KeyValues
               items={[
-                { label: t('tenant'), value: tenant ? `${tenant.name} (${tenant.plan.name})` : tc('empty') },
+                { label: t('tenant'), value: tenant ? tenant.name : tc('empty') },
                 { label: t('name'), value: details.name },
                 { label: t('slug'), value: <code className="font-mono text-xs">{details.slug}</code> },
                 { label: t('environment'), value: envLabel(details.environment) },

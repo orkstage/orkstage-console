@@ -2,8 +2,8 @@
 'use client';
 
 import '@xyflow/react/dist/style.css';
-import { cloneTemplateSchema, type PlanDto, type TemplateDto, type TemplateVersionDto } from '@orkstage/contracts';
-import type { Entitlements, PlanCode } from '@orkstage/domain/core';
+import { cloneTemplateSchema, type TemplateDto, type TemplateVersionDto } from '@orkstage/contracts';
+import { ALL_FEATURES } from '@orkstage/domain/core';
 import { validateTemplate, type ValidationIssue, type ValidationReport } from '@orkstage/templates';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -31,7 +31,7 @@ import { parse as parseYaml } from 'yaml';
 import { useStatusLabel } from '@/i18n/labels';
 import { useZodResolver } from '@/i18n/zod';
 import { apiSend } from '@/lib/api';
-import { usePlans } from '@/lib/queries';
+import { useTenants } from '@/lib/queries';
 import { useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 import { ResourceIcon, useResourceTypeLabel } from '../resource-icon';
@@ -266,7 +266,7 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
   const qc = useQueryClient();
   const theme = useTheme();
   const flow = useReactFlow();
-  const plans = usePlans();
+  const tenants = useTenants();
   const isNew = !template;
 
   const [initialDoc] = useState<Draft>(() => {
@@ -294,7 +294,8 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
   const [selection, setSelection] = useState<Selection>(null);
   const [tab, setTab] = useState<'inspector' | 'template' | 'yaml'>('inspector');
   const [pendingEdge, setPendingEdge] = useState<{ from: string; to: string } | null>(null);
-  const [planCode, setPlanCode] = useState('');
+  const [tenantId, setTenantId] = useState('');
+  const checkTenant = tenants.data?.find((x) => x.id === tenantId);
   const [report, setReport] = useState<ValidationReport>({ valid: true, issues: [] });
   const [saved, setSaved] = useState<{ version: TemplateVersionDto; json: string } | null>(null);
   const [cloning, setCloning] = useState(false);
@@ -305,11 +306,11 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
   /* live validation (debounced) */
   useEffect(() => {
     const timer = setTimeout(() => {
-      const plan = plans.data?.find((p) => p.code === planCode);
-      setReport(validateTemplate(doc, plan ? { code: plan.code as PlanCode, entitlements: plan.entitlements as unknown as Entitlements } : undefined));
+      // Live: the tenant's limits; its feature flags are checked by "Validate on server".
+      setReport(validateTemplate(doc, checkTenant ? { limits: checkTenant.limits, features: ALL_FEATURES } : undefined));
     }, 250);
     return () => clearTimeout(timer);
-  }, [doc, planCode, plans.data]);
+  }, [doc, checkTenant]);
 
   const issuesBy = useMemo(() => {
     const res = new Map<string, ValidationIssue[]>();
@@ -505,7 +506,7 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
   /* server actions (existing endpoints only) */
   const source = useMemo(() => yamlOf(doc), [doc]);
   const serverValidate = useMutation({
-    mutationFn: () => apiSend<ValidationReport>('POST', `/templates/${template!.id}/validate`, { source, ...(planCode ? { planCode } : {}) }),
+    mutationFn: () => apiSend<ValidationReport>('POST', `/templates/${template!.id}/validate`, { source, ...(tenantId ? { tenantId } : {}) }),
   });
   const save = useMutation({
     mutationFn: async () => {
@@ -596,14 +597,14 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
         >
           <Plus size={13} aria-hidden /> {t('addSlot')}
         </Button>
-        <label className="sr-only" htmlFor="builder-plan">
-          {t('validatePlan')}
+        <label className="sr-only" htmlFor="builder-tenant">
+          {t('validateTenant')}
         </label>
-        <Select id="builder-plan" value={planCode} onChange={(e) => setPlanCode(e.target.value)} className="h-7 w-44 text-xs">
-          <option value="">{t('anyPlan')}</option>
-          {(plans.data ?? []).map((p: PlanDto) => (
-            <option key={p.code} value={p.code}>
-              {t('checkAgainst', { plan: p.name })}
+        <Select id="builder-tenant" value={tenantId} onChange={(e) => setTenantId(e.target.value)} className="h-7 w-44 text-xs">
+          <option value="">{t('anyTenant')}</option>
+          {(tenants.data ?? []).map((x) => (
+            <option key={x.id} value={x.id}>
+              {t('checkAgainst', { tenant: x.name })}
             </option>
           ))}
         </Select>
@@ -781,7 +782,7 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
           </h2>
           <Badge tone={errors.length ? 'danger' : 'neutral'}>{t('errors', { count: errors.length })}</Badge>
           <Badge tone={warnings.length ? 'warn' : 'neutral'}>{t('warnings', { count: warnings.length })}</Badge>
-          <span className="ml-auto text-[11px] text-fg-subtle">{planCode ? t('checkedLivePlan', { plan: planCode }) : t('checkedLive')}</span>
+          <span className="ml-auto text-[11px] text-fg-subtle">{checkTenant ? t('checkedLiveTenant', { tenant: checkTenant.name }) : t('checkedLive')}</span>
         </div>
         {report.issues.length === 0 ? (
           <p className="flex items-center gap-1.5 px-3 py-2 text-sm text-ok-ink">

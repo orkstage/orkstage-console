@@ -6,7 +6,6 @@ import type {
   CloudTargetDto,
   InstanceDto,
   Page,
-  PlanDto,
   TemplateDto,
   TenantDto,
 } from '@orkstage/contracts';
@@ -20,15 +19,6 @@ export function useTenants(enabled = true) {
     queryFn: async ({ signal }) => asItems(await apiGet<TenantDto[] | Page<TenantDto>>('/tenants?limit=100', { signal })),
     enabled,
     staleTime: 30_000,
-  });
-}
-
-export function usePlans(enabled = true) {
-  return useQuery({
-    queryKey: ['plans'],
-    queryFn: async ({ signal }) => asItems(await apiGet<PlanDto[] | Page<PlanDto>>('/plans', { signal })),
-    enabled,
-    staleTime: 5 * 60_000,
   });
 }
 

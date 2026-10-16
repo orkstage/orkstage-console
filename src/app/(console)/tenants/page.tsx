@@ -8,7 +8,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog } from '@/components/ui/dialog';
@@ -16,14 +15,14 @@ import { EmptyState } from '@/components/ui/empty-state';
 import { ErrorNotice } from '@/components/ui/error-notice';
 import { describedBy, Field, Input } from '@/components/ui/input';
 import { Disclosure, PageHeader } from '@/components/ui/page-header';
-import { Select } from '@/components/ui/select';
 import { PageSpinner } from '@/components/ui/spinner';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 import { useFormat } from '@/i18n/format';
 import { useZodResolver } from '@/i18n/zod';
 import { apiSend } from '@/lib/api';
 import { useCan } from '@/lib/ability';
-import { usePlans, useTenants } from '@/lib/queries';
+import { useTenants } from '@/lib/queries';
+import { LimitsSummary, TenantLimitsDialog } from '@/components/tenant-limits';
 import { slugify, splitList } from '@/lib/utils';
 
 export default function TenantsPage() {
@@ -64,13 +63,16 @@ export default function TenantsPage() {
 function TenantTable({ tenants }: { tenants: TenantDto[] }) {
   const t = useTranslations('tenants');
   const fmt = useFormat();
+  const can = useCan();
+  const [editing, setEditing] = useState<TenantDto | null>(null);
   return (
+    <>
     <Table>
       <THead>
         <tr>
           <TH>{t('table.name')}</TH>
           <TH>{t('table.slug')}</TH>
-          <TH>{t('table.plan')}</TH>
+          <TH>{t('table.limits')}</TH>
           <TH className="text-right">{t('table.instances')}</TH>
           <TH>{t('table.created')}</TH>
           <TH>
@@ -86,7 +88,7 @@ function TenantTable({ tenants }: { tenants: TenantDto[] }) {
               <code className="font-mono text-xs text-fg-muted">{tenant.slug}</code>
             </TD>
             <TD>
-              <Badge tone="info">{tenant.plan.name}</Badge>
+              <LimitsSummary limits={tenant.limits} />
             </TD>
             <TD className="text-right tabular-nums">{fmt.number(tenant.instanceCount)}</TD>
             <TD className="text-xs text-fg-muted">{fmt.dateTime(tenant.createdAt)}</TD>
@@ -98,11 +100,21 @@ function TenantTable({ tenants }: { tenants: TenantDto[] }) {
               <Link href={`/status/${tenant.id}`} className="text-accent-ink hover:underline">
                 {t('statusLink')}
               </Link>
+              {can('manage', 'TenantLimits') ? (
+                <>
+                  <span className="mx-1.5 text-fg-subtle">·</span>
+                  <button type="button" className="text-accent-ink hover:underline" onClick={() => setEditing(tenant)}>
+                    {t('limits.edit')}
+                  </button>
+                </>
+              ) : null}
             </TD>
           </TR>
         ))}
       </TBody>
     </Table>
+    <TenantLimitsDialog tenant={editing} onClose={() => setEditing(null)} />
+    </>
   );
 }
 
@@ -118,12 +130,11 @@ function CreateTenantDialog({ open, onClose }: { open: boolean; onClose: () => v
 function CreateTenantForm({ onDone }: { onDone: () => void }) {
   const t = useTranslations('tenants.form');
   const tc = useTranslations('common');
-  const plans = usePlans();
   const qc = useQueryClient();
   const [slugTouched, setSlugTouched] = useState(false);
   const form = useForm({
     resolver: useZodResolver(createTenantSchema),
-    defaultValues: { name: '', slug: '', planCode: 'STARTER', allowedEmailDomains: [] } as CreateTenantInput,
+    defaultValues: { name: '', slug: '', limits: {}, allowedEmailDomains: [] } as CreateTenantInput,
   });
   const { errors } = form.formState;
 
@@ -153,21 +164,6 @@ function CreateTenantForm({ onDone }: { onDone: () => void }) {
           {...describedBy('tenant-slug', { hint: true, error: errors.slug })}
           {...form.register('slug', { onChange: () => setSlugTouched(true) })}
         />
-      </Field>
-      <Field label={t('plan')} htmlFor="tenant-plan" error={errors.planCode?.message} hint={plans.isError ? t('plansError') : undefined} required>
-        <Select id="tenant-plan" {...form.register('planCode')}>
-          {(plans.data ?? []).length > 0
-            ? plans.data!.map((p) => (
-                <option key={p.id} value={p.code}>
-                  {p.name} ({p.code})
-                </option>
-              ))
-            : ['FREE', 'SANDBOX', 'STARTER', 'GROWTH', 'SCALE'].map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-        </Select>
       </Field>
       <Disclosure summary={t('advanced')}>
         <Field label={t('domains')} htmlFor="tenant-domains" hint={t('domainsHint')} error={errors.allowedEmailDomains?.message}>
