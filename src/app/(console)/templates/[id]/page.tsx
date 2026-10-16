@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import { cloneTemplateSchema, PLAN_CODES, type TemplateDto, type TemplateVersionDto, type ValidationIssueDto } from '@orkstage/contracts';
+import { cloneTemplateSchema, type TemplateDto, type TemplateVersionDto, type ValidationIssueDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Copy, FilePlus2, Send, Workflow } from 'lucide-react';
 import Link from 'next/link';
@@ -27,7 +27,7 @@ import { useZodResolver } from '@/i18n/zod';
 import { apiSend, isApiError } from '@/lib/api';
 import { useDocumentTitle } from '@/lib/hooks';
 import { useCan } from '@/lib/ability';
-import { useTemplate } from '@/lib/queries';
+import { useTemplate, useTenants } from '@/lib/queries';
 import { readTemplateDoc } from '@/lib/template-doc';
 import { cn } from '@/lib/utils';
 
@@ -220,11 +220,12 @@ function VersionEditor({ template, initialSource, onClose, onSaved }: { template
   const td = useTranslations('templates.detail');
   const qc = useQueryClient();
   const [source, setSource] = useState(initialSource);
-  const [planCode, setPlanCode] = useState('');
+  const tenants = useTenants();
+  const [tenantId, setTenantId] = useState('');
   const [saved, setSaved] = useState<TemplateVersionDto | null>(null);
 
   const validate = useMutation({
-    mutationFn: () => apiSend<ValidationReport>('POST', `/templates/${template.id}/validate`, { source, ...(planCode ? { planCode } : {}) }),
+    mutationFn: () => apiSend<ValidationReport>('POST', `/templates/${template.id}/validate`, { source, ...(tenantId ? { tenantId } : {}) }),
   });
   const save = useMutation({
     mutationFn: () => apiSend<TemplateVersionDto>('POST', `/templates/${template.id}/versions`, { source }),
@@ -274,14 +275,14 @@ function VersionEditor({ template, initialSource, onClose, onSaved }: { template
         />
         <div className="flex flex-wrap items-end gap-2">
           <div>
-            <label htmlFor="tpl-plan" className="mb-1 block text-xs text-fg-subtle">
-              {t('plan')}
+            <label htmlFor="tpl-tenant" className="mb-1 block text-xs text-fg-subtle">
+              {t('tenant')}
             </label>
-            <Select id="tpl-plan" value={planCode} onChange={(e) => setPlanCode(e.target.value)} className="w-44">
-              <option value="">{t('anyPlan')}</option>
-              {PLAN_CODES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
+            <Select id="tpl-tenant" value={tenantId} onChange={(e) => setTenantId(e.target.value)} className="w-44">
+              <option value="">{t('anyTenant')}</option>
+              {(tenants.data ?? []).map((tenant) => (
+                <option key={tenant.id} value={tenant.id}>
+                  {tenant.name}
                 </option>
               ))}
             </Select>
