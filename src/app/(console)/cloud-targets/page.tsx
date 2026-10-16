@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, type CapabilityDto, type CloudTargetDto, type Page, type ProviderDto } from '@orkstage/contracts';
+import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, TARGET_ENVIRONMENTS, type CapabilityDto, type CloudTargetDto, type Page, type ProviderDto } from '@orkstage/contracts';
 import { PROVIDER_INFO } from '@orkstage/domain/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Cloud, ListChecks, Plus, ShieldCheck } from 'lucide-react';
@@ -297,7 +297,7 @@ function registerFormSchema(t: FormT) {
     .object({
       provider: z.enum(PROVIDERS),
       name: z.string().min(2).max(80),
-      environment: z.string().min(1),
+      environment: z.enum(TARGET_ENVIRONMENTS),
       tenantId: z.string(),
       config: z.record(z.string(), z.string()),
       credentialRef: z.string(),
@@ -336,6 +336,7 @@ type RegisterForm = z.infer<ReturnType<typeof registerFormSchema>>;
 
 function RegisterForm({ onDone }: { onDone: () => void }) {
   const t = useTranslations('cloudTargets.form');
+  const envLabel = useEnvironmentLabel();
   const tc = useTranslations('common');
   const qc = useQueryClient();
   const tenants = useTenants();
@@ -346,7 +347,7 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
     defaultValues: {
       provider: 'mock',
       name: '',
-      environment: 'production',
+      environment: 'any',
       tenantId: '',
       config: {},
       credentialRef: '',
@@ -481,8 +482,14 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
 
       <Disclosure summary={t('advanced')}>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label={t('environment')} htmlFor="ct-env">
-            <Input id="ct-env" {...form.register('environment')} />
+          <Field label={t('environment')} htmlFor="ct-env" hint={t('environmentHint')}>
+            <Select id="ct-env" {...form.register('environment')}>
+              {TARGET_ENVIRONMENTS.map((env) => (
+                <option key={env} value={env}>
+                  {envLabel(env)}
+                </option>
+              ))}
+            </Select>
           </Field>
           <Field label={t('scope')} htmlFor="ct-tenant" hint={t('scopeHint')}>
             <Select id="ct-tenant" {...form.register('tenantId')}>

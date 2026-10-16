@@ -540,7 +540,8 @@
     "production": "production",
     "staging": "staging",
     "development": "development",
-    "sandbox": "sandbox"
+    "sandbox": "sandbox",
+    "any": "any environment"
   },
   "instances": {
     "title": "Instances",
@@ -1318,7 +1319,8 @@
       "credentialSingle": "A reference such as <code>env://NAME</code> or <code>aws-sm://name</code> to the {fields}. Resolved when used; never paste the value.",
       "credentialJson": "A reference such as <code>env://NAME</code> or <code>aws-sm://name</code> to a JSON object with: <code>{fields}</code>. Resolved when used; never paste the value.",
       "providerDisabled": "disabled",
-      "providerDisabledHint": "{provider} is disabled on this platform. A platform owner can enable it under Feature flags; until then, a simulation target can imitate it."
+      "providerDisabledHint": "{provider} is disabled on this platform. A platform owner can enable it under Feature flags; until then, a simulation target can imitate it.",
+      "environmentHint": "Instances of another environment cannot deploy here. Use one target per account and environment; choose any environment only for shared or simulation targets."
     }
   },
   "applications": {
