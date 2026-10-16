@@ -1,8 +1,14 @@
 name: CI
 
 on:
-  # Merges to main are not built again: the pull request was.
+  # Pull requests are built; merges to main are not built again. Pull requests that only change
+  # Markdown or docs/ skip CI. A weekly run on main scans for secrets and refreshes the caches that
+  # pull requests restore (a pull request can only reuse caches saved on main).
   pull_request:
+    paths-ignore: ['**/*.md', 'docs/**']
+  schedule:
+    - cron: '23 5 * * 1'
+  workflow_dispatch:
 
 # A new push to a pull request cancels its previous run.
 concurrency:
@@ -15,9 +21,11 @@ permissions:
   packages: read
 
 jobs:
-  # Secret scan of the whole history with gitleaks. Reviewed false positives go in .gitleaksignore.
-  secrets:
+  typecheck-build:
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NEXT_TELEMETRY_DISABLED: '1'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -30,14 +38,6 @@ jobs:
       # Every source file has an SPDX license header; core code does not import ee/ (scripts/spdx.sh).
       - name: License headers and the ee/ boundary
         run: bash scripts/spdx.sh
-
-  typecheck-build:
-    runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NEXT_TELEMETRY_DISABLED: '1'
-    steps:
-      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v6
         with:
