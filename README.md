@@ -94,5 +94,5 @@ or to security@orkstage.io.
 
 ## License
 
-[GNU AGPL-3.0](LICENSE). Code in `ee/` directories, when present, is under the OrkStage
-Enterprise License.
+[GNU AGPL-3.0](LICENSE). Enterprise features are developed in a private repository under the
+[OrkStage Enterprise License](https://github.com/orkstage/orkstage/blob/main/LICENSE-ENTERPRISE).
