@@ -53,8 +53,7 @@ export default function TemplatesPage() {
                 <TH>{t('table.template')}</TH>
                 <TH>{t('table.visibility')}</TH>
                 <TH>{t('table.latest')}</TH>
-                <TH>{t('table.plans')}</TH>
-                <TH>{t('table.profile')}</TH>
+                <TH>{t('table.tags')}</TH>
                 <TH>{t('table.published')}</TH>
               </tr>
             </THead>
@@ -86,12 +85,11 @@ export default function TemplatesPage() {
                     </TD>
                     <TD>
                       <div className="flex flex-wrap gap-1">
-                        {(doc?.plans ?? []).map((p) => (
-                          <Badge key={p}>{p}</Badge>
+                        {(doc?.tags ?? []).map((tag) => (
+                          <Badge key={tag}>{tag}</Badge>
                         ))}
                       </div>
                     </TD>
-                    <TD className="text-xs text-fg-muted">{doc?.profile ?? fmt.empty}</TD>
                     <TD className="whitespace-nowrap text-xs text-fg-muted">{fmt.dateTime(tpl.latestPublished?.publishedAt)}</TD>
                   </TR>
                 );

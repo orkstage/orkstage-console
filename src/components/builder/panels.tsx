@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import { CLOUD_PROVIDERS, PLAN_CODES } from '@orkstage/domain/core';
+import { CLOUD_PROVIDERS } from '@orkstage/domain/core';
 import { parseTemplate, type ValidationIssue } from '@orkstage/templates';
 import { ArrowRight, Trash2 } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { Field, Input } from '../ui/input';
 import { Disclosure } from '../ui/page-header';
 import { Select } from '../ui/select';
 import { Textarea } from '../ui/textarea';
-import { NumberInput, SchemaField, TextInput, unwrap, useFieldLabel } from './fields';
+import { ListInput, NumberInput, SchemaField, TextInput, unwrap, useFieldLabel } from './fields';
 import {
   draftEdges,
   edgeKindsFor,
@@ -25,7 +25,6 @@ import {
   MODES,
   OBSERVABILITY_KEYS,
   placementOf,
-  PROFILES,
   PROTOCOLS,
   renameLane,
   renameResource,
@@ -369,16 +368,10 @@ export function TemplatePanel({ doc, commit, readOnly }: { doc: Draft; commit: C
           <Field label={t('version')} htmlFor={`${base}-ver`} hint={t('versionHint')}>
             <TextInput id={`${base}-ver`} className="font-mono" value={md.version} readOnly={readOnly} onChange={(v) => setMeta('version', v)} />
           </Field>
-          <Field label={t('profile')} htmlFor={`${base}-profile`}>
-            <Select id={`${base}-profile`} value={md.profile} disabled={readOnly} onChange={(e) => setMeta('profile', e.target.value)}>
-              {PROFILES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </Select>
-          </Field>
         </div>
+        <Field label={t('tags')} htmlFor={`${base}-tags`} hint={t('tagsHint')}>
+          <ListInput id={`${base}-tags`} value={md.tags ?? []} readOnly={readOnly} onChange={(tags) => setMeta('tags', tags)} />
+        </Field>
         <Field label={t('displayName')} htmlFor={`${base}-display`}>
           <TextInput id={`${base}-display`} value={md.displayName} readOnly={readOnly} onChange={(v) => setMeta('displayName', v)} />
         </Field>
@@ -389,31 +382,6 @@ export function TemplatePanel({ doc, commit, readOnly }: { doc: Draft; commit: C
           {t('notForProduction')}
           <input type="checkbox" checked={md.nonProduction === true} disabled={readOnly} onChange={(e) => setMeta('nonProduction', e.target.checked || undefined)} />
         </label>
-      </section>
-
-      <section className="space-y-2">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-subtle">{t('plans')}</h3>
-        <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('plansLabel')}>
-          {PLAN_CODES.map((p) => {
-            const on = doc.spec.plans.includes(p);
-            return (
-              <button
-                key={p}
-                type="button"
-                aria-pressed={on}
-                disabled={readOnly}
-                onClick={() => {
-                  const next = structuredClone(doc);
-                  next.spec.plans = on ? next.spec.plans.filter((x) => x !== p) : [...next.spec.plans, p];
-                  commit(next);
-                }}
-                className={cn('rounded-full border px-2.5 py-0.5 text-xs', on ? 'border-accent bg-accent/10 text-accent-ink' : 'border-border text-fg-muted hover:bg-surface-2')}
-              >
-                {p}
-              </button>
-            );
-          })}
-        </div>
       </section>
 
       <section className="space-y-2">

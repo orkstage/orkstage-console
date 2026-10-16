@@ -178,7 +178,6 @@ export default function ListingPage() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-3 text-xs text-fg-muted">{t('plans', { plans: l.plans.join(', ') })}</p>
             </CardBody>
           </Card>
 

@@ -182,13 +182,12 @@ function VersionDetail({ template, version, canPublish }: { template: TemplateDt
         />
         <CardBody className="space-y-3">
           <div className="flex flex-wrap gap-1.5 text-xs">
-            {doc.plans.map((p) => (
-              <Badge key={p}>{p}</Badge>
+            {doc.tags.map((tag) => (
+              <Badge key={tag}>{tag}</Badge>
             ))}
             <Badge>{t('placementSlots', { count: doc.placements.length })}</Badge>
             <Badge>{t('resources', { count: doc.resourceCount })}</Badge>
             <Badge>{t('variables', { count: doc.variables.length })}</Badge>
-            {doc.profile ? <Badge>{t('profile', { profile: doc.profile })}</Badge> : null}
           </div>
           {version.validation ? (
             version.validation.valid && version.validation.issues.length === 0 ? (

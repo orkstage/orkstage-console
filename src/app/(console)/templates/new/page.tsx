@@ -25,9 +25,8 @@ metadata:
   displayName: My template
   description: >
     What this environment is for.
-  profile: starter
+  tags: [starter]
 spec:
-  plans: [STARTER, GROWTH]
   placements:
     - name: primary
       description: Everything runs in one account and region.

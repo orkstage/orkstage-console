@@ -25,8 +25,7 @@ export interface TemplateDocView {
   displayName: string;
   description: string;
   nonProduction: boolean;
-  profile: string | null;
-  plans: string[];
+  tags: string[];
   placements: PlacementSlot[];
   variables: TemplateVariable[];
   resourceCount: number;
@@ -63,8 +62,7 @@ export function readTemplateDoc(document: Record<string, unknown> | null | undef
     displayName: str(metadata.displayName),
     description: str(metadata.description),
     nonProduction: metadata.nonProduction === true,
-    profile: typeof metadata.profile === 'string' ? metadata.profile : null,
-    plans: arr(spec.plans).map(String),
+    tags: arr(metadata.tags).map(String),
     placements: placements.length > 0 ? placements : [{ name: 'primary', description: '', providers: [] }],
     variables: variables.filter((v) => v.name),
     resourceCount: arr(spec.resources).length,
