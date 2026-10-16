@@ -1320,8 +1320,13 @@
       "credentialJson": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para um objeto JSON com: <code>{fields}</code>. É resolvida no momento do uso; nunca cole o valor.",
       "providerDisabled": "desativado",
       "providerDisabledHint": "{provider} está desativado nesta plataforma. Um owner da plataforma pode ativar o provedor em Feature flags; enquanto isso, um alvo de simulação pode imitar esse provedor.",
-      "environmentHint": "Instâncias de outro ambiente não podem fazer deploy aqui. Use um target por conta e ambiente; escolha qualquer ambiente só para targets compartilhados ou de simulação."
-    }
+      "environmentHint": "Instâncias de outro ambiente não podem fazer deploy aqui. Use um target por conta e ambiente; escolha qualquer ambiente só para targets compartilhados ou de simulação.",
+      "isDefault": "Target padrão do seu ambiente para este provedor: slots de instância sem target usam este. Substitui o padrão atual."
+    },
+    "defaultBadge": "padrão",
+    "defaultHint": "Slots de instância sem target usam este para o seu ambiente.",
+    "setDefault": "Tornar padrão",
+    "unsetDefault": "Remover padrão"
   },
   "applications": {
     "title": "Aplicações",
