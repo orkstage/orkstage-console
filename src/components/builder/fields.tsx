@@ -247,6 +247,28 @@ export function TextInput({ id, value, onChange, placeholder, readOnly, classNam
   return <Input id={id} value={value} placeholder={placeholder} readOnly={readOnly} className={className} onChange={(e) => onChange(e.target.value)} />;
 }
 
+/**
+ * A comma separated list (template tags). Keeps its own text while typing, so a trailing comma
+ * survives, and commits the trimmed lowercase list on blur; an empty list commits undefined.
+ */
+export function ListInput({ id, value, onChange, readOnly }: { id: string; value: readonly string[]; onChange: (v: string[] | undefined) => void; readOnly?: boolean }) {
+  const joined = value.join(', ');
+  const [text, setText] = useState(joined);
+  useEffect(() => setText(joined), [joined]);
+  return (
+    <Input
+      id={id}
+      value={text}
+      readOnly={readOnly}
+      onChange={(e) => setText(e.target.value)}
+      onBlur={() => {
+        const list = text.split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
+        onChange(list.length > 0 ? list : undefined);
+      }}
+    />
+  );
+}
+
 function JsonField({ id, label, value, onChange, readOnly }: { id: string; label: string; value: unknown; onChange: (v: unknown) => void; readOnly?: boolean }) {
   const t = useTranslations('fields');
   const [text, setText] = useState(value === undefined ? '' : JSON.stringify(value, null, 2));

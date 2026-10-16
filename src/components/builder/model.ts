@@ -49,9 +49,8 @@ export interface Var {
 export interface Draft {
   apiVersion: string;
   kind: string;
-  metadata: { name: string; version: string; displayName: string; description?: string; nonProduction?: boolean; profile: string } & Record<string, unknown>;
+  metadata: { name: string; version: string; displayName: string; description?: string; nonProduction?: boolean; tags?: string[] } & Record<string, unknown>;
   spec: {
-    plans: string[];
     placements: Slot[];
     variables?: Var[];
     resources: Res[];
@@ -76,7 +75,6 @@ export { RESOURCE_TYPES, type ResourceType };
 
 export const PROTOCOLS = connectivityRequirement.shape.protocol.options as readonly string[];
 export const MODES = ['private-required', 'private-preferred', 'secure'] as const;
-export const PROFILES = environmentTemplate.shape.metadata.shape.profile.options as readonly string[];
 export const OBSERVABILITY_KEYS = ['logs', 'metrics', 'traces', 'uptime', 'alerts'] as const;
 export const ID_PATTERN = /^[a-z][a-zA-Z0-9-]{0,39}$/;
 
@@ -97,11 +95,10 @@ export function toDraft(input: unknown): Draft {
       name: String(metadata.name ?? ''),
       version: String(metadata.version ?? '1.0.0'),
       displayName: String(metadata.displayName ?? ''),
-      profile: String(metadata.profile ?? 'starter'),
+      ...(metadata.tags !== undefined ? { tags: arr<string>(metadata.tags).map(String) } : {}),
     },
     spec: {
       ...spec,
-      plans: arr<string>(spec.plans),
       placements: arr<Slot>(spec.placements).length ? arr<Slot>(spec.placements) : [{ name: 'primary' }],
       resources: arr<Res>(spec.resources),
       ...(spec.variables !== undefined ? { variables: arr<Var>(spec.variables) } : {}),
@@ -115,8 +112,8 @@ export function emptyDraft(text: { displayName: string; slotDescription: string 
   return {
     apiVersion: 'platform/v1',
     kind: 'EnvironmentTemplate',
-    metadata: { name: 'my-template', version: '1.0.0', displayName: text.displayName, description: '', profile: 'starter' },
-    spec: { plans: ['STARTER'], placements: [{ name: 'primary', description: text.slotDescription }], resources: [], connectivity: [] },
+    metadata: { name: 'my-template', version: '1.0.0', displayName: text.displayName, description: '' },
+    spec: { placements: [{ name: 'primary', description: text.slotDescription }], resources: [], connectivity: [] },
   };
 }
 

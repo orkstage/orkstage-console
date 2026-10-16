@@ -193,7 +193,6 @@ function NewInstanceWizard() {
             <TemplateStep
               templates={templates.data ?? []}
               error={templates.error}
-              tenant={tenant}
               templateId={templateId}
               onTemplate={(t) => {
                 setTemplateId(t.id);
@@ -317,7 +316,6 @@ function TenantStep({ tenants, value, onChange, error }: { tenants: TenantDto[];
 function TemplateStep({
   templates,
   error,
-  tenant,
   templateId,
   onTemplate,
   versions,
@@ -328,7 +326,6 @@ function TemplateStep({
 }: {
   templates: TemplateDto[];
   error: unknown;
-  tenant: TenantDto | null;
   templateId: string;
   onTemplate: (t: TemplateDto) => void;
   versions: TemplateVersionDto[];
@@ -350,7 +347,6 @@ function TemplateStep({
         <div className="grid gap-2 md:grid-cols-2">
           {published.map((tpl) => {
             const d = readTemplateDoc(tpl.latestPublished!.document);
-            const planMismatch = tenant && d.plans.length > 0 && !d.plans.includes(tenant.plan.code);
             return (
               <label
                 key={tpl.id}
@@ -369,17 +365,12 @@ function TemplateStep({
                   </span>
                   <span className="mt-1 line-clamp-2 block text-xs text-fg-muted">{tpl.description || d.description}</span>
                   <span className="mt-1.5 flex flex-wrap gap-1">
-                    {d.plans.map((p) => (
-                      <Badge key={p} tone={tenant?.plan.code === p ? 'info' : 'neutral'}>
-                        {p}
-                      </Badge>
+                    {d.tags.map((tag) => (
+                      <Badge key={tag}>{tag}</Badge>
                     ))}
                     <Badge>{t('template.placements', { count: d.placements.length })}</Badge>
                     <Badge>{t('template.resources', { count: d.resourceCount })}</Badge>
                   </span>
-                  {planMismatch ? (
-                    <span className="mt-1.5 block text-xs text-warn-ink">{t('template.planMismatch', { plan: tenant.plan.name })}</span>
-                  ) : null}
                 </span>
               </label>
             );
