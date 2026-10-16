@@ -246,8 +246,8 @@
     }
   },
   "login": {
-    "tagline": "Raw scale. Precise control.",
-    "headline": "Command every stage of your cloud.",
+    "tagline": "Open source multicloud control plane.",
+    "headline": "Orchestrate every cloud from one stage.",
     "intro": "OrkStage turns templates into running customer environments on any cloud, and plans every change before it happens.",
     "points": {
       "provisionTitle": "Provision on AWS, Azure and OCI from one control plane",
