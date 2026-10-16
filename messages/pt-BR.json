@@ -246,8 +246,8 @@
     }
   },
   "login": {
-    "tagline": "Escala de verdade. Controle preciso.",
-    "headline": "Comande cada ambiente da sua nuvem.",
+    "tagline": "Control plane multicloud e open source.",
+    "headline": "Orquestre todas as nuvens de um só palco.",
     "intro": "O OrkStage transforma templates em ambientes de clientes rodando em qualquer nuvem e planeja cada mudança antes de ela acontecer.",
     "points": {
       "provisionTitle": "Provisione na AWS, no Azure e na OCI a partir de um único control plane",
