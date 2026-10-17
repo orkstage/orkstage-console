@@ -1386,6 +1386,9 @@
     "failed": "Reprovado",
     "never": "Nunca",
     "validate": "Validar",
+    "edit": "Editar",
+    "editTitle": "Editar {name}",
+    "editDescription": "Troque a role ou a referência da credencial, mude regiões ou a zona DNS. O provedor, o escopo e o ambiente continuam como estão.",
     "capabilities": "Capacidades",
     "registerTitle": "Registrar destino de nuvem",
     "registerDescription": "Só configurações que não são secretas ficam salvas. Secrets são passados como referências que o worker resolve.",
@@ -1436,7 +1439,13 @@
       "credentialJson": "Uma referência como <code>env://NOME</code> ou <code>aws-sm://nome</code> para um objeto JSON com: <code>{fields}</code>. É resolvida no momento do uso; nunca cole o valor.",
       "providerDisabled": "desativado",
       "providerDisabledHint": "{provider} está desativado nesta plataforma. Um owner da plataforma pode ativar o provedor em Feature flags; enquanto isso, um alvo de simulação pode imitar esse provedor.",
-      "environmentHint": "Instâncias de outro ambiente não podem fazer deploy aqui. Use um target por conta e ambiente; escolha qualquer ambiente só para targets compartilhados ou de simulação."
+      "environmentHint": "Instâncias de outro ambiente não podem fazer deploy aqui. Use um target por conta e ambiente; escolha qualquer ambiente só para targets compartilhados ou de simulação.",
+      "fixedHint": "Fixo: identifica a conta ou onde fica o estado dos recursos existentes. Um valor diferente pede um novo destino.",
+      "credentialKeep": "Deixe vazio para manter a referência atual. Uma nova substitui a anterior, por exemplo depois de trocar o external id.",
+      "credentialNone": "Nenhuma referência definida. Adicione uma como env://NOME ou aws-sm://nome.",
+      "regionsInUseHint": "Separe com vírgulas. Uma região que ainda tem recursos, instâncias ou perfis não pode ser removida.",
+      "revalidateNote": "Mudanças além do nome ou do limite de concorrência apagam a última validação. Rode Validar depois de salvar.",
+      "save": "Salvar alterações"
     }
   },
   "profiles": {
