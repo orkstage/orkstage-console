@@ -26,6 +26,7 @@
       "audit": "Audit log",
       "integrations": "Integrations",
       "featureFlags": "Feature flags",
+      "license": "License",
       "marketplace": "Template marketplace",
       "team": "Team",
       "invite": "Invitation"
@@ -228,6 +229,7 @@
       "integrations": "Integrations",
       "statusPage": "Status page",
       "featureFlags": "Feature flags",
+      "license": "License",
       "marketplace": "Marketplace",
       "team": "Team"
     },
@@ -1457,7 +1459,8 @@
     "emptyTitle": "No audit events yet",
     "emptyBody": "Sign ins, deployments and configuration changes are recorded here.",
     "loaded": "{count, plural, one {# event loaded} other {# events loaded}}",
-    "end": "End of log"
+    "end": "End of log",
+    "export": "Export {format}"
   },
   "integrations": {
     "title": "Integrations",
@@ -1611,6 +1614,53 @@
     "default": "Default ({value})",
     "override": "Set here",
     "reset": "Remove this override"
+  },
+  "license": {
+    "title": "License",
+    "description": "The edition of this installation and what its license includes.",
+    "current": "This installation",
+    "edition": "Edition",
+    "status": "Status",
+    "customer": "Customer",
+    "expires": "Expires",
+    "editions": {
+      "community": "Community",
+      "enterprise": "Enterprise"
+    },
+    "statuses": {
+      "community": "No license",
+      "active": "Active",
+      "grace": "Grace period",
+      "expired": "Expired",
+      "invalid": "Invalid key"
+    },
+    "features": "Enterprise features",
+    "featuresHint": "What the license grants. Everything else in OrkStage is in the Community edition.",
+    "included": "included",
+    "notIncluded": "not included",
+    "install": "Install or renew a key",
+    "installBody": "Set the key in the environment of the API and the worker, for example in the .env file of a Compose installation:",
+    "installAfter": "Then restart both. The key is checked offline: OrkStage never contacts a license server.",
+    "communityNote": "This installation runs the Community edition, complete for self hosting. Enterprise adds identity, governance and compliance features."
+  },
+  "enterprise": {
+    "features": {
+      "auditExport": "Audit export",
+      "authSaml": "SAML single sign on",
+      "authScim": "SCIM provisioning",
+      "customRoles": "Custom roles",
+      "multiStepApprovals": "Multistep approvals",
+      "policyPacks": "Policy packs",
+      "multipleOrganizations": "Multiple organizations",
+      "whiteLabelStatus": "White label status pages"
+    },
+    "lockedBody": "{feature} is part of OrkStage Enterprise, and this installation's license does not include it.",
+    "lockedShort": "{feature}: Enterprise",
+    "licenseLink": "License",
+    "editionsLink": "Compare editions",
+    "graceBanner": "The Enterprise license expired on {date}. Its features keep working for 14 days after that date; renew to keep them.",
+    "expiredBanner": "The Enterprise license expired and its features are off. Your data stays as it is.",
+    "invalidBanner": "The configured license key is not valid: {reason}"
   },
   "marketplace": {
     "title": "Template marketplace",

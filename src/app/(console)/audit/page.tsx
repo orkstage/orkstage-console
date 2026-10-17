@@ -7,6 +7,7 @@ import { ScrollText } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslations } from 'use-intl';
 import { AuditTable } from '@/components/audit-table';
+import { EnterpriseLock } from '@/components/enterprise';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -32,7 +33,27 @@ export default function AuditPage() {
 
   return (
     <>
-      <PageHeader title={t('title')} description={t('description')} />
+      <PageHeader
+        title={t('title')}
+        description={t('description')}
+        actions={
+          // Enterprise (audit.export): the whole log as a file for SIEM ingestion and archives.
+          <EnterpriseLock feature="audit.export" compact>
+            <span className="flex items-center gap-2">
+              {(['csv', 'ndjson'] as const).map((format) => (
+                <a
+                  key={format}
+                  href={`/api/v1/audit/export${qs({ format, tenantId: tenantId || undefined })}`}
+                  className="rounded-md border border-border px-2.5 py-1 text-sm hover:bg-surface-2"
+                  download
+                >
+                  {t('export', { format: format.toUpperCase() })}
+                </a>
+              ))}
+            </span>
+          </EnterpriseLock>
+        }
+      />
       {(tenants.data?.length ?? 0) > 0 ? (
         <div className="mb-3">
           <label htmlFor="audit-tenant" className="mb-1 block text-xs text-fg-subtle">
