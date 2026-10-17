@@ -56,7 +56,12 @@ export function OnboardingChecklist({ instanceCount }: { instanceCount: number }
       <div className="flex items-start justify-between gap-3 border-b border-border px-4 py-3">
         <div>
           <h2 className="font-display text-base font-semibold">{t('title')}</h2>
-          <p className="text-xs text-fg-subtle">{t('intro', { done: doneCount, total: steps.length })}</p>
+          <p className="text-xs text-fg-subtle">
+            {t('intro', { done: doneCount, total: steps.length })}{' '}
+            <Link href="/getting-started" className="text-accent-ink underline">
+              {t('guide')}
+            </Link>
+          </p>
         </div>
         <button
           type="button"
