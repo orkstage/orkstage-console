@@ -29,6 +29,7 @@
       "integrations": "Integrações",
       "featureFlags": "Feature flags",
       "license": "Licença",
+      "sessions": "Suas sessões",
       "marketplace": "Marketplace de templates",
       "team": "Equipe",
       "invite": "Convite"
@@ -249,7 +250,8 @@
     "userMenu": {
       "label": "Menu da conta de {email}",
       "lightTheme": "Tema claro",
-      "signOut": "Sair"
+      "signOut": "Sair",
+      "yourSessions": "Suas sessões"
     }
   },
   "login": {
@@ -1894,6 +1896,21 @@
     "installBody": "Defina a chave no ambiente da API e do worker, por exemplo no arquivo .env de uma instalação com Compose:",
     "installAfter": "Depois reinicie os dois. A chave é conferida offline: o OrkStage nunca consulta um servidor de licenças.",
     "communityNote": "Esta instalação roda a edição Community, completa para hospedar por conta própria. O Enterprise acrescenta recursos de identidade, governança e conformidade."
+  },
+  "sessions": {
+    "title": "Suas sessões",
+    "description": "Onde a sua conta está conectada. Desconecte um dispositivo que você não usa mais ou não reconhece; ele vai precisar entrar de novo.",
+    "device": "Dispositivo",
+    "method": "Entrou com",
+    "address": "Endereço",
+    "signedIn": "Entrou em",
+    "lastSeen": "Última atividade",
+    "actions": "Ações",
+    "current": "Esta sessão",
+    "unknownDevice": "Dispositivo desconhecido",
+    "revoke": "Desconectar",
+    "revokeOthers": "Desconectar todas as outras",
+    "revokedOthers": "{count, plural, one {# outra sessão desconectada.} other {# outras sessões desconectadas.}}"
   },
   "enterprise": {
     "features": {

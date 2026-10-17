@@ -29,6 +29,7 @@
       "integrations": "Integrations",
       "featureFlags": "Feature flags",
       "license": "License",
+      "sessions": "Your sessions",
       "marketplace": "Template marketplace",
       "team": "Team",
       "invite": "Invitation"
@@ -249,7 +250,8 @@
     "userMenu": {
       "label": "Account menu for {email}",
       "lightTheme": "Light theme",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "yourSessions": "Your sessions"
     }
   },
   "login": {
@@ -1894,6 +1896,21 @@
     "installBody": "Set the key in the environment of the API and the worker, for example in the .env file of a Compose installation:",
     "installAfter": "Then restart both. The key is checked offline: OrkStage never contacts a license server.",
     "communityNote": "This installation runs the Community edition, complete for self hosting. Enterprise adds identity, governance and compliance features."
+  },
+  "sessions": {
+    "title": "Your sessions",
+    "description": "Where your account is signed in. Sign out a device you no longer use or do not recognize; it has to sign in again.",
+    "device": "Device",
+    "method": "Signed in with",
+    "address": "Address",
+    "signedIn": "Signed in",
+    "lastSeen": "Last active",
+    "actions": "Actions",
+    "current": "This session",
+    "unknownDevice": "Unknown device",
+    "revoke": "Sign out",
+    "revokeOthers": "Sign out everywhere else",
+    "revokedOthers": "{count, plural, one {# other session signed out.} other {# other sessions signed out.}}"
   },
   "enterprise": {
     "features": {
