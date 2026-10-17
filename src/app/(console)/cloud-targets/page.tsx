@@ -1,10 +1,21 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import { createCloudTargetSchema, PROVIDER_FORMS, PROVIDERS, SECRET_REF_PATTERN, TARGET_ENVIRONMENTS, type CapabilityDto, type CloudTargetDto, type Page, type ProviderDto } from '@orkstage/contracts';
+import {
+  createCloudTargetSchema,
+  PROVIDER_FORMS,
+  PROVIDERS,
+  SECRET_REF_PATTERN,
+  TARGET_ENVIRONMENTS,
+  updateCloudTargetSchema,
+  type CapabilityDto,
+  type CloudTargetDto,
+  type Page,
+  type ProviderDto,
+} from '@orkstage/contracts';
 import { PROVIDER_INFO } from '@orkstage/domain/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Cloud, ListChecks, Plus, ShieldCheck } from 'lucide-react';
+import { Cloud, ListChecks, Lock, Pencil, Plus, ShieldCheck } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
@@ -41,6 +52,7 @@ export default function CloudTargetsPage() {
   const can = useCan();
   const [registering, setRegistering] = useState(false);
   const [validating, setValidating] = useState<CloudTargetDto | null>(null);
+  const [editing, setEditing] = useState<CloudTargetDto | null>(null);
   const [capabilities, setCapabilities] = useState<CloudTargetDto | null>(null);
   const tenantNames = tenantNameMap(tenants.data);
   const canValidate = can('update', 'CloudTarget');
@@ -132,6 +144,11 @@ export default function CloudTargetsPage() {
                           <ShieldCheck size={13} aria-hidden /> {t('validate')}
                         </Button>
                       ) : null}
+                      {canValidate ? (
+                        <Button size="sm" variant="ghost" onClick={() => setEditing(target)}>
+                          <Pencil size={13} aria-hidden /> {t('edit')}
+                        </Button>
+                      ) : null}
                       <Button size="sm" variant="ghost" onClick={() => setCapabilities(target)}>
                         <ListChecks size={13} aria-hidden /> {t('capabilities')}
                       </Button>
@@ -146,6 +163,9 @@ export default function CloudTargetsPage() {
 
       <Dialog open={registering} onClose={() => setRegistering(false)} title={t('registerTitle')} description={t('registerDescription')} size="lg">
         <RegisterForm onDone={() => setRegistering(false)} />
+      </Dialog>
+      <Dialog open={!!editing} onClose={() => setEditing(null)} title={t('editTitle', { name: editing?.name ?? '' })} description={t('editDescription')} size="lg">
+        {editing ? <EditForm target={editing} onDone={() => setEditing(null)} /> : null}
       </Dialog>
       <Dialog open={!!validating} onClose={() => setValidating(null)} title={t('validateTitle', { name: validating?.name ?? '' })} description={t('validateDescription')}>
         {validating ? <ValidatePanel target={validating} /> : null}
@@ -288,6 +308,8 @@ function CapabilitiesPanel({ target }: { target: CloudTargetDto }) {
     </div>
   );
 }
+
+type Provider = (typeof PROVIDERS)[number];
 
 const SIMULATED = PROVIDERS.filter((p) => p !== 'mock') as Exclude<(typeof PROVIDERS)[number], 'mock'>[];
 
@@ -518,6 +540,172 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
         <Button onClick={onDone}>{tc('cancel')}</Button>
         <Button type="submit" variant="primary" loading={create.isPending}>
           {t('submit')}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+/** Editing keeps the provider, the scope and the environment; fixed config fields are read only. */
+function editFormSchema(t: FormT, target: CloudTargetDto) {
+  return z
+    .object({
+      name: z.string().min(2).max(80),
+      config: z.record(z.string(), z.string()),
+      credentialRef: z.string(),
+      regions: z.string(),
+      defaultRegion: z.string(),
+      maxConcurrentDeployments: z.number().int().min(1).max(20),
+    })
+    .superRefine((v, ctx) => {
+      for (const f of PROVIDER_FORMS[target.provider as Provider].config) {
+        if (f.fixed) continue;
+        const value = (v.config[f.key] ?? '').trim();
+        if (!value && f.required) ctx.addIssue({ code: 'custom', path: ['config', f.key], message: t('fieldRequired') });
+        else if (value && f.pattern && !new RegExp(f.pattern).test(value)) ctx.addIssue({ code: 'custom', path: ['config', f.key], message: t('fieldFormat', { example: f.example }) });
+      }
+      if (v.credentialRef && !SECRET_REF_PATTERN.test(v.credentialRef)) ctx.addIssue({ code: 'custom', path: ['credentialRef'], message: t('credentialRef') });
+      const regions = splitList(v.regions);
+      if (regions.length === 0) ctx.addIssue({ code: 'custom', path: ['regions'], message: t('regionsRequired') });
+      if (v.defaultRegion && !regions.includes(v.defaultRegion)) ctx.addIssue({ code: 'custom', path: ['defaultRegion'], message: t('defaultRegionInvalid') });
+    });
+}
+type EditForm = z.infer<ReturnType<typeof editFormSchema>>;
+
+function EditForm({ target, onDone }: { target: CloudTargetDto; onDone: () => void }) {
+  const t = useTranslations('cloudTargets.form');
+  const tc = useTranslations('common');
+  const qc = useQueryClient();
+  const spec = PROVIDER_FORMS[target.provider as Provider];
+  const stored = (key: string) => {
+    const v = target.config[key];
+    return typeof v === 'string' ? v : v === undefined || v === null ? '' : String(v);
+  };
+  const [requestError, setRequestError] = useState<string | null>(null);
+  const schema = useMemo(() => editFormSchema(t, target), [t, target]);
+  const form = useForm<EditForm>({
+    resolver: useZodResolver(schema),
+    defaultValues: {
+      name: target.name,
+      config: Object.fromEntries(spec.config.map((f) => [f.key, stored(f.key)])),
+      credentialRef: '',
+      regions: target.allowedRegions.join(', '),
+      defaultRegion: target.defaultRegion,
+      maxConcurrentDeployments: target.maxConcurrentDeployments,
+    },
+  });
+  const { errors } = form.formState;
+  const regions = splitList(form.watch('regions'));
+
+  const save = useMutation({
+    mutationFn: (body: unknown) => apiSend<CloudTargetDto>('PATCH', `/cloud/targets/${target.id}`, body),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['cloud-targets'] });
+      onDone();
+    },
+  });
+
+  const onSubmit = form.handleSubmit((v) => {
+    setRequestError(null);
+    const config: Record<string, string | null> = {};
+    for (const f of spec.config) {
+      if (f.fixed) continue;
+      const value = (v.config[f.key] ?? '').trim();
+      if (value !== stored(f.key)) config[f.key] = value || null;
+    }
+    const allowedRegions = splitList(v.regions);
+    const defaultRegion = v.defaultRegion || allowedRegions[0] || '';
+    const body = {
+      ...(v.name !== target.name ? { name: v.name } : {}),
+      ...(Object.keys(config).length ? { config } : {}),
+      ...(v.credentialRef ? { credentialRef: v.credentialRef } : {}),
+      ...(allowedRegions.join() !== target.allowedRegions.join() ? { allowedRegions } : {}),
+      ...(defaultRegion !== target.defaultRegion ? { defaultRegion } : {}),
+      ...(v.maxConcurrentDeployments !== target.maxConcurrentDeployments ? { maxConcurrentDeployments: v.maxConcurrentDeployments } : {}),
+    };
+    if (Object.keys(body).length === 0) {
+      onDone();
+      return;
+    }
+    const parsed = updateCloudTargetSchema.safeParse(body);
+    if (!parsed.success) {
+      setRequestError(parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join(' · '));
+      return;
+    }
+    save.mutate(parsed.data);
+  });
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <Field label={t('name')} htmlFor="et-name" error={errors.name?.message} required>
+        <Input id="et-name" {...describedBy('et-name', { error: errors.name })} {...form.register('name')} />
+      </Field>
+
+      {spec.config.length || spec.credentialFields.length ? (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {spec.config.map((f) => {
+            const id = `et-cfg-${f.key}`;
+            const error = errors.config?.[f.key];
+            return (
+              <Field
+                key={f.key}
+                label={
+                  <span className="inline-flex items-center gap-1">
+                    <code className="font-mono">{f.key}</code>
+                    {f.fixed ? <Lock size={11} className="text-fg-subtle" aria-hidden /> : null}
+                  </span>
+                }
+                htmlFor={id}
+                hint={f.fixed ? t('fixedHint') : undefined}
+                error={error?.message}
+                required={f.required && !f.fixed}
+              >
+                <Input
+                  id={id}
+                  className={f.fixed ? 'bg-surface-2 font-mono text-fg-muted' : 'font-mono'}
+                  autoComplete="off"
+                  placeholder={f.fixed ? undefined : f.example}
+                  readOnly={f.fixed}
+                  {...describedBy(id, { hint: f.fixed, error })}
+                  {...form.register(`config.${f.key}`)}
+                />
+              </Field>
+            );
+          })}
+          {spec.credentialFields.length ? (
+            <Field label={t('credential')} htmlFor="et-cred" className="sm:col-span-2" hint={target.hasCredentialRef ? t('credentialKeep') : t('credentialNone')} error={errors.credentialRef?.message}>
+              <Input id="et-cred" className="font-mono" autoComplete="off" placeholder="env://NAME" {...describedBy('et-cred', { hint: true, error: errors.credentialRef })} {...form.register('credentialRef')} />
+            </Field>
+          ) : null}
+        </div>
+      ) : null}
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Field label={t('regions')} htmlFor="et-regions" hint={t('regionsInUseHint')} error={errors.regions?.message} required>
+          <Input id="et-regions" className="font-mono" placeholder={spec.regionsExample} {...describedBy('et-regions', { hint: true, error: errors.regions })} {...form.register('regions')} />
+        </Field>
+        <Field label={t('defaultRegion')} htmlFor="et-default" error={errors.defaultRegion?.message}>
+          <Select id="et-default" {...form.register('defaultRegion')}>
+            <option value="">{regions[0] ? t('firstRegion', { region: regions[0] }) : tc('empty')}</option>
+            {regions.map((r) => (
+              <option key={r} value={r}>
+                {r}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field label={t('maxConcurrent')} htmlFor="et-max" error={errors.maxConcurrentDeployments?.message}>
+          <Input id="et-max" type="number" min={1} max={20} {...form.register('maxConcurrentDeployments', { valueAsNumber: true })} />
+        </Field>
+      </div>
+
+      <Notice tone="info">{t('revalidateNote')}</Notice>
+      {requestError ? <ErrorNotice error={new Error(requestError)} /> : null}
+      {save.error ? <ErrorNotice error={save.error} /> : null}
+      <div className="flex justify-end gap-2 border-t border-border pt-3">
+        <Button onClick={onDone}>{tc('cancel')}</Button>
+        <Button type="submit" variant="primary" loading={save.isPending}>
+          {t('save')}
         </Button>
       </div>
     </form>
