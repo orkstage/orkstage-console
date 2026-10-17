@@ -15,13 +15,13 @@ import {
 } from '@orkstage/contracts';
 import { PROVIDER_INFO } from '@orkstage/domain/core';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Cloud, ListChecks, Lock, Pencil, Plus, ShieldCheck } from 'lucide-react';
+import { Cloud, ListChecks, Lock, Pencil, Plus, ShieldCheck, Wand2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
 import { z } from 'zod';
 import { Badge, SimulatedBadge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Button, ButtonLink } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog } from '@/components/ui/dialog';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -34,8 +34,9 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import { useFormat } from '@/i18n/format';
-import { useEnvironmentLabel, useStatusLabel } from '@/i18n/labels';
+import { useEnvironmentLabel } from '@/i18n/labels';
 import { useZodResolver } from '@/i18n/zod';
+import { ChecksList } from '@/components/target-checks';
 import { apiGet, apiSend, asItems } from '@/lib/api';
 import { useCan } from '@/lib/ability';
 import { tenantNameMap, useCloudTargets, useTenants } from '@/lib/queries';
@@ -64,9 +65,14 @@ export default function CloudTargetsPage() {
         description={t('description')}
         actions={
           can('create', 'CloudTarget') ? (
-            <Button variant="primary" onClick={() => setRegistering(true)}>
-              <Plus size={14} aria-hidden /> {t('register')}
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => setRegistering(true)}>
+                <Plus size={14} aria-hidden /> {t('register')}
+              </Button>
+              <ButtonLink href="/cloud-targets/connect" variant="primary">
+                <Wand2 size={14} aria-hidden /> {t('connect')}
+              </ButtonLink>
+            </div>
           ) : null
         }
       />
@@ -180,32 +186,6 @@ export default function CloudTargetsPage() {
         {capabilities ? <CapabilitiesPanel target={capabilities} /> : null}
       </Dialog>
     </>
-  );
-}
-
-function ChecksList({ validation }: { validation: Validation }) {
-  const t = useTranslations('cloudTargets');
-  const fmt = useFormat();
-  const statusLabel = useStatusLabel();
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        <StatusBadge status={validation.ok ? 'PASS' : 'FAIL'} label={validation.ok ? t('allPassed') : t('validationFailed')} />
-        <span className="text-xs text-fg-subtle">{fmt.dateTime(validation.validatedAt)}</span>
-        {validation.identity ? <code className="font-mono text-xs text-fg-muted">{validation.identity}</code> : null}
-      </div>
-      <ul className="divide-y divide-border rounded-md border border-border">
-        {validation.checks.map((c, i) => (
-          <li key={`${c.name}-${i}`} className="flex items-start gap-2 px-3 py-2">
-            <StatusBadge status={c.status} label={statusLabel(c.status)} className="mt-0.5 min-w-16 justify-center" />
-            <div className="min-w-0 text-sm">
-              <p className="font-medium">{c.name}</p>
-              <p className="text-xs text-fg-muted">{c.message}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
 

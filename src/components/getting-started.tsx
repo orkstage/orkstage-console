@@ -59,7 +59,7 @@ export function useSetupSteps(): { steps: SetupStep[]; loading: boolean; staff: 
 
   if (staff) {
     const steps: SetupStep[] = [
-      { key: 'target', phase: 'connect', href: '/cloud-targets', docs: 'self-hosting/connect-aws/', done: (targets.data ?? []).some((t) => t.lastValidation?.ok) },
+      { key: 'target', phase: 'connect', href: '/cloud-targets/connect', docs: 'self-hosting/connect-aws/', done: (targets.data ?? []).some((t) => t.lastValidation?.ok) },
       { key: 'profile', phase: 'connect', href: '/profiles', docs: 'get-started/core-concepts/', done: (profiles.data ?? []).length > 0 },
       { key: 'tenant', phase: 'customers', href: '/tenants', docs: 'user-guide/roles/', done: (tenants.data ?? []).length > 0 },
       { key: 'team', phase: 'customers', href: '/settings/team', docs: 'user-guide/roles/', optional: true, done: false },
