@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Activity,
   AppWindow,
+  BellRing,
   Boxes,
   Building2,
   Cloud,
@@ -73,6 +74,7 @@ function navFor(me: MeResponse): NavItem[] {
       { href: '/cloud-targets', label: 'cloudTargets', icon: Cloud },
       { href: '/profiles', label: 'profiles', icon: Layers },
       { href: '/incidents', label: 'incidents', icon: Siren },
+      { href: '/settings/alerts', label: 'alerts', icon: BellRing },
       { href: '/audit', label: 'audit', icon: ScrollText },
       { href: '/settings/integrations', label: 'integrations', icon: Plug },
       { href: '/settings/team', label: 'team', icon: UsersRound },
@@ -92,6 +94,7 @@ function navFor(me: MeResponse): NavItem[] {
   ];
   if (first) items.push({ href: `/status/${first}`, label: 'statusPage', icon: Activity, match: ['/status'] });
   if (me.memberships.some((m) => m.role === 'CustomerOwner' || m.role === 'CustomerAdmin')) {
+    items.push({ href: '/settings/alerts', label: 'alerts', icon: BellRing });
     items.push({ href: '/settings/integrations', label: 'integrations', icon: Plug });
   }
   if (me.memberships.length) items.push({ href: '/settings/team', label: 'team', icon: UsersRound });
