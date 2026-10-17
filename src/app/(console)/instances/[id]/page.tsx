@@ -186,6 +186,7 @@ function InstanceView() {
                       { label: t('fields.slug'), value: <code className="font-mono text-xs">{inst.slug}</code> },
                       { label: t('fields.tenant'), value: inst.tenantName },
                       { label: t('fields.environment'), value: envLabel(inst.environment) },
+                      { label: t('fields.profile'), value: inst.profile?.name ?? fmt.empty },
                       { label: t('fields.template'), value: `${inst.template.displayName} @${inst.template.version}` },
                       { label: t('fields.created'), value: fmt.dateTime(inst.createdAt) },
                       { label: t('fields.updated'), value: fmt.dateTime(inst.updatedAt) },

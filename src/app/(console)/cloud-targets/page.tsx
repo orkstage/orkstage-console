@@ -44,11 +44,6 @@ export default function CloudTargetsPage() {
   const [capabilities, setCapabilities] = useState<CloudTargetDto | null>(null);
   const tenantNames = tenantNameMap(tenants.data);
   const canValidate = can('update', 'CloudTarget');
-  const qc = useQueryClient();
-  const setDefault = useMutation({
-    mutationFn: (v: { id: string; isDefault: boolean }) => apiSend<CloudTargetDto>('POST', `/cloud/targets/${v.id}/default`, { isDefault: v.isDefault }),
-    onSettled: () => qc.invalidateQueries({ queryKey: ['cloud-targets'] }),
-  });
 
   return (
     <>
@@ -91,11 +86,6 @@ export default function CloudTargetsPage() {
                   <TD>
                     <p className="flex items-center gap-1.5 font-medium">
                       {target.name}
-                      {target.isDefault ? (
-                        <Badge tone="info" title={t('defaultHint')}>
-                          {t('defaultBadge')}
-                        </Badge>
-                      ) : null}
                     </p>
                     <p className="text-[11px] text-fg-subtle">
                       {envLabel(target.environment)} · {target.tenantId ? (tenantNames.get(target.tenantId) ?? t('tenantScoped')) : t('shared')}
@@ -140,16 +130,6 @@ export default function CloudTargetsPage() {
                       {canValidate ? (
                         <Button size="sm" onClick={() => setValidating(target)}>
                           <ShieldCheck size={13} aria-hidden /> {t('validate')}
-                        </Button>
-                      ) : null}
-                      {canValidate ? (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          loading={setDefault.isPending && setDefault.variables?.id === target.id}
-                          onClick={() => setDefault.mutate({ id: target.id, isDefault: !target.isDefault })}
-                        >
-                          {target.isDefault ? t('unsetDefault') : t('setDefault')}
                         </Button>
                       ) : null}
                       <Button size="sm" variant="ghost" onClick={() => setCapabilities(target)}>
@@ -320,7 +300,6 @@ function registerFormSchema(t: FormT) {
       provider: z.enum(PROVIDERS),
       name: z.string().min(2).max(80),
       environment: z.enum(TARGET_ENVIRONMENTS),
-      isDefault: z.boolean(),
       tenantId: z.string(),
       config: z.record(z.string(), z.string()),
       credentialRef: z.string(),
@@ -371,7 +350,6 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
       provider: 'mock',
       name: '',
       environment: 'any',
-      isDefault: false,
       tenantId: '',
       config: {},
       credentialRef: '',
@@ -412,7 +390,6 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
       provider: v.provider,
       name: v.name,
       environment: v.environment,
-      isDefault: v.isDefault,
       config,
       credentialRef: v.credentialRef || undefined,
       allowedRegions,
@@ -516,10 +493,6 @@ function RegisterForm({ onDone }: { onDone: () => void }) {
               ))}
             </Select>
           </Field>
-          <label className="flex items-start gap-2 text-sm sm:col-span-2">
-            <input type="checkbox" className="mt-0.5" {...form.register('isDefault')} />
-            <span>{t('isDefault')}</span>
-          </label>
           <Field label={t('scope')} htmlFor="ct-tenant" hint={t('scopeHint')}>
             <Select id="ct-tenant" {...form.register('tenantId')}>
               <option value="">{t('sharedOption')}</option>
