@@ -16,6 +16,7 @@ import {
   ListChecks,
   LogOut,
   Menu,
+  MonitorSmartphone,
   Rocket,
   ScrollText,
   Moon,
@@ -346,6 +347,9 @@ function UserMenu({ me }: { me: MeResponse }) {
           </div>
           <LanguageMenuGroup />
           <div className="border-t border-border pt-1">
+            <Link href="/settings/sessions" className="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-left text-sm text-fg-muted hover:bg-surface-2 hover:text-fg">
+              <MonitorSmartphone size={14} aria-hidden /> {t('yourSessions')}
+            </Link>
             <button
               type="button"
               onClick={() => logout.mutate()}
