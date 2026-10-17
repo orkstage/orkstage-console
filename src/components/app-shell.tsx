@@ -11,6 +11,7 @@ import {
   Cloud,
   FileCode2,
   Gauge,
+  KeyRound,
   Layers,
   LogOut,
   Menu,
@@ -42,6 +43,7 @@ import { Button } from './ui/button';
 import { ErrorNotice } from './ui/error-notice';
 import { PageSpinner } from './ui/spinner';
 import { EditionBadge } from './edition-badge';
+import { LicenseBanner } from './enterprise';
 import { LanguageMenuGroup } from './language-switcher';
 
 type NavKey = keyof Messages['shell']['nav'];
@@ -71,6 +73,7 @@ function navFor(me: MeResponse): NavItem[] {
       { href: '/settings/integrations', label: 'integrations', icon: Plug },
       { href: '/settings/team', label: 'team', icon: UsersRound },
       { href: '/settings/feature-flags', label: 'featureFlags', icon: ToggleLeft },
+      { href: '/settings/license', label: 'license', icon: KeyRound },
     ];
   }
   const first = me.memberships[0]?.tenantId;
@@ -244,6 +247,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
         <main id="main" className="mx-auto w-full max-w-[90rem] flex-1 px-3 py-5 sm:px-6">
+          <LicenseBanner />
           {children}
         </main>
       </div>

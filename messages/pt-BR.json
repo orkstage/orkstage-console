@@ -26,6 +26,7 @@
       "audit": "Log de auditoria",
       "integrations": "Integrações",
       "featureFlags": "Feature flags",
+      "license": "Licença",
       "marketplace": "Marketplace de templates",
       "team": "Equipe",
       "invite": "Convite"
@@ -228,6 +229,7 @@
       "integrations": "Integrações",
       "statusPage": "Página de status",
       "featureFlags": "Feature flags",
+      "license": "Licença",
       "marketplace": "Marketplace",
       "team": "Equipe"
     },
@@ -1457,7 +1459,8 @@
     "emptyTitle": "Nenhum evento de auditoria ainda",
     "emptyBody": "Logins, deploys e mudanças de configuração ficam registrados aqui.",
     "loaded": "{count, plural, =0 {# eventos carregados} one {# evento carregado} other {# eventos carregados}}",
-    "end": "Fim do log"
+    "end": "Fim do log",
+    "export": "Exportar {format}"
   },
   "integrations": {
     "title": "Integrações",
@@ -1611,6 +1614,53 @@
     "default": "Padrão ({value})",
     "override": "Definido aqui",
     "reset": "Remover este ajuste"
+  },
+  "license": {
+    "title": "Licença",
+    "description": "A edição desta instalação e o que a licença inclui.",
+    "current": "Esta instalação",
+    "edition": "Edição",
+    "status": "Situação",
+    "customer": "Cliente",
+    "expires": "Vence em",
+    "editions": {
+      "community": "Community",
+      "enterprise": "Enterprise"
+    },
+    "statuses": {
+      "community": "Sem licença",
+      "active": "Ativa",
+      "grace": "Período de carência",
+      "expired": "Vencida",
+      "invalid": "Chave inválida"
+    },
+    "features": "Recursos Enterprise",
+    "featuresHint": "O que a licença concede. Todo o resto do OrkStage está na edição Community.",
+    "included": "incluído",
+    "notIncluded": "não incluído",
+    "install": "Instalar ou renovar uma chave",
+    "installBody": "Defina a chave no ambiente da API e do worker, por exemplo no arquivo .env de uma instalação com Compose:",
+    "installAfter": "Depois reinicie os dois. A chave é conferida offline: o OrkStage nunca consulta um servidor de licenças.",
+    "communityNote": "Esta instalação roda a edição Community, completa para hospedar por conta própria. O Enterprise acrescenta recursos de identidade, governança e conformidade."
+  },
+  "enterprise": {
+    "features": {
+      "auditExport": "Exportação de auditoria",
+      "authSaml": "Single sign on SAML",
+      "authScim": "Provisionamento SCIM",
+      "customRoles": "Papéis personalizados",
+      "multiStepApprovals": "Aprovações em várias etapas",
+      "policyPacks": "Pacotes de políticas",
+      "multipleOrganizations": "Várias organizações",
+      "whiteLabelStatus": "Status pages com a sua marca"
+    },
+    "lockedBody": "{feature} faz parte do OrkStage Enterprise, e a licença desta instalação não inclui esse recurso.",
+    "lockedShort": "{feature}: Enterprise",
+    "licenseLink": "Licença",
+    "editionsLink": "Comparar edições",
+    "graceBanner": "A licença Enterprise venceu em {date}. Os recursos continuam funcionando por 14 dias depois dessa data; renove a licença para não perder esses recursos.",
+    "expiredBanner": "A licença Enterprise venceu e os recursos dela estão desligados. Os seus dados continuam como estão.",
+    "invalidBanner": "A chave de licença configurada não é válida: {reason}"
   },
   "marketplace": {
     "title": "Marketplace de templates",

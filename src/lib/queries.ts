@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import type {
   CloudTargetDto,
   InstanceDto,
+  LicenseDto,
   Page,
   ProfileDto,
   TemplateDto,
@@ -71,4 +72,9 @@ export function useProfiles(tenantId?: string, enabled = true) {
     enabled,
     staleTime: 15_000,
   });
+}
+
+/** The edition and licensed features (visibility only: the API enforces Enterprise features). */
+export function useLicense() {
+  return useQuery({ queryKey: ['license'], queryFn: ({ signal }) => apiGet<LicenseDto>('/license', { signal }), staleTime: 10 * 60_000 });
 }

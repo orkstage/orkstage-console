@@ -1,21 +1,14 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
 import { useTranslations } from 'use-intl';
-import { apiGet } from '@/lib/api';
+import { useLicense } from '@/lib/queries';
 import { Badge } from './ui/badge';
-
-interface License {
-  edition: 'community' | 'enterprise';
-  status: 'community' | 'active' | 'grace' | 'expired' | 'invalid';
-  message: string;
-}
 
 /** Edition indicator in the sidebar. Visibility only: the API enforces Enterprise features. */
 export function EditionBadge() {
   const t = useTranslations('edition');
-  const license = useQuery({ queryKey: ['license'], queryFn: () => apiGet<License>('/license'), staleTime: 10 * 60_000 });
+  const license = useLicense();
   if (!license.data) return null;
   const { edition, status, message } = license.data;
   if (edition === 'community') {
