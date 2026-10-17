@@ -20,6 +20,7 @@
       "templateDetail": "Template details",
       "applications": "Applications",
       "cloudTargets": "Cloud targets",
+      "connectCloud": "Connect a cloud",
       "profiles": "Profiles",
       "incidents": "Incidents",
       "incidentDetail": "Incident details",
@@ -1367,6 +1368,7 @@
     "title": "Cloud targets",
     "description": "The cloud accounts your instances run on. Credentials stay in your secret store, and OrkStage keeps only references.",
     "register": "Register target",
+    "connect": "Connect a cloud",
     "emptyTitle": "No cloud targets connected",
     "emptyBody": "Connect an AWS account, or register a mock target to simulate AWS, Azure or OCI without touching a real cloud.",
     "table": {
@@ -1446,6 +1448,139 @@
       "regionsInUseHint": "Separate with commas. A region that still has resources, instances or profiles cannot be removed.",
       "revalidateNote": "Changes other than the name or the concurrency limit clear the last validation. Run Validate after saving.",
       "save": "Save changes"
+    }
+  },
+  "connect": {
+    "title": "Connect a cloud",
+    "description": "Prepare an account, register it as a cloud target and validate it, one step at a time.",
+    "breadcrumb": "Cloud targets",
+    "stepsLabel": "Steps",
+    "steps": {
+      "provider": "Provider",
+      "prepare": "Prepare the account",
+      "details": "Target details",
+      "review": "Review and register",
+      "validate": "Validate"
+    },
+    "back": "Back",
+    "continue": "Continue",
+    "required": "Required.",
+    "format": "Unexpected format. Example: {example}",
+    "provider": {
+      "intro": "Choose where OrkStage will deploy. Infrastructure clouds run OpenTofu in your account; application platforms are driven through their APIs; the simulation imitates a cloud without touching one.",
+      "locked": "The target is already registered, so the provider can no longer change. Register another target for a different provider.",
+      "kinds": {
+        "infrastructure": "Infrastructure",
+        "platform": "Platform",
+        "simulation": "Simulation"
+      },
+      "kindHints": {
+        "infrastructure": "Networks, containers, databases and storage in your own account.",
+        "platform": "Projects and services on a managed platform.",
+        "simulation": "Rehearse every step without a real account."
+      },
+      "off": "Switched off",
+      "enable": "Turn it on for the platform",
+      "askOwner": "This provider is switched off. A platform owner can turn it on in Feature flags."
+    },
+    "prepare": {
+      "intro": "Run these once in the account, with its own command line tool. Fill in the fields to get commands ready to paste; tick each step as you go. Nothing here leaves your browser.",
+      "externalId": "A new external id is in the commands below. Store it in your secret store as the last step shows: OrkStage keeps only a reference to it.",
+      "regenerate": "New external id",
+      "nothing": "Nothing to prepare: the simulation needs no account. Continue to describe the target.",
+      "followDocs": "Follow the provider page to prepare the account, then store a secret with these fields as JSON: {fields}.",
+      "docs": "Read the full guide for this provider",
+      "inputs": {
+        "accountId": "AWS account id",
+        "principalArn": "OrkStage's own identity (ARN)",
+        "region": "Region",
+        "subscriptionId": "Subscription id",
+        "location": "Location",
+        "stateStorageAccount": "State storage account",
+        "compartmentOcid": "Compartment OCID"
+      },
+      "steps": {
+        "awsIdentity": {
+          "title": "Give OrkStage its own AWS identity",
+          "body": "An EC2 instance profile, IAM user keys in the environment of the API and worker, or an AWS CLI profile on the development stack (its real AWS script, see the docs). Attach infra/aws/orkstage-control-plane-policy.json to it and paste its ARN above."
+        },
+        "awsRole": {
+          "title": "Create the deployment role",
+          "body": "A CloudFormation stack in the account you connect. It trusts only the identity above, and only with this external id."
+        },
+        "awsBucket": {
+          "title": "Create the state bucket",
+          "body": "OpenTofu keeps its state here: versioned, encrypted and private. Repeat for each region you add."
+        },
+        "awsSecret": {
+          "title": "Store the external id",
+          "body": "Pick one place. The target will reference it in the next step."
+        },
+        "azurePrincipal": {
+          "title": "Create the service principal",
+          "body": "Contributor and User Access Administrator on the subscription. Keep the three values the first command prints."
+        },
+        "azureState": {
+          "title": "Create the state storage",
+          "body": "A storage account and container for OpenTofu state, reached with Microsoft Entra only."
+        },
+        "azureSecret": {
+          "title": "Store the client secret",
+          "body": "The target will reference it in the next step."
+        },
+        "ociKey": {
+          "title": "Create an API signing key",
+          "body": "For a user in a group with the policies below. The private key must have no passphrase."
+        },
+        "ociPolicies": {
+          "title": "Add the policies",
+          "body": "For the group of that user, in the compartment OrkStage deploys into (Identity, Policies)."
+        },
+        "ociState": {
+          "title": "Create the state bucket and its key",
+          "body": "The bucket lives in the compartment designated for the S3 compatibility API (the root compartment unless you changed it)."
+        },
+        "ociSecret": {
+          "title": "Store the credential",
+          "body": "The private key and the state key as one JSON value. The target will reference it in the next step."
+        }
+      }
+    },
+    "details": {
+      "name": "Name",
+      "environment": "Environment",
+      "environmentHint": "Instances of other environments cannot deploy here. Use one target per account and environment.",
+      "fixedAfterRegister": "Fixed once the target is registered.",
+      "scope": "Scope",
+      "scopeHint": "A shared target serves every tenant; a tenant target only that tenant.",
+      "shared": "Shared (platform)",
+      "store": "Where is the secret?",
+      "storeEnv": "Environment variable (env://)",
+      "storeSm": "AWS Secrets Manager (aws-sm://)",
+      "credential": "Credential reference",
+      "credentialHint": "A reference to the secret with: {fields}. Never the value itself.",
+      "credentialFormat": "Use env://NAME or aws-sm://name.",
+      "regions": "Allowed regions",
+      "regionsHint": "Separate with commas.",
+      "defaultRegion": "Default region",
+      "firstRegion": "{region} (first)"
+    },
+    "review": {
+      "intro": "This is what OrkStage will store. There is no secret in it, only the reference.",
+      "update": "The target is registered. Saving sends these values as an edit.",
+      "register": "Register target",
+      "save": "Save changes"
+    },
+    "validate": {
+      "intro": "OrkStage now checks {name}: it signs in with the reference, reaches the state store and checks the permissions a deployment needs.",
+      "running": "Validating",
+      "failed": "Some checks failed. Fix them in the account (or the details), then run the checks again.",
+      "again": "Run the checks again",
+      "edit": "Change the details",
+      "passed": "The target is ready. Next, put it in a profile so instances land on it, or deploy the portable starter to see it work.",
+      "profile": "Create a profile",
+      "starter": "Deploy the portable starter",
+      "targets": "Back to cloud targets"
     }
   },
   "profiles": {

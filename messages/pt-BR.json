@@ -20,6 +20,7 @@
       "templateDetail": "Detalhes do template",
       "applications": "Aplicações",
       "cloudTargets": "Destinos de nuvem",
+      "connectCloud": "Conectar uma nuvem",
       "profiles": "Perfis",
       "incidents": "Incidentes",
       "incidentDetail": "Detalhes do incidente",
@@ -1367,6 +1368,7 @@
     "title": "Destinos de nuvem",
     "description": "As contas de nuvem onde suas instâncias rodam. As credenciais ficam no seu cofre de secrets e o OrkStage guarda só referências.",
     "register": "Registrar destino",
+    "connect": "Conectar uma nuvem",
     "emptyTitle": "Nenhum destino de nuvem conectado",
     "emptyBody": "Conecte uma conta AWS ou registre um destino mock para simular AWS, Azure ou OCI sem tocar em uma nuvem real.",
     "table": {
@@ -1446,6 +1448,139 @@
       "regionsInUseHint": "Separe com vírgulas. Uma região que ainda tem recursos, instâncias ou perfis não pode ser removida.",
       "revalidateNote": "Mudanças além do nome ou do limite de concorrência apagam a última validação. Rode Validar depois de salvar.",
       "save": "Salvar alterações"
+    }
+  },
+  "connect": {
+    "title": "Conectar uma nuvem",
+    "description": "Prepare uma conta, cadastre como destino de nuvem e valide, um passo de cada vez.",
+    "breadcrumb": "Destinos de nuvem",
+    "stepsLabel": "Passos",
+    "steps": {
+      "provider": "Provedor",
+      "prepare": "Preparar a conta",
+      "details": "Dados do destino",
+      "review": "Revisar e cadastrar",
+      "validate": "Validar"
+    },
+    "back": "Voltar",
+    "continue": "Continuar",
+    "required": "Obrigatório.",
+    "format": "Formato inesperado. Exemplo: {example}",
+    "provider": {
+      "intro": "Escolha onde o OrkStage vai fazer deploy. Nuvens de infraestrutura rodam OpenTofu na sua conta; plataformas de aplicação são operadas pelas APIs delas; a simulação imita uma nuvem sem tocar em nenhuma.",
+      "locked": "O destino já foi cadastrado, então o provedor não muda mais. Cadastre outro destino para outro provedor.",
+      "kinds": {
+        "infrastructure": "Infraestrutura",
+        "platform": "Plataforma",
+        "simulation": "Simulação"
+      },
+      "kindHints": {
+        "infrastructure": "Redes, containers, bancos de dados e armazenamento na sua própria conta.",
+        "platform": "Projetos e serviços em uma plataforma gerenciada.",
+        "simulation": "Ensaie cada passo sem uma conta real."
+      },
+      "off": "Desligado",
+      "enable": "Ligar para a plataforma",
+      "askOwner": "Este provedor está desligado. Um dono da plataforma pode ligar em Feature flags."
+    },
+    "prepare": {
+      "intro": "Rode estes passos uma vez na conta, com a ferramenta de linha de comando dela. Preencha os campos para ter comandos prontos para colar; marque cada passo ao terminar. Nada daqui sai do seu navegador.",
+      "externalId": "Um external id novo está nos comandos abaixo. Guarde no seu cofre de segredos como mostra o último passo: o OrkStage guarda só uma referência a ele.",
+      "regenerate": "Novo external id",
+      "nothing": "Nada a preparar: a simulação não precisa de conta. Continue para descrever o destino.",
+      "followDocs": "Siga a página do provedor para preparar a conta e guarde um segredo com estes campos em JSON: {fields}.",
+      "docs": "Ler o guia completo deste provedor",
+      "inputs": {
+        "accountId": "Id da conta AWS",
+        "principalArn": "Identidade própria do OrkStage (ARN)",
+        "region": "Região",
+        "subscriptionId": "Id da assinatura",
+        "location": "Localização",
+        "stateStorageAccount": "Conta de armazenamento do estado",
+        "compartmentOcid": "OCID do compartimento"
+      },
+      "steps": {
+        "awsIdentity": {
+          "title": "Dê ao OrkStage uma identidade AWS própria",
+          "body": "Um instance profile no EC2, chaves de um usuário IAM no ambiente da API e do worker, ou um perfil da AWS CLI na stack de desenvolvimento (o script de AWS real dela, veja a documentação). Anexe infra/aws/orkstage-control-plane-policy.json a ela e cole o ARN acima."
+        },
+        "awsRole": {
+          "title": "Crie a role de deploy",
+          "body": "Uma stack CloudFormation na conta que você conecta. Ela confia só na identidade acima, e só com este external id."
+        },
+        "awsBucket": {
+          "title": "Crie o bucket de estado",
+          "body": "O OpenTofu guarda o estado aqui: versionado, criptografado e privado. Repita para cada região que adicionar."
+        },
+        "awsSecret": {
+          "title": "Guarde o external id",
+          "body": "Escolha um lugar. O destino vai referenciar o segredo no próximo passo."
+        },
+        "azurePrincipal": {
+          "title": "Crie o service principal",
+          "body": "Contributor e User Access Administrator na assinatura. Guarde os três valores que o primeiro comando mostra."
+        },
+        "azureState": {
+          "title": "Crie o armazenamento do estado",
+          "body": "Uma conta de armazenamento e um container para o estado do OpenTofu, acessados só com Microsoft Entra."
+        },
+        "azureSecret": {
+          "title": "Guarde o client secret",
+          "body": "O destino vai referenciar o segredo no próximo passo."
+        },
+        "ociKey": {
+          "title": "Crie uma chave de assinatura da API",
+          "body": "Para um usuário em um grupo com as políticas abaixo. A chave privada não pode ter senha."
+        },
+        "ociPolicies": {
+          "title": "Adicione as políticas",
+          "body": "Para o grupo desse usuário, no compartimento onde o OrkStage faz deploy (Identity, Policies)."
+        },
+        "ociState": {
+          "title": "Crie o bucket de estado e a chave dele",
+          "body": "O bucket fica no compartimento designado para a API compatível com S3 (o compartimento raiz, a menos que você tenha mudado)."
+        },
+        "ociSecret": {
+          "title": "Guarde a credencial",
+          "body": "A chave privada e a chave do estado em um único valor JSON. O destino vai referenciar o segredo no próximo passo."
+        }
+      }
+    },
+    "details": {
+      "name": "Nome",
+      "environment": "Ambiente",
+      "environmentHint": "Instâncias de outros ambientes não fazem deploy aqui. Use um destino por conta e ambiente.",
+      "fixedAfterRegister": "Fixo depois que o destino é cadastrado.",
+      "scope": "Escopo",
+      "scopeHint": "Um destino compartilhado atende todos os tenants; um destino do tenant atende só aquele tenant.",
+      "shared": "Compartilhado (plataforma)",
+      "store": "Onde está o segredo?",
+      "storeEnv": "Variável de ambiente (env://)",
+      "storeSm": "AWS Secrets Manager (aws-sm://)",
+      "credential": "Referência da credencial",
+      "credentialHint": "Uma referência ao segredo com: {fields}. Nunca o valor em si.",
+      "credentialFormat": "Use env://NOME ou aws-sm://nome.",
+      "regions": "Regiões permitidas",
+      "regionsHint": "Separe com vírgulas.",
+      "defaultRegion": "Região padrão",
+      "firstRegion": "{region} (primeira)"
+    },
+    "review": {
+      "intro": "Isto é o que o OrkStage vai guardar. Não há segredo aqui, só a referência.",
+      "update": "O destino já está cadastrado. Salvar envia estes valores como uma edição.",
+      "register": "Cadastrar destino",
+      "save": "Salvar alterações"
+    },
+    "validate": {
+      "intro": "Agora o OrkStage confere {name}: entra com a referência, alcança o armazenamento do estado e confere as permissões que um deploy precisa.",
+      "running": "Validando",
+      "failed": "Algumas verificações falharam. Corrija na conta (ou nos dados) e rode as verificações de novo.",
+      "again": "Rodar as verificações de novo",
+      "edit": "Mudar os dados",
+      "passed": "O destino está pronto. Agora coloque ele em um perfil para as instâncias caírem nele, ou faça deploy do portable starter para ver funcionando.",
+      "profile": "Criar um perfil",
+      "starter": "Fazer deploy do portable starter",
+      "targets": "Voltar para destinos de nuvem"
     }
   },
   "profiles": {
