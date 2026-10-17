@@ -11,6 +11,7 @@ import {
   Cloud,
   FileCode2,
   Gauge,
+  Layers,
   LogOut,
   Menu,
   Rocket,
@@ -64,6 +65,7 @@ function navFor(me: MeResponse): NavItem[] {
       { href: '/marketplace', label: 'marketplace', icon: Store },
       { href: '/applications', label: 'applications', icon: AppWindow },
       { href: '/cloud-targets', label: 'cloudTargets', icon: Cloud },
+      { href: '/profiles', label: 'profiles', icon: Layers },
       { href: '/incidents', label: 'incidents', icon: Siren },
       { href: '/audit', label: 'audit', icon: ScrollText },
       { href: '/settings/integrations', label: 'integrations', icon: Plug },
@@ -78,6 +80,7 @@ function navFor(me: MeResponse): NavItem[] {
     { href: '/deployments', label: 'deployments', icon: Rocket },
     { href: '/incidents', label: 'incidents', icon: Siren },
     { href: '/marketplace', label: 'marketplace', icon: Store },
+    { href: '/profiles', label: 'profiles', icon: Layers },
   ];
   if (first) items.push({ href: `/status/${first}`, label: 'statusPage', icon: Activity, match: ['/status'] });
   if (me.memberships.some((m) => m.role === 'CustomerOwner' || m.role === 'CustomerAdmin')) {

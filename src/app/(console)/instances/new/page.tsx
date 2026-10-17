@@ -7,6 +7,7 @@ import {
   type CloudTargetDto,
   type CreateInstanceInput,
   type InstanceDto,
+  type ProfileDto,
   type TemplateDto,
   type TemplateVersionDto,
   type TenantDto,
@@ -33,7 +34,7 @@ import { useFormat } from '@/i18n/format';
 import { useEnvironmentLabel } from '@/i18n/labels';
 import { useZodResolver } from '@/i18n/zod';
 import { apiSend } from '@/lib/api';
-import { useCloudTargets, useTemplate, useTemplates, useTenants } from '@/lib/queries';
+import { useCloudTargets, useProfiles, useTemplate, useTemplates, useTenants } from '@/lib/queries';
 import { checkVariable, readTemplateDoc, type PlacementSlot, type TemplateDocView, type TemplateVariable, type VariableIssue } from '@/lib/template-doc';
 import { cn, slugify } from '@/lib/utils';
 
@@ -74,6 +75,10 @@ function NewInstanceWizard() {
   const [bindings, setBindings] = useState<Record<string, Binding>>({});
   const [variables, setVariables] = useState<Record<string, VarValue>>({});
   const [details, setDetails] = useState<Details>({ name: '', slug: '', environment: 'production' });
+  // ADR 0007: a profile fills the slots with its target and region per provider.
+  const profiles = useProfiles(tenantId || undefined, Boolean(tenantId));
+  const [profileId, setProfileId] = useState('');
+  const profile = profiles.data?.find((p) => p.id === profileId) ?? null;
 
   // A single tenant? Preselect it.
   useEffect(() => {
@@ -97,6 +102,7 @@ function NewInstanceWizard() {
     setSeededFor(version.id);
     setVariables(Object.fromEntries(doc.variables.map((v) => [v.name, v.default])));
     setBindings({});
+    setProfileId('');
   }, [doc, version, seededFor]);
 
   const tenant = tenants.data?.find((t) => t.id === tenantId) ?? null;
@@ -131,8 +137,24 @@ function NewInstanceWizard() {
     environment: details.environment,
     variables,
     bindings,
+    ...(profileId ? { profileId } : {}),
   };
   const parsed = createInstanceSchema.safeParse(payload);
+
+  /** The profile's target for the first provider each slot accepts, with its region. */
+  const applyProfile = (next: ProfileDto | null) => {
+    setProfileId(next?.id ?? '');
+    if (!next || !doc) return;
+    setBindings((prev) => {
+      const out = { ...prev };
+      for (const slot of doc.placements) {
+        const entry = slot.providers.length ? slot.providers.map((p) => next.targets.find((e) => e.provider === p)).find(Boolean) : next.targets[0];
+        if (entry) out[slot.name] = { targetId: entry.targetId, region: entry.region ?? entry.defaultRegion };
+      }
+      return out;
+    });
+    if (next.environment !== 'any') setDetails((d) => ({ ...d, environment: next.environment as Details['environment'] }));
+  };
 
   const create = useMutation({
     mutationFn: (input: CreateInstanceInput) => apiSend<InstanceDto>('POST', '/instances', input),
@@ -213,8 +235,11 @@ function NewInstanceWizard() {
               bindings={bindings}
               setBindings={setBindings}
               eligible={eligibleTargets}
-              loading={targets.isPending}
+              loading={targets.isPending && !targets.isError}
               error={targets.error}
+              profiles={profiles.data ?? []}
+              profileId={profileId}
+              onProfile={applyProfile}
             />
           ) : null}
 
@@ -242,6 +267,7 @@ function NewInstanceWizard() {
               doc={doc}
               bindings={bindings}
               targets={targets.data ?? []}
+              profile={profile}
               variables={variables}
               details={details}
               issues={parsed.success ? [] : parsed.error.issues.map((i) => `${i.path.join('.') || t('review.request')}: ${i.message}`)}
@@ -422,6 +448,9 @@ function PlacementStep({
   eligible,
   loading,
   error,
+  profiles,
+  profileId,
+  onProfile,
 }: {
   slots: PlacementSlot[];
   bindings: Record<string, Binding>;
@@ -429,6 +458,9 @@ function PlacementStep({
   eligible: (slot: PlacementSlot) => CloudTargetDto[];
   loading: boolean;
   error: unknown;
+  profiles: ProfileDto[];
+  profileId: string;
+  onProfile: (profile: ProfileDto | null) => void;
 }) {
   const t = useTranslations('wizard.placement');
   const tc = useTranslations('common');
@@ -439,7 +471,9 @@ function PlacementStep({
       ? t('targetLabelSimulated', { name: target.name, provider: target.provider, simulates: target.simulates ?? t('cloud'), environment: envLabel(target.environment) })
       : t('targetLabel', { name: target.name, provider: target.provider, environment: envLabel(target.environment) });
   if (loading) return <PageSpinner label={t('loadingTargets')} />;
-  if (error) return <ErrorNotice error={error} />;
+  // Tenant roles cannot list cloud targets: they place an instance with a profile.
+  if (error && profiles.length === 0) return <ErrorNotice error={error} />;
+  const profileTargets = new Map(profiles.flatMap((p) => p.targets.map((e) => [e.targetId, e.targetName] as const)));
 
   const first = slots[0];
   const firstBinding = first ? bindings[first.name] : undefined;
@@ -459,7 +493,19 @@ function PlacementStep({
   return (
     <div className="space-y-4">
       <StepTitle title={t('title')} description={t('hint')} />
-      {slots.length > 1 ? (
+      {profiles.length > 0 ? (
+        <Field label={t('profile')} htmlFor="wizard-profile" hint={t('profileHint')}>
+          <Select id="wizard-profile" value={profileId} onChange={(e) => onProfile(profiles.find((p) => p.id === e.target.value) ?? null)}>
+            <option value="">{t('noProfile')}</option>
+            {profiles.map((p) => (
+              <option key={p.id} value={p.id}>
+                {t(p.isDefault ? 'profileDefault' : 'profileOption', { name: p.name, environment: envLabel(p.environment) })}
+              </option>
+            ))}
+          </Select>
+        </Field>
+      ) : null}
+      {slots.length > 1 && !error ? (
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" onClick={useSameForAll} disabled={!firstBinding?.targetId}>
             <Copy size={13} aria-hidden /> {t('useSame')}
@@ -485,7 +531,9 @@ function PlacementStep({
                 {t('allowedProviders')}
                 {slot.providers.length === 0 ? <Badge>{tc('any')}</Badge> : slot.providers.map((p) => <Badge key={p}>{p}</Badge>)}
               </p>
-              {options.length === 0 ? (
+              {options.length === 0 && binding?.targetId ? (
+                <p className="text-sm">{t('fromProfile', { target: profileTargets.get(binding.targetId) ?? binding.targetId, region: binding.region })}</p>
+              ) : options.length === 0 ? (
                 <Notice tone="warn">
                   {t('noTarget')}{' '}
                   <Link href="/cloud-targets" className="text-accent-ink underline">
@@ -694,6 +742,7 @@ function ReviewStep({
   doc,
   bindings,
   targets,
+  profile,
   variables,
   details,
   issues,
@@ -704,6 +753,7 @@ function ReviewStep({
   doc: TemplateDocView;
   bindings: Record<string, Binding>;
   targets: CloudTargetDto[];
+  profile: ProfileDto | null;
   variables: Record<string, VarValue>;
   details: Details;
   issues: string[];
@@ -729,6 +779,7 @@ function ReviewStep({
                 { label: t('name'), value: details.name },
                 { label: t('slug'), value: <code className="font-mono text-xs">{details.slug}</code> },
                 { label: t('environment'), value: envLabel(details.environment) },
+                { label: t('profile'), value: profile?.name ?? tc('none') },
                 {
                   label: t('template'),
                   value: (
@@ -765,9 +816,9 @@ function ReviewStep({
                 return (
                   <li key={s.name} className="flex flex-wrap items-center gap-x-2">
                     <span className="w-20 font-mono text-xs text-fg-subtle">{s.name}</span>
-                    <span>{target?.name ?? tc('empty')}</span>
+                    <span>{target?.name ?? profile?.targets.find((e) => e.targetId === b?.targetId)?.targetName ?? tc('empty')}</span>
                     <span className="font-mono text-xs text-fg-muted">
-                      {target?.provider}
+                      {target?.provider ?? profile?.targets.find((e) => e.targetId === b?.targetId)?.provider}
                       {target?.simulated ? ` (${target.simulates})` : ''} / {b?.region}
                     </span>
                   </li>

@@ -6,6 +6,7 @@ import type {
   CloudTargetDto,
   InstanceDto,
   Page,
+  ProfileDto,
   TemplateDto,
   TenantDto,
 } from '@orkstage/contracts';
@@ -60,4 +61,14 @@ export function useInstances(filter: { tenantId?: string; status?: string } = {}
 /** id → name lookup helper for tenant columns. */
 export function tenantNameMap(tenants: TenantDto[] | undefined): Map<string, string> {
   return new Map((tenants ?? []).map((t) => [t.id, t.name]));
+}
+
+/** Profiles a tenant may use (its own and the shared ones), or every profile the caller sees. */
+export function useProfiles(tenantId?: string, enabled = true) {
+  return useQuery({
+    queryKey: ['profiles', tenantId ?? null],
+    queryFn: async ({ signal }) => asItems(await apiGet<ProfileDto[] | Page<ProfileDto>>(`/profiles${tenantId ? qs({ tenantId }) : ''}`, { signal })),
+    enabled,
+    staleTime: 15_000,
+  });
 }
