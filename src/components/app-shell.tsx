@@ -13,6 +13,7 @@ import {
   Gauge,
   KeyRound,
   Layers,
+  ListChecks,
   LogOut,
   Menu,
   Rocket,
@@ -44,6 +45,7 @@ import { ErrorNotice } from './ui/error-notice';
 import { PageSpinner } from './ui/spinner';
 import { EditionBadge } from './edition-badge';
 import { LicenseBanner } from './enterprise';
+import { WelcomeDialog } from './getting-started';
 import { LanguageMenuGroup } from './language-switcher';
 
 type NavKey = keyof Messages['shell']['nav'];
@@ -60,6 +62,7 @@ function navFor(me: MeResponse): NavItem[] {
   if (isPlatformStaff(me)) {
     return [
       { href: '/', label: 'overview', icon: Gauge },
+      { href: '/getting-started', label: 'gettingStarted', icon: ListChecks },
       { href: '/tenants', label: 'tenants', icon: Building2 },
       { href: '/instances', label: 'instances', icon: Boxes },
       { href: '/deployments', label: 'deployments', icon: Rocket },
@@ -79,6 +82,7 @@ function navFor(me: MeResponse): NavItem[] {
   const first = me.memberships[0]?.tenantId;
   const items: NavItem[] = [
     { href: '/', label: 'overview', icon: Gauge },
+    { href: '/getting-started', label: 'gettingStarted', icon: ListChecks },
     { href: '/instances', label: 'instances', icon: Boxes },
     { href: '/deployments', label: 'deployments', icon: Rocket },
     { href: '/incidents', label: 'incidents', icon: Siren },
@@ -248,6 +252,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </header>
         <main id="main" className="mx-auto w-full max-w-[90rem] flex-1 px-3 py-5 sm:px-6">
           <LicenseBanner />
+          <WelcomeDialog />
           {children}
         </main>
       </div>

@@ -6,6 +6,7 @@
       "signIn": "Sign in",
       "notFound": "Page not found",
       "overview": "Overview",
+      "gettingStarted": "Getting started",
       "tenants": "Tenants",
       "instances": "Instances",
       "instanceNew": "New instance",
@@ -217,6 +218,7 @@
     "nav": {
       "label": "Main",
       "overview": "Overview",
+      "gettingStarted": "Getting started",
       "tenants": "Tenants",
       "instances": "Instances",
       "deployments": "Deployments",
@@ -297,6 +299,7 @@
   "onboarding": {
     "title": "Set the stage",
     "intro": "Five steps from an empty console to a running, monitored environment. {done} of {total} done.",
+    "guide": "Open the full guide",
     "dismiss": "Dismiss the getting started checklist",
     "done": "(done)",
     "notDone": "(not done)",
@@ -311,6 +314,111 @@
       "planHint": "See every change and the approximate monthly cost before anything runs.",
       "deployLabel": "Deploy and watch",
       "deployHint": "Follow the rollout live, then keep watch from the status page."
+    }
+  },
+  "gettingStarted": {
+    "title": "Getting started",
+    "staffDescription": "Set up OrkStage from an empty installation to a running, watched environment. Each step links to the page that does it and to the docs, and turns green by itself once it is done.",
+    "memberDescription": "What you can do in your tenant, in order. Each step links to the page that does it and to the docs.",
+    "progress": "{done} of {total} steps done",
+    "allDone": "Every required step is done. The optional ones are still worth a look.",
+    "progressLabel": "Setup progress",
+    "optionalHint": "Optional steps do not count toward progress.",
+    "readDocs": "Read the docs",
+    "badges": {
+      "done": "Done",
+      "next": "Next",
+      "optional": "Optional"
+    },
+    "phases": {
+      "connect": {
+        "title": "Connect your clouds",
+        "body": "OrkStage deploys into accounts you own. Connect them first and decide where each environment lands."
+      },
+      "customers": {
+        "title": "Add your customers",
+        "body": "A tenant is a customer or a team with its own instances, people, limits and status page."
+      },
+      "deliver": {
+        "title": "Deliver an environment",
+        "body": "Pick a template, create an instance from it, review the plan and deploy."
+      },
+      "operate": {
+        "title": "Operate it",
+        "body": "Watch health and incidents, share the status page and automate the routine."
+      }
+    },
+    "steps": {
+      "target": {
+        "title": "Connect a cloud account",
+        "body": "Deploy the OrkStage role in your AWS account with the CloudFormation template from the docs, then register the account here as a cloud target and run Validate. Validate assumes the role, checks the account id and the state bucket, and simulates every permission a deployment needs.",
+        "tip": "Use one target per account and environment, for example one for staging and one for production. Other providers start switched off: a platform owner turns them on in Feature flags first.",
+        "action": "Open cloud targets"
+      },
+      "profile": {
+        "title": "Create a placement profile",
+        "body": "A profile says, for one environment, which target and region each provider uses. Instances created from it land in the right account without anyone picking targets by hand.",
+        "tip": "Mark one profile as the default for each environment. A shared profile serves every tenant, and a tenant profile takes its place for that tenant.",
+        "action": "Open profiles"
+      },
+      "tenant": {
+        "title": "Create a tenant",
+        "body": "Create a tenant for each customer or internal team, and set its limits for instances, vCPU, memory, replicas and storage so nobody grows past what you agreed.",
+        "tip": "Platform owners can turn features on or off for one tenant in Feature flags.",
+        "action": "Open tenants"
+      },
+      "team": {
+        "title": "Invite your team",
+        "body": "Invite people by email and give each one a role: owners manage people, admins manage instances and integrations, developers deploy, viewers read.",
+        "tip": "Invitations expire. Send a new one from the same page when that happens.",
+        "action": "Open team"
+      },
+      "template": {
+        "title": "Pick or build a template",
+        "body": "A template describes an environment without naming a cloud: services, databases, queues, storage and how they connect. Start from a system template or the marketplace, or build your own in the visual builder.",
+        "tip": "Templates are versioned. Publish a version before instances can use it.",
+        "action": "Open templates"
+      },
+      "instance": {
+        "title": "Create an instance",
+        "body": "Choose the tenant, the template and a profile, then fill in the variables. The wizard shows where every part runs before you confirm.",
+        "tip": "Production instances ask for approval before high risk changes.",
+        "action": "Create an instance"
+      },
+      "deploy": {
+        "title": "Review the plan and deploy",
+        "body": "Every deployment starts with a plan: the changes, their risk and the approximate monthly cost. Approve it and follow the rollout step by step.",
+        "tip": "When a step fails, fix the cause and retry the deployment. Resources that finished are not deployed again.",
+        "action": "Open deployments"
+      },
+      "observe": {
+        "title": "Watch health and incidents",
+        "body": "OrkStage checks every resource, opens an incident when something critical fails and resolves it when it recovers. Each tenant has a status page with the same picture.",
+        "tip": "Check drift too: it shows changes made outside OrkStage.",
+        "action": "Open incidents"
+      },
+      "automate": {
+        "title": "Automate",
+        "body": "Create an API key for scripts and CI, a webhook for your chat or ticket tool, and install the ork command line tool to validate, push and deploy templates from a repository.",
+        "tip": "Install the CLI with the command below, then run ork login.",
+        "action": "Open integrations"
+      }
+    },
+    "welcome": {
+      "title": "Welcome to OrkStage",
+      "staffIntro": "OrkStage turns one template into running environments on the clouds you choose. Four steps get you there.",
+      "memberIntro": "Your tenant is ready. This is what you can do here.",
+      "points": {
+        "staffConnect": "Connect your cloud accounts and decide where each environment lands.",
+        "staffCustomers": "Add a tenant for each customer or team and invite people.",
+        "staffDeliver": "Create an instance from a template, review the plan and deploy.",
+        "staffOperate": "Watch health and incidents and automate the routine.",
+        "memberDeliver": "See your instances and deployments, and create them when your role allows.",
+        "memberOperate": "Follow the health, incidents and status page of your tenant.",
+        "memberAutomate": "Automate deploys with API keys, webhooks and the ork CLI."
+      },
+      "later": "Explore on my own",
+      "start": "Start the guided setup"
     }
   },
   "edition": {

@@ -6,6 +6,7 @@
       "signIn": "Entrar",
       "notFound": "Página não encontrada",
       "overview": "Visão geral",
+      "gettingStarted": "Primeiros passos",
       "tenants": "Tenants",
       "instances": "Instâncias",
       "instanceNew": "Nova instância",
@@ -217,6 +218,7 @@
     "nav": {
       "label": "Principal",
       "overview": "Visão geral",
+      "gettingStarted": "Primeiros passos",
       "tenants": "Tenants",
       "instances": "Instâncias",
       "deployments": "Deploys",
@@ -297,6 +299,7 @@
   "onboarding": {
     "title": "Prepare o palco",
     "intro": "Cinco passos de um console vazio até um ambiente rodando e monitorado. {done} de {total} concluídos.",
+    "guide": "Abrir o guia completo",
     "dismiss": "Dispensar o checklist de primeiros passos",
     "done": "(concluído)",
     "notDone": "(pendente)",
@@ -311,6 +314,111 @@
       "planHint": "Veja cada mudança e o custo mensal aproximado antes de qualquer execução.",
       "deployLabel": "Faça o deploy e acompanhe",
       "deployHint": "Acompanhe o rollout ao vivo e depois monitore pela página de status."
+    }
+  },
+  "gettingStarted": {
+    "title": "Primeiros passos",
+    "staffDescription": "Configure o OrkStage desde uma instalação vazia até um ambiente rodando e monitorado. Cada passo leva à página que faz o trabalho e à documentação, e fica verde sozinho quando termina.",
+    "memberDescription": "O que você pode fazer no seu tenant, em ordem. Cada passo leva à página que faz o trabalho e à documentação.",
+    "progress": "{done} de {total} passos concluídos",
+    "allDone": "Todos os passos obrigatórios estão concluídos. Os opcionais ainda valem uma olhada.",
+    "progressLabel": "Progresso da configuração",
+    "optionalHint": "Passos opcionais não contam no progresso.",
+    "readDocs": "Ler a documentação",
+    "badges": {
+      "done": "Concluído",
+      "next": "Próximo",
+      "optional": "Opcional"
+    },
+    "phases": {
+      "connect": {
+        "title": "Conecte as suas nuvens",
+        "body": "O OrkStage faz deploy em contas que são suas. Conecte as contas primeiro e decida onde cada ambiente vai rodar."
+      },
+      "customers": {
+        "title": "Cadastre os seus clientes",
+        "body": "Um tenant é um cliente ou uma equipe, com instâncias, pessoas, limites e página de status próprios."
+      },
+      "deliver": {
+        "title": "Entregue um ambiente",
+        "body": "Escolha um template, crie uma instância a partir dele, revise o plano e faça o deploy."
+      },
+      "operate": {
+        "title": "Opere o ambiente",
+        "body": "Acompanhe saúde e incidentes, compartilhe a página de status e automatize a rotina."
+      }
+    },
+    "steps": {
+      "target": {
+        "title": "Conecte uma conta de nuvem",
+        "body": "Crie a role do OrkStage na sua conta AWS com o template CloudFormation da documentação, cadastre a conta aqui como destino de nuvem e clique em Validar. A validação assume a role, confere o id da conta e o bucket de estado e simula cada permissão que um deploy precisa.",
+        "tip": "Use um destino por conta e ambiente, por exemplo um para staging e outro para produção. Os outros provedores começam desligados: um dono da plataforma liga cada um em Feature flags antes.",
+        "action": "Abrir destinos de nuvem"
+      },
+      "profile": {
+        "title": "Crie um perfil de posicionamento",
+        "body": "Um perfil diz, para um ambiente, qual destino e qual região cada provedor usa. As instâncias criadas com ele caem na conta certa sem ninguém escolher destinos na mão.",
+        "tip": "Marque um perfil como padrão para cada ambiente. Um perfil compartilhado atende todos os tenants, e um perfil do tenant toma o lugar dele para aquele tenant.",
+        "action": "Abrir perfis"
+      },
+      "tenant": {
+        "title": "Crie um tenant",
+        "body": "Crie um tenant para cada cliente ou equipe interna e defina os limites de instâncias, vCPU, memória, réplicas e armazenamento, para ninguém passar do combinado.",
+        "tip": "Donos da plataforma podem ligar ou desligar recursos para um tenant em Feature flags.",
+        "action": "Abrir tenants"
+      },
+      "team": {
+        "title": "Convide a sua equipe",
+        "body": "Convide pessoas por email e dê um papel a cada uma: owners cuidam das pessoas, admins cuidam de instâncias e integrações, developers fazem deploy, viewers só leem.",
+        "tip": "Convites vencem. Quando isso acontecer, envie um novo pela mesma página.",
+        "action": "Abrir equipe"
+      },
+      "template": {
+        "title": "Escolha ou crie um template",
+        "body": "Um template descreve um ambiente sem citar uma nuvem: serviços, bancos de dados, filas, armazenamento e como eles se ligam. Comece por um template do sistema ou do marketplace, ou crie o seu no editor visual.",
+        "tip": "Templates têm versões. Publique uma versão para que as instâncias possam usar.",
+        "action": "Abrir templates"
+      },
+      "instance": {
+        "title": "Crie uma instância",
+        "body": "Escolha o tenant, o template e um perfil, depois preencha as variáveis. O assistente mostra onde cada parte vai rodar antes de você confirmar.",
+        "tip": "Instâncias de produção pedem aprovação antes de mudanças de alto risco.",
+        "action": "Criar uma instância"
+      },
+      "deploy": {
+        "title": "Revise o plano e faça o deploy",
+        "body": "Todo deploy começa com um plano: as mudanças, o risco e o custo mensal aproximado. Aprove e acompanhe o deploy passo a passo.",
+        "tip": "Quando um passo falha, corrija a causa e tente o deploy de novo. Recursos que já terminaram não rodam outra vez.",
+        "action": "Abrir deploys"
+      },
+      "observe": {
+        "title": "Acompanhe saúde e incidentes",
+        "body": "O OrkStage verifica cada recurso, abre um incidente quando algo crítico falha e resolve quando volta. Cada tenant tem uma página de status com o mesmo retrato.",
+        "tip": "Olhe o drift também: ele mostra mudanças feitas fora do OrkStage.",
+        "action": "Abrir incidentes"
+      },
+      "automate": {
+        "title": "Automatize",
+        "body": "Crie uma API key para scripts e CI, um webhook para a sua ferramenta de chat ou de chamados, e instale a ferramenta de linha de comando ork para validar, enviar e fazer deploy de templates a partir de um repositório.",
+        "tip": "Instale a CLI com o comando abaixo e depois rode ork login.",
+        "action": "Abrir integrações"
+      }
+    },
+    "welcome": {
+      "title": "Boas vindas ao OrkStage",
+      "staffIntro": "O OrkStage transforma um template em ambientes rodando nas nuvens que você escolher. Quatro passos levam você até lá.",
+      "memberIntro": "O seu tenant está pronto. Veja o que dá para fazer aqui.",
+      "points": {
+        "staffConnect": "Conecte as suas contas de nuvem e decida onde cada ambiente vai rodar.",
+        "staffCustomers": "Crie um tenant para cada cliente ou equipe e convide as pessoas.",
+        "staffDeliver": "Crie uma instância a partir de um template, revise o plano e faça o deploy.",
+        "staffOperate": "Acompanhe saúde e incidentes e automatize a rotina.",
+        "memberDeliver": "Veja as suas instâncias e deploys, e crie novos quando o seu papel permitir.",
+        "memberOperate": "Acompanhe a saúde, os incidentes e a página de status do seu tenant.",
+        "memberAutomate": "Automatize deploys com API keys, webhooks e a CLI ork."
+      },
+      "later": "Explorar por conta própria",
+      "start": "Começar a configuração guiada"
     }
   },
   "edition": {
