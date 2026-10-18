@@ -7,18 +7,20 @@ import {
   type CloudTargetDto,
   type CreateInstanceInput,
   type InstanceDto,
+  type NewInstancePreviewDto,
   type ProfileDto,
   type TemplateDto,
   type TemplateVersionDto,
   type TenantDto,
 } from '@orkstage/contracts';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, Check, Copy } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'use-intl';
+import { PreviewReport } from '@/components/plan-view';
 import { LimitsSummary } from '@/components/tenant-limits';
 import { Badge, SimulatedBadge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -38,8 +40,8 @@ import { useCloudTargets, useProfiles, useTemplate, useTemplates, useTenants } f
 import { checkVariable, readTemplateDoc, type PlacementSlot, type TemplateDocView, type TemplateVariable, type VariableIssue } from '@/lib/template-doc';
 import { cn, slugify } from '@/lib/utils';
 
-type StepId = 'tenant' | 'template' | 'placement' | 'variables' | 'details' | 'review';
-const STEPS: { id: StepId }[] = [{ id: 'tenant' }, { id: 'template' }, { id: 'placement' }, { id: 'variables' }, { id: 'details' }, { id: 'review' }];
+type StepId = 'tenant' | 'template' | 'placement' | 'variables' | 'details' | 'plan' | 'review';
+const STEPS: { id: StepId }[] = [{ id: 'tenant' }, { id: 'template' }, { id: 'placement' }, { id: 'variables' }, { id: 'details' }, { id: 'plan' }, { id: 'review' }];
 
 type Binding = { targetId: string; region: string };
 type VarValue = string | number | boolean;
@@ -60,6 +62,7 @@ export default function NewInstancePage() {
 function NewInstanceWizard() {
   const t = useTranslations('wizard');
   const tc = useTranslations('common');
+  const fmt = useFormat();
   const router = useRouter();
   const qc = useQueryClient();
   const tenants = useTenants();
@@ -120,6 +123,7 @@ function NewInstanceWizard() {
     placement: !!doc && doc.placements.every((s) => bindings[s.name]?.targetId && bindings[s.name]?.region),
     variables: Object.values(variableErrors).every((e) => e === null),
     details: !!details.name && !!details.slug,
+    plan: false,
     review: true,
   };
 
@@ -137,9 +141,22 @@ function NewInstanceWizard() {
     environment: details.environment,
     variables,
     bindings,
+    labels: {},
     ...(profileId ? { profileId } : {}),
   };
   const parsed = createInstanceSchema.safeParse(payload);
+
+  // The plan of the instance before it exists (open item 14), refreshed when the inputs change.
+  const planInput = parsed.success ? JSON.stringify(payload) : '';
+  const plan = useQuery({
+    queryKey: ['instance-preview', planInput],
+    queryFn: () => apiSend<NewInstancePreviewDto>('POST', '/instances/preview', payload),
+    enabled: Boolean(planInput) && (step === 'plan' || step === 'review'),
+    staleTime: 60_000,
+    retry: false,
+  });
+  const blockingIssues = (plan.data?.issues ?? []).filter((i) => i.severity === 'error' && i.stage !== 'policy');
+  canAdvance.plan = Boolean(plan.data) && blockingIssues.length === 0;
 
   /** The profile's target for the first provider each slot accepts, with its region. */
   const applyProfile = (next: ProfileDto | null) => {
@@ -253,10 +270,31 @@ function NewInstanceWizard() {
               nonProduction={doc?.nonProduction ?? false}
               onSubmit={(d) => {
                 setDetails(d);
-                setStep('review');
+                setStep('plan');
               }}
               onBack={() => go(-1)}
             />
+          ) : null}
+
+          {step === 'plan' ? (
+            <div className="space-y-4">
+              <StepTitle title={t('plan.title')} description={t('plan.hint')} />
+              {plan.isPending ? (
+                <PageSpinner label={t('plan.loading')} />
+              ) : plan.error ? (
+                <ErrorNotice error={plan.error} />
+              ) : (
+                <>
+                  {blockingIssues.length > 0 ? <Notice tone="warn">{t('plan.blocking')}</Notice> : null}
+                  {plan.data.policyResults.some((p) => p.status === 'fail') ? <Notice tone="info">{t('plan.policyNote')}</Notice> : null}
+                  <PreviewReport preview={plan.data} />
+                </>
+              )}
+            </div>
+          ) : null}
+
+          {step === 'review' && plan.data ? (
+            <p className="mb-3 text-sm font-medium">{t('plan.estimate', { amount: fmt.money(plan.data.cost.total) })}</p>
           ) : null}
 
           {step === 'review' && doc && version ? (
@@ -627,9 +665,9 @@ function VariablesStep({
         return tv(issue.code);
     }
   };
-  return (
-    <div>
-      <StepTitle title={t('configure')} description={t('configureHint')} />
+  // Advanced settings collapsed by default when every variable has a default (spec §40, §87).
+  const simple = vars.every((v) => v.default !== undefined);
+  const fields = (
       <div className="grid gap-4 sm:grid-cols-2">
         {vars.map((v) => {
           const id = `var-${v.name}`;
@@ -680,6 +718,20 @@ function VariablesStep({
           );
         })}
       </div>
+  );
+  return (
+    <div>
+      <StepTitle title={t('configure')} description={t('configureHint')} />
+      {simple ? (
+        <div className="space-y-3">
+          <p className="text-sm text-fg-muted">{t('defaultsFit')}</p>
+          <Disclosure summary={t('advanced', { count: vars.length })}>
+            <div className="p-3">{fields}</div>
+          </Disclosure>
+        </div>
+      ) : (
+        fields
+      )}
     </div>
   );
 }

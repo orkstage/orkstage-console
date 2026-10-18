@@ -5,11 +5,10 @@ import type { OverviewDto } from '@orkstage/contracts';
 import { useQuery } from '@tanstack/react-query';
 import { Cloud, ScrollText, Users } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useTranslations } from 'use-intl';
 import { AuditTable } from '@/components/audit-table';
+import { CustomerOverview } from '@/components/customer-overview';
 import { OnboardingChecklist } from '@/components/onboarding-checklist';
 import { Card, CardBody, CardHeader, StatCard } from '@/components/ui/card';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -34,20 +33,15 @@ function TrendsSpinner() {
 export default function OverviewPage() {
   const t = useTranslations('overview');
   const me = useMe();
-  const router = useRouter();
   const staff = isPlatformStaff(me.data);
-  const firstTenant = me.data?.memberships[0]?.tenantId;
-
-  useEffect(() => {
-    if (me.data && !staff && firstTenant) router.replace(`/status/${firstTenant}`);
-  }, [me.data, staff, firstTenant, router]);
+  const tenants = (me.data?.memberships ?? []).map((m) => ({ id: m.tenantId, name: m.tenantName }));
 
   if (!me.data) return <PageSpinner />;
   if (!staff) {
-    if (!firstTenant) {
+    if (tenants.length === 0) {
       return <EmptyState icon={Users} title={t('noTenantTitle')} description={t('noTenantBody')} />;
     }
-    return <PageSpinner label={t('openingStatus')} />;
+    return <CustomerOverview tenants={tenants} />;
   }
   return <PlatformOverview />;
 }

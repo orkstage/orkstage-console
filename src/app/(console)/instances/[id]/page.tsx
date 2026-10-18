@@ -12,6 +12,8 @@ import { DeploymentsList } from '@/components/deployments-table';
 import { DeployDialog, DestroyDialog, UpgradeDialog } from '@/components/instance/action-dialogs';
 import { LogsPanel, MetricsPanel } from '@/components/instance/telemetry';
 import { Topology } from '@/components/instance/topology';
+import { DomainsPanel } from '@/components/instance/domains';
+import { LabelsCard } from '@/components/instance/labels';
 import { TriggersPanel } from '@/components/instance/triggers';
 import { PreviewReport } from '@/components/plan-view';
 import { Badge, SimulatedBadge } from '@/components/ui/badge';
@@ -31,8 +33,8 @@ import { useEnvironmentLabel, useStatusLabel } from '@/i18n/labels';
 import { useDocumentTitle } from '@/lib/hooks';
 import { shortId } from '@/lib/utils';
 
-type TabId = 'overview' | 'plan' | 'deployments' | 'triggers' | 'logs' | 'metrics';
-const TAB_IDS: TabId[] = ['overview', 'plan', 'deployments', 'triggers', 'logs', 'metrics'];
+type TabId = 'overview' | 'plan' | 'deployments' | 'triggers' | 'domains' | 'logs' | 'metrics';
+const TAB_IDS: TabId[] = ['overview', 'plan', 'deployments', 'triggers', 'domains', 'logs', 'metrics'];
 
 export default function InstancePage() {
   return (
@@ -195,6 +197,7 @@ function InstanceView() {
                   />
                 </CardBody>
               </Card>
+              <LabelsCard instanceId={inst.id} labels={inst.labels ?? {}} canEdit={canUpdate && !destroyed} />
               <Card>
                 <CardHeader title={t('placement')} as="h3" />
                 <CardBody>
@@ -259,6 +262,23 @@ function InstanceView() {
           <Card>
             <CardBody>
               <TriggersPanel instanceId={inst.id} canRun={canDeploy} />
+            </CardBody>
+          </Card>
+        </TabPanel>
+      ) : null}
+
+      {tab === 'domains' ? (
+        <TabPanel id="domains" idPrefix="inst">
+          <Card>
+            <CardBody>
+              <DomainsPanel
+                instanceId={inst.id}
+                resourceIds={resources.filter((r) => r.type === 'dns' || r.type === 'web.frontend').map((r) => r.resourceId)}
+                canEdit={canUpdate}
+                canDeploy={canDeploy && !destroyed}
+                simulated={Boolean(inst.simulated)}
+                onDeploy={() => setDialog('deploy')}
+              />
             </CardBody>
           </Card>
         </TabPanel>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import { API_KEY_SCOPE_VALUES, WEBHOOK_EVENTS, type ApiKeyDto, type WebhookDeliveryDto, type WebhookDto } from '@orkstage/contracts';
+import { API_KEY_SCOPE_VALUES, WEBHOOK_EVENTS, WEBHOOK_FORMATS, type ApiKeyDto, type WebhookDeliveryDto, type WebhookDto } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { KeyRound, Plus, Send, Trash2, Webhook } from 'lucide-react';
 import { useId, useState, type FormEvent } from 'react';
@@ -446,7 +446,7 @@ function Webhooks({ tenantId }: { tenantId?: string }) {
             onCreated={(s) => {
               setCreating(false);
               refresh();
-              setSecret({ title: t('secretTitle'), value: s });
+              if (s) setSecret({ title: t('secretTitle'), value: s });
             }}
             onClose={() => setCreating(false)}
           />
@@ -472,9 +472,11 @@ function CreateWebhookForm({ tenantId, onCreated, onClose }: { tenantId?: string
   const [url, setUrl] = useState('https://');
   const [description, setDescription] = useState('');
   const [events, setEvents] = useState<string[]>(['deployment.succeeded', 'deployment.failed', 'incident.opened', 'incident.resolved']);
+  const [format, setFormat] = useState<(typeof WEBHOOK_FORMATS)[number]>('ORKSTAGE');
   const create = useMutation({
-    mutationFn: () => apiSend<{ webhook: WebhookDto; secret: string }>('POST', '/webhooks', { url, description, events, tenantId }),
-    onSuccess: (r) => onCreated(r.secret),
+    mutationFn: () => apiSend<{ webhook: WebhookDto; secret: string }>('POST', '/webhooks', { url, description, events, tenantId, format }),
+    // Slack and Teams do not check signatures: there is no secret to show.
+    onSuccess: (r) => onCreated(format === 'ORKSTAGE' ? r.secret : ''),
   });
   return (
     <form
@@ -484,6 +486,15 @@ function CreateWebhookForm({ tenantId, onCreated, onClose }: { tenantId?: string
         create.mutate();
       }}
     >
+      <Field label={t('format')} htmlFor={`${id}-format`} hint={t(`formatHints.${format}`)}>
+        <Select id={`${id}-format`} value={format} onChange={(e) => setFormat(e.target.value as (typeof WEBHOOK_FORMATS)[number])}>
+          {WEBHOOK_FORMATS.map((f) => (
+            <option key={f} value={f}>
+              {t(`formats.${f}`)}
+            </option>
+          ))}
+        </Select>
+      </Field>
       <Field label={t('url')} htmlFor={`${id}-url`} required>
         <Input id={`${id}-url`} type="url" value={url} onChange={(e) => setUrl(e.target.value)} required />
       </Field>
