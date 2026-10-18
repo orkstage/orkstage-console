@@ -33,7 +33,11 @@
       "sessions": "Your sessions",
       "marketplace": "Template marketplace",
       "team": "Team",
-      "invite": "Invitation"
+      "invite": "Invitation",
+      "statusSettings": "Status page settings",
+      "publicStatus": "Status",
+      "policies": "Policies",
+      "notificationSettings": "Notification settings"
     }
   },
   "common": {
@@ -237,7 +241,9 @@
       "featureFlags": "Feature flags",
       "license": "License",
       "marketplace": "Marketplace",
-      "team": "Team"
+      "team": "Team",
+      "policies": "Policies",
+      "notificationSettings": "Notification settings"
     },
     "home": "OrkStage home",
     "skipToContent": "Skip to content",
@@ -562,7 +568,6 @@
   "overview": {
     "noTenantTitle": "No tenant access yet",
     "noTenantBody": "Ask your organization admin to add you to a tenant.",
-    "openingStatus": "Opening your status page",
     "unavailable": "Overview unavailable",
     "title": "Overview",
     "description": "Your fleet at a glance: health, deployments and spend across every cloud.",
@@ -695,7 +700,8 @@
       "placement": "Placement",
       "variables": "Variables",
       "details": "Name and environment",
-      "review": "Review and create"
+      "review": "Review and create",
+      "plan": "Plan and cost"
     },
     "createFailed": "The instance could not be created",
     "create": "Create instance",
@@ -755,7 +761,9 @@
       "configureHint": "Defaults are prefilled. The API validates the values again.",
       "range": "Range {min} to {max}",
       "noMin": "no minimum",
-      "noMax": "no maximum"
+      "noMax": "no maximum",
+      "advanced": "Advanced settings ({count})",
+      "defaultsFit": "The defaults fit most instances. Open the advanced settings to change them."
     },
     "details": {
       "title": "Name and environment",
@@ -782,6 +790,14 @@
       "multicloud": "Multicloud",
       "variablesSummary": "Variables ({count} changed from default)",
       "defaultWas": "(default {value})"
+    },
+    "plan": {
+      "title": "Plan and cost",
+      "hint": "What OrkStage will create, the policies it checks and the estimated monthly cost. Nothing is created yet.",
+      "loading": "Building the plan",
+      "blocking": "Fix these issues before you create the instance.",
+      "policyNote": "Policy failures do not stop the creation, but they block deployments until they are fixed.",
+      "estimate": "Estimated cost: {amount} a month"
     }
   },
   "instance": {
@@ -792,7 +808,8 @@
       "deployments": "Deployments",
       "logs": "Logs",
       "metrics": "Metrics",
-      "triggers": "Triggers"
+      "triggers": "Triggers",
+      "domains": "Domains"
     },
     "unavailable": "Instance unavailable",
     "breadcrumb": "Instances",
@@ -828,7 +845,14 @@
     "previewFailed": "Preview failed",
     "planning": "Compiling and planning",
     "noPreviewTitle": "No preview yet",
-    "noPreviewBody": "Run a preview to see validation issues, policy results, connectivity, cost and the change plan."
+    "noPreviewBody": "Run a preview to see validation issues, policy results, connectivity, cost and the change plan.",
+    "labels": "Labels",
+    "labelsHint": "Added as tags to every cloud resource of this instance. Policies may require some.",
+    "noLabels": "No labels.",
+    "editLabels": "Edit labels",
+    "labelsField": "One per line as key=value",
+    "labelsInvalid": "Write each label as key=value.",
+    "saveLabels": "Save labels"
   },
   "instanceDialogs": {
     "deployTitle": "Deploy {name}",
@@ -993,7 +1017,24 @@
       "publishRefused": "Publishing was refused",
       "published": "Published. Instances can now use this version.",
       "source": "Source",
-      "sourceHint": "YAML as submitted. Published versions cannot change."
+      "sourceHint": "YAML as submitted. Published versions cannot change.",
+      "editDraft": "Edit draft",
+      "saveDraft": "Save draft",
+      "draftSaved": "Draft saved. Validate and publish it when it is ready.",
+      "cancelEdit": "Cancel",
+      "deprecate": "Deprecate",
+      "deprecateTitle": "Deprecate version {version}",
+      "deprecateHint": "Instances on this version keep running and can still be deployed. New instances and upgrades cannot use it.",
+      "deprecationNote": "Note for people who try to use it",
+      "deprecationNotePlaceholder": "Use version 2.0.0, which adds backups.",
+      "deprecateSave": "Deprecate version",
+      "deprecatedOn": "Deprecated {date}.",
+      "restore": "Restore",
+      "compare": "Compare with",
+      "noCompare": "No comparison",
+      "diffTitle": "Changes from {from} to {to}",
+      "diffSummary": "{added} lines added, {removed} removed",
+      "noChanges": "The two versions have the same source."
     },
     "editor": {
       "title": "New version",
@@ -1366,7 +1407,20 @@
     "noPast": "No incidents reported recently.",
     "resolvedAfter": "resolved after {duration}",
     "activity": "Recent activity",
-    "noActivity": "No recent activity."
+    "noActivity": "No recent activity.",
+    "subscribe": "Email me updates",
+    "unsubscribe": "Stop email updates",
+    "subscribedHint": "You get an email when an incident opens, changes or resolves, and about maintenance.",
+    "settings": "Settings",
+    "publicPage": "Public page",
+    "maintenance": "Maintenance",
+    "maintenanceWhen": "{start} to {end}",
+    "allComponents": "All components",
+    "states": {
+      "scheduled": "Scheduled",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    }
   },
   "cloudTargets": {
     "title": "Cloud targets",
@@ -1822,7 +1876,18 @@
         "actions": "Actions"
       },
       "nextTry": "Next try {when}",
-      "redeliver": "Redeliver"
+      "redeliver": "Redeliver",
+      "format": "Send as",
+      "formats": {
+        "ORKSTAGE": "OrkStage events (signed JSON)",
+        "SLACK": "Slack message",
+        "TEAMS": "Microsoft Teams message"
+      },
+      "formatHints": {
+        "ORKSTAGE": "Your endpoint receives each event as JSON, signed with the secret shown after creation.",
+        "SLACK": "Paste the URL of a Slack incoming webhook, which starts with https://hooks.slack.com/. Messages carry the title, a short text and a link.",
+        "TEAMS": "Paste the URL of a Teams incoming webhook or workflow. Messages carry the title, a short text and a link."
+      }
     }
   },
   "triggers": {
@@ -2130,5 +2195,201 @@
     "forEmail": "The invitation is for {email}; sign in with that address.",
     "accept": "Join {tenant}",
     "signIn": "Sign in to accept"
+  },
+  "statusSettings": {
+    "title": "Status page settings",
+    "description": "Choose who sees the status page of {tenant}, how its components read and when maintenance is planned.",
+    "back": "Status page",
+    "page": "Visibility",
+    "visibility": "Who can see it",
+    "visibilities": {
+      "PRIVATE": "Owners and admins only",
+      "CUSTOMER_ONLY": "Every member of the tenant",
+      "PUBLIC": "Anyone with the link"
+    },
+    "visibilityHints": {
+      "PRIVATE": "Platform staff and the tenant owners and admins.",
+      "CUSTOMER_ONLY": "Everyone in the tenant, after signing in.",
+      "PUBLIC": "Also people without an account, at the public address. They see component names and states, never resources or internal details."
+    },
+    "slug": "Public address",
+    "slugHint": "Lowercase letters, digits and dashes, 3 to 41 characters.",
+    "pageTitle": "Title",
+    "pageTitleHint": "Shown on the public page and in emails. The tenant name when empty.",
+    "pageDescription": "Description",
+    "save": "Save settings",
+    "saved": "Settings saved.",
+    "subscribers": "{count, plural, =0 {No confirmed subscribers} one {# confirmed subscriber} other {# confirmed subscribers}}",
+    "openPublic": "Open the public page",
+    "components": "Components",
+    "componentsHint": "Rename, hide or order the components people see. Their status still follows the resources.",
+    "instance": "Instance",
+    "component": "Component",
+    "label": "Shown as",
+    "order": "Order",
+    "shown": "Shown",
+    "saveComponent": "Save {name}",
+    "noComponents": "Components appear after the first deployment.",
+    "maintenance": "Maintenance",
+    "maintenanceHint": "While maintenance runs, its components show Maintenance and open no incidents. Subscribers get an email when it is scheduled, starts and ends.",
+    "schedule": "Schedule maintenance",
+    "noMaintenance": "No maintenance planned.",
+    "showPast": "Include past maintenance",
+    "mTitle": "Title",
+    "mTitlePlaceholder": "Database upgrade",
+    "mMessage": "Message",
+    "mMessagePlaceholder": "What people should expect while it runs.",
+    "mInstance": "Instance",
+    "allInstances": "All instances",
+    "mComponents": "Components",
+    "mComponentsHint": "None selected means all components.",
+    "startsAt": "Starts",
+    "endsAt": "Ends",
+    "when": "When",
+    "state": "State",
+    "scheduleSave": "Schedule",
+    "cancel": "Cancel",
+    "cancelMaintenance": "Cancel {title}",
+    "endMaintenance": "End {title} now"
+  },
+  "publicStatus": {
+    "notFound": "This status page does not exist or is not public.",
+    "active": "Active incidents",
+    "maintenance": "Maintenance",
+    "components": "Components",
+    "past": "Past incidents",
+    "noPast": "No incidents in the last 14 days.",
+    "subscribeTitle": "Get updates by email",
+    "subscribeBody": "We email you when an incident opens, changes or resolves, and about planned maintenance.",
+    "email": "Email address",
+    "subscribe": "Subscribe",
+    "subscribeSent": "Check your inbox: we sent a link to confirm the subscription.",
+    "poweredBy": "Status page by OrkStage",
+    "confirmTitle": "Confirm your subscription",
+    "confirmBody": "Confirm that you want email updates about incidents and maintenance.",
+    "confirm": "Confirm subscription",
+    "confirmed": "You are subscribed. We will email you about incidents and maintenance.",
+    "linkInvalid": "This link is no longer valid. Subscribe again from the status page.",
+    "unsubscribeTitle": "Unsubscribe",
+    "unsubscribeBody": "Stop the email updates from this status page?",
+    "unsubscribe": "Unsubscribe",
+    "unsubscribed": "You are unsubscribed. No more emails will be sent.",
+    "backToPage": "Back to the status page"
+  },
+  "domains": {
+    "title": "Domains",
+    "hint": "Hostnames this instance serves. Add your own domain, create the records shown at your DNS provider, and OrkStage verifies it and watches its certificate.",
+    "add": "Add domain",
+    "hostname": "Hostname",
+    "hostnamePlaceholder": "api.example.com",
+    "resource": "Served by",
+    "anyResource": "The only resource that can serve it",
+    "addSave": "Add",
+    "cancel": "Cancel",
+    "empty": "No domains yet. The platform subdomain appears after the first deployment.",
+    "kinds": {
+      "PLATFORM": "Platform",
+      "CUSTOM": "Custom"
+    },
+    "statuses": {
+      "PENDING_VERIFICATION": "Waiting for DNS",
+      "VERIFIED": "Verified",
+      "FAILED": "Not verified"
+    },
+    "certificate": "Certificate",
+    "certStatuses": {
+      "NONE": "Not requested yet",
+      "PENDING_VALIDATION": "Waiting for validation",
+      "ISSUED": "Issued",
+      "EXPIRING": "Expiring soon",
+      "EXPIRED": "Expired",
+      "FAILED": "Failed"
+    },
+    "expires": "valid until {date}",
+    "records": "Create these records at your DNS provider",
+    "purposes": {
+      "ownership": "Ownership",
+      "routing": "Routing",
+      "certificate": "Certificate"
+    },
+    "name": "Name",
+    "type": "Type",
+    "value": "Value",
+    "purpose": "Purpose",
+    "verify": "Check now",
+    "remove": "Remove {hostname}",
+    "needsDeploy": "Deploy the instance to attach it and request its certificate.",
+    "deploy": "Deploy",
+    "lastChecked": "Checked {time}",
+    "simulateRecord": "Create the TXT record (simulation)"
+  },
+  "customerOverview": {
+    "title": "Overview",
+    "description": "Health, deployments and uptime of the instances of {tenant}.",
+    "unavailable": "Overview unavailable",
+    "tenant": "Tenant",
+    "stats": {
+      "instances": "Instances",
+      "healthy": "Operational",
+      "deploying": "Deploying",
+      "openIncidents": "Open incidents",
+      "cost": "Estimated monthly cost"
+    },
+    "noInstancesTitle": "No instances yet",
+    "noInstancesBody": "Instances of this tenant appear here once they are created.",
+    "uptime": "{value}% uptime in 30 days",
+    "noUptime": "No uptime data yet",
+    "day": "{day}: {value}%",
+    "dayNoData": "{day}: no data",
+    "lastDeployment": "Last deployment {status} {time}",
+    "neverDeployed": "Never deployed",
+    "costPerMonth": "{amount} a month",
+    "openIncidents": "Open incidents",
+    "noIncidents": "No open incidents.",
+    "activity": "Recent activity",
+    "noActivity": "No recent activity.",
+    "statusPage": "Status page",
+    "metrics": "Metrics",
+    "uptimeLegend": "Each bar is one day, oldest on the left."
+  },
+  "policies": {
+    "title": "Policies",
+    "description": "Rules every plan and deployment is checked against, custom templates included. A tenant can tighten the platform policy, never loosen it.",
+    "platform": "Platform policy",
+    "platformHint": "Applies to every tenant.",
+    "tenant": "Tenant policy",
+    "tenantHint": "Adds to the platform policy for {tenant}.",
+    "chooseTenant": "Tenant",
+    "effective": "In effect for {tenant}",
+    "effectiveHint": "The platform policy tightened by the tenant's. This is what plans are checked against.",
+    "none": "No rule",
+    "save": "Save policy",
+    "saved": "Policy saved.",
+    "allowedRegions": "Allowed regions",
+    "allowedRegionsHint": "Comma separated, for example us-east-1, sa-east-1. Empty means every region the cloud targets allow.",
+    "maxMonthlyCostUsd": "Monthly budget per instance (USD)",
+    "maxReplicas": "Most replicas per service",
+    "machineSizes": "Approved service sizes",
+    "machineSizesHint": "One per line as vCPU/MiB, for example 0.5/1024. Empty means any size.",
+    "approvedRegistries": "Approved registries",
+    "approvedRegistriesHint": "One image prefix per line, for example 123456789012.dkr.ecr.us-east-1.amazonaws.com/. Empty means any registry.",
+    "requiredLabels": "Required instance labels",
+    "requiredLabelsHint": "Comma separated label keys, for example team or owner. Labels become tags on every cloud resource.",
+    "minTlsVersion": "Lowest TLS version",
+    "minLogRetentionDays": "Keep service logs at least (days)",
+    "disabled": "Built in policies turned off",
+    "disabledHint": "Only the platform can turn a policy off.",
+    "readOnly": "Only owners and admins of the tenant change its policy.",
+    "invalidSizes": "Write each size as vCPU/MiB, for example 0.5/1024."
+  },
+  "notificationSettings": {
+    "title": "Notification settings",
+    "description": "Choose what reaches you in the console and by email. Everything is on until you turn it off.",
+    "event": "Event",
+    "inApp": "Console",
+    "email": "Email",
+    "save": "Save settings",
+    "saved": "Settings saved.",
+    "chatHint": "Slack and Teams messages go to channels for the whole tenant: owners and admins add them under Integrations."
   }
 }

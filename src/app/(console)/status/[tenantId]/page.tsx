@@ -2,12 +2,14 @@
 'use client';
 
 import type { IncidentDto, StatusPageDto } from '@orkstage/contracts';
-import { useQuery } from '@tanstack/react-query';
-import { AlertTriangle, CheckCircle2, HelpCircle, OctagonAlert, Wrench, type LucideIcon } from 'lucide-react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlertTriangle, Bell, BellOff, CheckCircle2, ExternalLink, HelpCircle, OctagonAlert, Settings, Wrench, type LucideIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'use-intl';
 import { SimulatedBadge } from '@/components/ui/badge';
+import { Button, buttonClass } from '@/components/ui/button';
+import { MaintenanceCard } from '@/components/status/maintenance-card';
 import { Card, CardHeader } from '@/components/ui/card';
 import { ErrorNotice } from '@/components/ui/error-notice';
 import { Select } from '@/components/ui/select';
@@ -15,8 +17,8 @@ import { PageSpinner, Spinner } from '@/components/ui/spinner';
 import { StatusBadge, StatusDot } from '@/components/ui/status-badge';
 import { useFormat } from '@/i18n/format';
 import { useStatusLabel } from '@/i18n/labels';
-import { apiGet } from '@/lib/api';
-import { isPlatformStaff, useMe } from '@/lib/ability';
+import { apiGet, apiSend } from '@/lib/api';
+import { isPlatformStaff, useCan, useMe } from '@/lib/ability';
 import { useTenants } from '@/lib/queries';
 import { toneOf, type Tone } from '@/lib/status';
 import { cn, durationBetween } from '@/lib/utils';
@@ -53,6 +55,8 @@ export default function StatusPage() {
   const { tenantId } = useParams<{ tenantId: string }>();
   const router = useRouter();
   const me = useMe();
+  const can = useCan();
+  const qc = useQueryClient();
   const staff = isPlatformStaff(me.data);
   const tenants = useTenants(staff);
   const switchable = staff
@@ -64,6 +68,11 @@ export default function StatusPage() {
     queryFn: ({ signal }) => apiGet<StatusPageDto>(`/status/${tenantId}`, { signal }),
     refetchInterval: 30_000,
     refetchIntervalInBackground: false,
+  });
+
+  const subscription = useMutation({
+    mutationFn: (on: boolean) => apiSend(on ? 'PUT' : 'DELETE', `/status-pages/${tenantId}/subscription`),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['status', tenantId] }),
   });
 
   if (q.isPending) return <PageSpinner />;
@@ -81,8 +90,28 @@ export default function StatusPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-fg-subtle">{t('eyebrow')}</p>
-          <h1 className="text-xl font-semibold tracking-tight">{s.tenant.name}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">{s.page.title ?? s.tenant.name}</h1>
+          {s.page.description ? <p className="mt-1 text-sm text-fg-muted">{s.page.description}</p> : null}
         </div>
+        <div className="flex flex-wrap items-end gap-2">
+          <Button
+            variant={s.subscribed ? 'ghost' : 'secondary'}
+            onClick={() => subscription.mutate(!s.subscribed)}
+            loading={subscription.isPending}
+            title={s.subscribed ? t('subscribedHint') : undefined}
+          >
+            {s.subscribed ? <BellOff size={14} aria-hidden /> : <Bell size={14} aria-hidden />} {s.subscribed ? t('unsubscribe') : t('subscribe')}
+          </Button>
+          {s.page.visibility === 'PUBLIC' && s.page.slug ? (
+            <a className={buttonClass('ghost')} href={`/s/${s.page.slug}`} target="_blank" rel="noreferrer">
+              <ExternalLink size={14} aria-hidden /> {t('publicPage')}
+            </a>
+          ) : null}
+          {can('update', 'StatusPage', tenantId) ? (
+            <Link className={buttonClass('ghost')} href={`/status/${tenantId}/settings`}>
+              <Settings size={14} aria-hidden /> {t('settings')}
+            </Link>
+          ) : null}
         {switchable.length > 1 ? (
           <div>
             <label htmlFor="status-tenant" className="mb-1 block text-xs text-fg-subtle">
@@ -97,7 +126,9 @@ export default function StatusPage() {
             </Select>
           </div>
         ) : null}
+        </div>
       </div>
+      {subscription.error ? <ErrorNotice error={subscription.error} /> : null}
 
       <section aria-live="polite" className={cn('flex items-center gap-4 rounded-lg border px-5 py-5', banner.box)}>
         <Icon size={32} className={cn('shrink-0', banner.icon_)} aria-hidden />
@@ -134,6 +165,17 @@ export default function StatusPage() {
               </article>
             );
           })}
+        </section>
+      ) : null}
+
+      {s.maintenance.length > 0 ? (
+        <section aria-labelledby="maintenance" className="space-y-3">
+          <h2 id="maintenance" className="text-sm font-semibold">
+            {t('maintenance')}
+          </h2>
+          {s.maintenance.map((m) => (
+            <MaintenanceCard key={m.id} m={m} />
+          ))}
         </section>
       ) : null}
 
@@ -219,3 +261,4 @@ export default function StatusPage() {
     </div>
   );
 }
+

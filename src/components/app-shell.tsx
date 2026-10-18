@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Activity,
   AppWindow,
+  BellDot,
   BellRing,
   Boxes,
   Building2,
@@ -19,6 +20,7 @@ import {
   Menu,
   MonitorSmartphone,
   Rocket,
+  ShieldCheck,
   ScrollText,
   Moon,
   Plug,
@@ -35,7 +37,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { useTranslations } from 'use-intl';
 import { apiSend, isApiError } from '@/lib/api';
-import { isPlatformStaff, useMe } from '@/lib/ability';
+import { isPlatformStaff, useAbility, useMe } from '@/lib/ability';
+import type { Action, AppAbility, SubjectName } from '@orkstage/authorization';
 import { useDismiss } from '@/lib/hooks';
 import { setTheme, useTheme } from '@/lib/theme';
 import type { Messages } from '@/i18n/messages';
@@ -60,44 +63,46 @@ interface NavItem {
   match?: string[];
 }
 
-function navFor(me: MeResponse): NavItem[] {
-  if (isPlatformStaff(me)) {
-    return [
-      { href: '/', label: 'overview', icon: Gauge },
-      { href: '/getting-started', label: 'gettingStarted', icon: ListChecks },
-      { href: '/tenants', label: 'tenants', icon: Building2 },
-      { href: '/instances', label: 'instances', icon: Boxes },
-      { href: '/deployments', label: 'deployments', icon: Rocket },
-      { href: '/templates', label: 'templates', icon: FileCode2 },
-      { href: '/marketplace', label: 'marketplace', icon: Store },
-      { href: '/applications', label: 'applications', icon: AppWindow },
-      { href: '/cloud-targets', label: 'cloudTargets', icon: Cloud },
-      { href: '/profiles', label: 'profiles', icon: Layers },
-      { href: '/incidents', label: 'incidents', icon: Siren },
-      { href: '/settings/alerts', label: 'alerts', icon: BellRing },
-      { href: '/audit', label: 'audit', icon: ScrollText },
-      { href: '/settings/integrations', label: 'integrations', icon: Plug },
-      { href: '/settings/team', label: 'team', icon: UsersRound },
-      { href: '/settings/feature-flags', label: 'featureFlags', icon: ToggleLeft },
-      { href: '/settings/license', label: 'license', icon: KeyRound },
-    ];
-  }
+/** True when the ability allows the action on every record of the subject, not only on some tenants. */
+function everywhere(ability: AppAbility, action: Action, type: SubjectName): boolean {
+  return ability.can(action, type) && !ability.relevantRuleFor(action, type)?.conditions;
+}
+
+/**
+ * The menu, from the CASL rules of the signed in user (open item 12): an item shows when the user
+ * may use its page. Platform wide pages need a rule without tenant conditions. Hiding an item is
+ * never the protection; the API checks every request.
+ */
+const NAV: { item: NavItem; show: (a: AppAbility) => boolean }[] = [
+  { item: { href: '/', label: 'overview', icon: Gauge }, show: () => true },
+  { item: { href: '/getting-started', label: 'gettingStarted', icon: ListChecks }, show: () => true },
+  { item: { href: '/tenants', label: 'tenants', icon: Building2 }, show: (a) => everywhere(a, 'read', 'Tenant') },
+  { item: { href: '/instances', label: 'instances', icon: Boxes }, show: (a) => a.can('read', 'Instance') },
+  { item: { href: '/deployments', label: 'deployments', icon: Rocket }, show: (a) => a.can('read', 'Deployment') },
+  { item: { href: '/templates', label: 'templates', icon: FileCode2 }, show: (a) => everywhere(a, 'read', 'CloudTarget') },
+  { item: { href: '/marketplace', label: 'marketplace', icon: Store }, show: (a) => a.can('read', 'Marketplace') },
+  { item: { href: '/applications', label: 'applications', icon: AppWindow }, show: (a) => everywhere(a, 'read', 'CloudTarget') },
+  { item: { href: '/cloud-targets', label: 'cloudTargets', icon: Cloud }, show: (a) => everywhere(a, 'read', 'CloudTarget') },
+  { item: { href: '/profiles', label: 'profiles', icon: Layers }, show: (a) => a.can('read', 'Profile') },
+  { item: { href: '/incidents', label: 'incidents', icon: Siren }, show: (a) => a.can('read', 'Incident') },
+  { item: { href: '/settings/alerts', label: 'alerts', icon: BellRing }, show: (a) => a.can('update', 'AlertRule') },
+  { item: { href: '/settings/policies', label: 'policies', icon: ShieldCheck }, show: (a) => a.can('update', 'Policy') || everywhere(a, 'read', 'Policy') },
+  { item: { href: '/audit', label: 'audit', icon: ScrollText }, show: (a) => everywhere(a, 'read', 'Audit') },
+  { item: { href: '/settings/integrations', label: 'integrations', icon: Plug }, show: (a) => a.can('manage', 'ApiKey') },
+  { item: { href: '/settings/team', label: 'team', icon: UsersRound }, show: (a) => a.can('read', 'Member') },
+  { item: { href: '/settings/notifications', label: 'notificationSettings', icon: BellDot }, show: () => true },
+  { item: { href: '/settings/feature-flags', label: 'featureFlags', icon: ToggleLeft }, show: (a) => everywhere(a, 'read', 'Settings') },
+  { item: { href: '/settings/license', label: 'license', icon: KeyRound }, show: (a) => everywhere(a, 'read', 'Settings') },
+];
+
+function navFor(me: MeResponse, ability: AppAbility): NavItem[] {
+  const items = NAV.filter((n) => n.show(ability)).map((n) => n.item);
+  // Tenant members get their status page right after incidents.
   const first = me.memberships[0]?.tenantId;
-  const items: NavItem[] = [
-    { href: '/', label: 'overview', icon: Gauge },
-    { href: '/getting-started', label: 'gettingStarted', icon: ListChecks },
-    { href: '/instances', label: 'instances', icon: Boxes },
-    { href: '/deployments', label: 'deployments', icon: Rocket },
-    { href: '/incidents', label: 'incidents', icon: Siren },
-    { href: '/marketplace', label: 'marketplace', icon: Store },
-    { href: '/profiles', label: 'profiles', icon: Layers },
-  ];
-  if (first) items.push({ href: `/status/${first}`, label: 'statusPage', icon: Activity, match: ['/status'] });
-  if (me.memberships.some((m) => m.role === 'CustomerOwner' || m.role === 'CustomerAdmin')) {
-    items.push({ href: '/settings/alerts', label: 'alerts', icon: BellRing });
-    items.push({ href: '/settings/integrations', label: 'integrations', icon: Plug });
+  if (first && !isPlatformStaff(me)) {
+    const at = items.findIndex((i) => i.label === 'incidents') + 1;
+    items.splice(at, 0, { href: `/status/${first}`, label: 'statusPage', icon: Activity, match: ['/status'] });
   }
-  if (me.memberships.length) items.push({ href: '/settings/team', label: 'team', icon: UsersRound });
   return items;
 }
 
@@ -127,6 +132,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const tc = useTranslations('common');
   const roles = useRoleLabels();
   const me = useMe();
+  const ability = useAbility();
   const pathname = usePathname();
   const router = useRouter();
   const [navOpen, setNavOpen] = useState(false);
@@ -169,7 +175,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const nav = navFor(me.data);
+  const nav = navFor(me.data, ability);
 
   const sidebar = (
     <nav aria-label={t('nav.label')} className="flex h-full flex-col">

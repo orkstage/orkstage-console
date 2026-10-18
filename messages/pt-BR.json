@@ -33,7 +33,11 @@
       "sessions": "Suas sessões",
       "marketplace": "Marketplace de templates",
       "team": "Equipe",
-      "invite": "Convite"
+      "invite": "Convite",
+      "statusSettings": "Configurações da página de status",
+      "publicStatus": "Status",
+      "policies": "Políticas",
+      "notificationSettings": "Configurações de notificação"
     }
   },
   "common": {
@@ -237,7 +241,9 @@
       "featureFlags": "Feature flags",
       "license": "Licença",
       "marketplace": "Marketplace",
-      "team": "Equipe"
+      "team": "Equipe",
+      "policies": "Políticas",
+      "notificationSettings": "Notificações"
     },
     "home": "Início do OrkStage",
     "skipToContent": "Pular para o conteúdo",
@@ -562,7 +568,6 @@
   "overview": {
     "noTenantTitle": "Ainda sem acesso a um tenant",
     "noTenantBody": "Peça ao administrador da sua organização para adicionar você a um tenant.",
-    "openingStatus": "Abrindo sua página de status",
     "unavailable": "Visão geral indisponível",
     "title": "Visão geral",
     "description": "Sua frota num relance: saúde, deploys e gastos em todas as nuvens.",
@@ -695,7 +700,8 @@
       "placement": "Alocação",
       "variables": "Variáveis",
       "details": "Nome e ambiente",
-      "review": "Revisar e criar"
+      "review": "Revisar e criar",
+      "plan": "Plano e custo"
     },
     "createFailed": "Não foi possível criar a instância",
     "create": "Criar instância",
@@ -755,7 +761,9 @@
       "configureHint": "Os valores padrão já vêm preenchidos. A API valida os valores de novo.",
       "range": "Faixa de {min} a {max}",
       "noMin": "sem mínimo",
-      "noMax": "sem máximo"
+      "noMax": "sem máximo",
+      "advanced": "Configurações avançadas ({count})",
+      "defaultsFit": "Os valores padrão servem para a maioria das instâncias. Abra as configurações avançadas para mudar os valores."
     },
     "details": {
       "title": "Nome e ambiente",
@@ -782,6 +790,14 @@
       "multicloud": "Multicloud",
       "variablesSummary": "Variáveis ({count, plural, =0 {# alteradas} one {# alterada} other {# alteradas}} em relação ao padrão)",
       "defaultWas": "(padrão {value})"
+    },
+    "plan": {
+      "title": "Plano e custo",
+      "hint": "O que a OrkStage vai criar, as políticas que verifica e o custo mensal estimado. Nada é criado ainda.",
+      "loading": "Montando o plano",
+      "blocking": "Corrija estes problemas antes de criar a instância.",
+      "policyNote": "Falhas de política não impedem a criação, mas bloqueiam os deploys até serem corrigidas.",
+      "estimate": "Custo estimado: {amount} por mês"
     }
   },
   "instance": {
@@ -792,7 +808,8 @@
       "deployments": "Deploys",
       "logs": "Logs",
       "metrics": "Métricas",
-      "triggers": "Gatilhos"
+      "triggers": "Gatilhos",
+      "domains": "Domínios"
     },
     "unavailable": "Instância indisponível",
     "breadcrumb": "Instâncias",
@@ -828,7 +845,14 @@
     "previewFailed": "A prévia falhou",
     "planning": "Compilando e planejando",
     "noPreviewTitle": "Nenhuma prévia ainda",
-    "noPreviewBody": "Gere uma prévia para ver problemas de validação, resultados de políticas, conectividade, custo e o plano de mudanças."
+    "noPreviewBody": "Gere uma prévia para ver problemas de validação, resultados de políticas, conectividade, custo e o plano de mudanças.",
+    "labels": "Rótulos",
+    "labelsHint": "Viram tags em todo recurso de nuvem desta instância. As políticas podem exigir alguns.",
+    "noLabels": "Nenhum rótulo.",
+    "editLabels": "Editar rótulos",
+    "labelsField": "Um por linha como chave=valor",
+    "labelsInvalid": "Escreva cada rótulo como chave=valor.",
+    "saveLabels": "Salvar rótulos"
   },
   "instanceDialogs": {
     "deployTitle": "Fazer deploy de {name}",
@@ -993,7 +1017,24 @@
       "publishRefused": "A publicação foi recusada",
       "published": "Publicado. As instâncias já podem usar esta versão.",
       "source": "Código",
-      "sourceHint": "YAML como foi enviado. Versões publicadas não mudam."
+      "sourceHint": "YAML como foi enviado. Versões publicadas não mudam.",
+      "editDraft": "Editar rascunho",
+      "saveDraft": "Salvar rascunho",
+      "draftSaved": "Rascunho salvo. Valide e publique quando estiver pronto.",
+      "cancelEdit": "Cancelar",
+      "deprecate": "Descontinuar",
+      "deprecateTitle": "Descontinuar a versão {version}",
+      "deprecateHint": "As instâncias nesta versão continuam rodando e ainda podem receber deploy. Novas instâncias e upgrades não podem usar esta versão.",
+      "deprecationNote": "Nota para quem tentar usar esta versão",
+      "deprecationNotePlaceholder": "Use a versão 2.0.0, que adiciona backups.",
+      "deprecateSave": "Descontinuar versão",
+      "deprecatedOn": "Descontinuada em {date}.",
+      "restore": "Restaurar",
+      "compare": "Comparar com",
+      "noCompare": "Sem comparação",
+      "diffTitle": "Mudanças de {from} para {to}",
+      "diffSummary": "{added} linhas adicionadas, {removed} removidas",
+      "noChanges": "As duas versões têm o mesmo código."
     },
     "editor": {
       "title": "Nova versão",
@@ -1366,7 +1407,20 @@
     "noPast": "Nenhum incidente reportado recentemente.",
     "resolvedAfter": "resolvido em {duration}",
     "activity": "Atividade recente",
-    "noActivity": "Nenhuma atividade recente."
+    "noActivity": "Nenhuma atividade recente.",
+    "subscribe": "Receber atualizações por email",
+    "unsubscribe": "Parar atualizações por email",
+    "subscribedHint": "Você recebe um email quando um incidente abre, muda ou é resolvido, e sobre manutenções.",
+    "settings": "Configurações",
+    "publicPage": "Página pública",
+    "maintenance": "Manutenção",
+    "maintenanceWhen": "{start} até {end}",
+    "allComponents": "Todos os componentes",
+    "states": {
+      "scheduled": "Programada",
+      "in_progress": "Em andamento",
+      "completed": "Concluída"
+    }
   },
   "cloudTargets": {
     "title": "Destinos de nuvem",
@@ -1822,7 +1876,18 @@
         "actions": "Ações"
       },
       "nextTry": "Próxima tentativa {when}",
-      "redeliver": "Reenviar"
+      "redeliver": "Reenviar",
+      "format": "Enviar como",
+      "formats": {
+        "ORKSTAGE": "Eventos OrkStage (JSON assinado)",
+        "SLACK": "Mensagem do Slack",
+        "TEAMS": "Mensagem do Microsoft Teams"
+      },
+      "formatHints": {
+        "ORKSTAGE": "Seu endpoint recebe cada evento como JSON, assinado com o segredo mostrado depois da criação.",
+        "SLACK": "Cole a URL de um webhook de entrada do Slack, que começa com https://hooks.slack.com/. As mensagens trazem o título, um texto curto e um link.",
+        "TEAMS": "Cole a URL de um webhook de entrada ou fluxo do Teams. As mensagens trazem o título, um texto curto e um link."
+      }
     }
   },
   "triggers": {
@@ -2130,5 +2195,201 @@
     "forEmail": "O convite é para {email}; entre com esse endereço.",
     "accept": "Entrar em {tenant}",
     "signIn": "Entrar para aceitar"
+  },
+  "statusSettings": {
+    "title": "Configurações da página de status",
+    "description": "Escolha quem vê a página de status de {tenant}, como seus componentes aparecem e quando há manutenção planejada.",
+    "back": "Página de status",
+    "page": "Visibilidade",
+    "visibility": "Quem pode ver",
+    "visibilities": {
+      "PRIVATE": "Somente proprietários e administradores",
+      "CUSTOMER_ONLY": "Todos os membros do tenant",
+      "PUBLIC": "Qualquer pessoa com o link"
+    },
+    "visibilityHints": {
+      "PRIVATE": "A equipe da plataforma e os proprietários e administradores do tenant.",
+      "CUSTOMER_ONLY": "Todos do tenant, depois de entrar.",
+      "PUBLIC": "Também pessoas sem conta, no endereço público. Elas veem nomes e estados dos componentes, nunca recursos ou detalhes internos."
+    },
+    "slug": "Endereço público",
+    "slugHint": "Letras minúsculas, números e traços, de 3 a 41 caracteres.",
+    "pageTitle": "Título",
+    "pageTitleHint": "Aparece na página pública e nos emails. O nome do tenant quando vazio.",
+    "pageDescription": "Descrição",
+    "save": "Salvar configurações",
+    "saved": "Configurações salvas.",
+    "subscribers": "{count, plural, =0 {Nenhum assinante confirmado} one {# assinante confirmado} other {# assinantes confirmados}}",
+    "openPublic": "Abrir a página pública",
+    "components": "Componentes",
+    "componentsHint": "Renomeie, oculte ou ordene os componentes que as pessoas veem. O status continua seguindo os recursos.",
+    "instance": "Instância",
+    "component": "Componente",
+    "label": "Exibido como",
+    "order": "Ordem",
+    "shown": "Visível",
+    "saveComponent": "Salvar {name}",
+    "noComponents": "Os componentes aparecem depois do primeiro deploy.",
+    "maintenance": "Manutenção",
+    "maintenanceHint": "Durante a manutenção, seus componentes mostram Manutenção e não abrem incidentes. Os assinantes recebem um email quando ela é programada, começa e termina.",
+    "schedule": "Programar manutenção",
+    "noMaintenance": "Nenhuma manutenção planejada.",
+    "showPast": "Incluir manutenções passadas",
+    "mTitle": "Título",
+    "mTitlePlaceholder": "Atualização do banco de dados",
+    "mMessage": "Mensagem",
+    "mMessagePlaceholder": "O que as pessoas devem esperar enquanto ela acontece.",
+    "mInstance": "Instância",
+    "allInstances": "Todas as instâncias",
+    "mComponents": "Componentes",
+    "mComponentsHint": "Nenhum selecionado significa todos os componentes.",
+    "startsAt": "Início",
+    "endsAt": "Fim",
+    "when": "Quando",
+    "state": "Estado",
+    "scheduleSave": "Programar",
+    "cancel": "Cancelar",
+    "cancelMaintenance": "Cancelar {title}",
+    "endMaintenance": "Encerrar {title} agora"
+  },
+  "publicStatus": {
+    "notFound": "Esta página de status não existe ou não é pública.",
+    "active": "Incidentes ativos",
+    "maintenance": "Manutenção",
+    "components": "Componentes",
+    "past": "Incidentes anteriores",
+    "noPast": "Nenhum incidente nos últimos 14 dias.",
+    "subscribeTitle": "Receba atualizações por email",
+    "subscribeBody": "Enviamos um email quando um incidente abre, muda ou é resolvido, e sobre manutenções planejadas.",
+    "email": "Endereço de email",
+    "subscribe": "Assinar",
+    "subscribeSent": "Confira sua caixa de entrada: enviamos um link para confirmar a assinatura.",
+    "poweredBy": "Página de status por OrkStage",
+    "confirmTitle": "Confirme sua assinatura",
+    "confirmBody": "Confirme que você quer receber atualizações por email sobre incidentes e manutenções.",
+    "confirm": "Confirmar assinatura",
+    "confirmed": "Assinatura confirmada. Vamos enviar emails sobre incidentes e manutenções.",
+    "linkInvalid": "Este link não é mais válido. Assine de novo pela página de status.",
+    "unsubscribeTitle": "Cancelar assinatura",
+    "unsubscribeBody": "Parar as atualizações por email desta página de status?",
+    "unsubscribe": "Cancelar assinatura",
+    "unsubscribed": "Assinatura cancelada. Nenhum email será enviado.",
+    "backToPage": "Voltar para a página de status"
+  },
+  "domains": {
+    "title": "Domínios",
+    "hint": "Hostnames que esta instância atende. Adicione seu domínio, crie os registros mostrados no seu provedor de DNS, e a OrkStage o verifica e acompanha o certificado.",
+    "add": "Adicionar domínio",
+    "hostname": "Hostname",
+    "hostnamePlaceholder": "api.exemplo.com.br",
+    "resource": "Atendido por",
+    "anyResource": "O único recurso que pode atender o domínio",
+    "addSave": "Adicionar",
+    "cancel": "Cancelar",
+    "empty": "Nenhum domínio ainda. O subdomínio da plataforma aparece depois do primeiro deploy.",
+    "kinds": {
+      "PLATFORM": "Plataforma",
+      "CUSTOM": "Próprio"
+    },
+    "statuses": {
+      "PENDING_VERIFICATION": "Aguardando o DNS",
+      "VERIFIED": "Verificado",
+      "FAILED": "Não verificado"
+    },
+    "certificate": "Certificado",
+    "certStatuses": {
+      "NONE": "Ainda não solicitado",
+      "PENDING_VALIDATION": "Aguardando validação",
+      "ISSUED": "Emitido",
+      "EXPIRING": "Expira em breve",
+      "EXPIRED": "Expirado",
+      "FAILED": "Falhou"
+    },
+    "expires": "válido até {date}",
+    "records": "Crie estes registros no seu provedor de DNS",
+    "purposes": {
+      "ownership": "Propriedade",
+      "routing": "Roteamento",
+      "certificate": "Certificado"
+    },
+    "name": "Nome",
+    "type": "Tipo",
+    "value": "Valor",
+    "purpose": "Finalidade",
+    "verify": "Verificar agora",
+    "remove": "Remover {hostname}",
+    "needsDeploy": "Faça o deploy da instância para anexar o domínio e solicitar o certificado.",
+    "deploy": "Deploy",
+    "lastChecked": "Verificado {time}",
+    "simulateRecord": "Criar o registro TXT (simulação)"
+  },
+  "customerOverview": {
+    "title": "Visão geral",
+    "description": "Saúde, deploys e disponibilidade das instâncias de {tenant}.",
+    "unavailable": "Visão geral indisponível",
+    "tenant": "Tenant",
+    "stats": {
+      "instances": "Instâncias",
+      "healthy": "Operacionais",
+      "deploying": "Em deploy",
+      "openIncidents": "Incidentes abertos",
+      "cost": "Custo mensal estimado"
+    },
+    "noInstancesTitle": "Nenhuma instância ainda",
+    "noInstancesBody": "As instâncias deste tenant aparecem aqui assim que forem criadas.",
+    "uptime": "{value}% de disponibilidade em 30 dias",
+    "noUptime": "Ainda sem dados de disponibilidade",
+    "day": "{day}: {value}%",
+    "dayNoData": "{day}: sem dados",
+    "lastDeployment": "Último deploy {status} {time}",
+    "neverDeployed": "Nenhum deploy ainda",
+    "costPerMonth": "{amount} por mês",
+    "openIncidents": "Incidentes abertos",
+    "noIncidents": "Nenhum incidente aberto.",
+    "activity": "Atividade recente",
+    "noActivity": "Nenhuma atividade recente.",
+    "statusPage": "Página de status",
+    "metrics": "Métricas",
+    "uptimeLegend": "Cada barra é um dia, o mais antigo à esquerda."
+  },
+  "policies": {
+    "title": "Políticas",
+    "description": "Regras que todo plano e deploy precisa cumprir, inclusive com templates próprios. Um tenant pode tornar a política da plataforma mais rígida, nunca mais flexível.",
+    "platform": "Política da plataforma",
+    "platformHint": "Vale para todos os tenants.",
+    "tenant": "Política do tenant",
+    "tenantHint": "Soma regras à política da plataforma para {tenant}.",
+    "chooseTenant": "Tenant",
+    "effective": "Em vigor para {tenant}",
+    "effectiveHint": "A política da plataforma com as regras do tenant. É isto que os planos precisam cumprir.",
+    "none": "Sem regra",
+    "save": "Salvar política",
+    "saved": "Política salva.",
+    "allowedRegions": "Regiões permitidas",
+    "allowedRegionsHint": "Separadas por vírgula, por exemplo us-east-1, sa-east-1. Vazio significa todas as regiões que os destinos de nuvem permitem.",
+    "maxMonthlyCostUsd": "Orçamento mensal por instância (USD)",
+    "maxReplicas": "Máximo de réplicas por serviço",
+    "machineSizes": "Tamanhos de serviço aprovados",
+    "machineSizesHint": "Um por linha como vCPU/MiB, por exemplo 0.5/1024. Vazio significa qualquer tamanho.",
+    "approvedRegistries": "Registros aprovados",
+    "approvedRegistriesHint": "Um prefixo de imagem por linha, por exemplo 123456789012.dkr.ecr.us-east-1.amazonaws.com/. Vazio significa qualquer registro.",
+    "requiredLabels": "Rótulos obrigatórios da instância",
+    "requiredLabelsHint": "Chaves separadas por vírgula, por exemplo team ou owner. Os rótulos viram tags em todo recurso de nuvem.",
+    "minTlsVersion": "Versão mínima de TLS",
+    "minLogRetentionDays": "Manter logs dos serviços por pelo menos (dias)",
+    "disabled": "Políticas embutidas desligadas",
+    "disabledHint": "Só a plataforma pode desligar uma política.",
+    "readOnly": "Só proprietários e administradores do tenant alteram a política.",
+    "invalidSizes": "Escreva cada tamanho como vCPU/MiB, por exemplo 0.5/1024."
+  },
+  "notificationSettings": {
+    "title": "Configurações de notificação",
+    "description": "Escolha o que chega até você no console e por email. Tudo fica ligado até você desligar.",
+    "event": "Evento",
+    "inApp": "Console",
+    "email": "Email",
+    "save": "Salvar configurações",
+    "saved": "Configurações salvas.",
+    "chatHint": "As mensagens do Slack e do Teams vão para canais do tenant inteiro: proprietários e administradores os adicionam em Integrações."
   }
 }

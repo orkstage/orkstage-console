@@ -3,7 +3,7 @@
 
 import { cloneTemplateSchema, type TemplateDto, type TemplateVersionDto, type ValidationIssueDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CheckCircle2, Copy, FilePlus2, Send, Workflow } from 'lucide-react';
+import { Archive, ArchiveRestore, CheckCircle2, Copy, FilePlus2, Pencil, Save, Send, Workflow } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -29,6 +29,7 @@ import { useDocumentTitle } from '@/lib/hooks';
 import { useCan } from '@/lib/ability';
 import { useTemplate, useTenants } from '@/lib/queries';
 import { readTemplateDoc } from '@/lib/template-doc';
+import { lineDiff } from '@/lib/line-diff';
 import { cn } from '@/lib/utils';
 
 interface ValidationReport {
@@ -134,7 +135,15 @@ export default function TemplatePage() {
           </ul>
         </Card>
 
-        {selected ? <VersionDetail template={t} version={selected} canPublish={can('publish', 'Template')} /> : null}
+        {selected ? (
+          <VersionDetail
+            template={t}
+            version={selected}
+            others={versions.filter((v) => v.id !== selected.id)}
+            canPublish={can('publish', 'Template')}
+            canEdit={can('update', 'Template') && t.visibility !== 'SYSTEM'}
+          />
+        ) : null}
       </div>
 
       <Dialog open={cloning} onClose={() => setCloning(false)} title={td('cloneTitle', { name: t.displayName })} description={td('cloneDescription')}>
@@ -144,19 +153,37 @@ export default function TemplatePage() {
   );
 }
 
-function VersionDetail({ template, version, canPublish }: { template: TemplateDto; version: TemplateVersionDto; canPublish: boolean }) {
+function VersionDetail({
+  template,
+  version,
+  others,
+  canPublish,
+  canEdit,
+}: {
+  template: TemplateDto;
+  version: TemplateVersionDto;
+  others: TemplateVersionDto[];
+  canPublish: boolean;
+  canEdit: boolean;
+}) {
   const t = useTranslations('templates.detail');
   const fmt = useFormat();
   const qc = useQueryClient();
+  const refresh = () => {
+    void qc.invalidateQueries({ queryKey: ['template', template.id] });
+    void qc.invalidateQueries({ queryKey: ['templates'] });
+  };
   const publish = useMutation({
     mutationFn: () => apiSend<TemplateVersionDto>('POST', `/templates/${template.id}/versions/${version.id}/publish`),
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['template', template.id] });
-      void qc.invalidateQueries({ queryKey: ['templates'] });
-    },
+    onSuccess: refresh,
   });
+  const restore = useMutation({ mutationFn: () => apiSend<TemplateVersionDto>('POST', `/templates/${template.id}/versions/${version.id}/restore`), onSuccess: refresh });
+  const [editingDraft, setEditingDraft] = useState(false);
+  const [deprecating, setDeprecating] = useState(false);
+  const [compareId, setCompareId] = useState('');
   const doc = readTemplateDoc(version.document);
   const publishIssues = issuesFromError(publish.error);
+  const compareWith = others.find((o) => o.id === compareId) ?? null;
 
   return (
     <div className="min-w-0 space-y-4">
@@ -173,11 +200,28 @@ function VersionDetail({ template, version, canPublish }: { template: TemplateDt
               : t('created', { date: fmt.dateTime(version.createdAt) })
           }
           actions={
-            version.status === 'DRAFT' && canPublish ? (
-              <Button variant="primary" onClick={() => publish.mutate()} loading={publish.isPending}>
-                <Send size={14} aria-hidden /> {t('publish')}
-              </Button>
-            ) : null
+            <>
+              {version.status === 'DRAFT' && canEdit && !editingDraft ? (
+                <Button onClick={() => setEditingDraft(true)}>
+                  <Pencil size={14} aria-hidden /> {t('editDraft')}
+                </Button>
+              ) : null}
+              {version.status === 'DRAFT' && canPublish ? (
+                <Button variant="primary" onClick={() => publish.mutate()} loading={publish.isPending}>
+                  <Send size={14} aria-hidden /> {t('publish')}
+                </Button>
+              ) : null}
+              {version.status === 'PUBLISHED' && canPublish ? (
+                <Button onClick={() => setDeprecating(true)}>
+                  <Archive size={14} aria-hidden /> {t('deprecate')}
+                </Button>
+              ) : null}
+              {version.status === 'DEPRECATED' && canPublish ? (
+                <Button onClick={() => restore.mutate()} loading={restore.isPending}>
+                  <ArchiveRestore size={14} aria-hidden /> {t('restore')}
+                </Button>
+              ) : null}
+            </>
           }
         />
         <CardBody className="space-y-3">
@@ -200,18 +244,137 @@ function VersionDetail({ template, version, canPublish }: { template: TemplateDt
           ) : (
             <p className="text-xs text-fg-subtle">{t('notValidated')}</p>
           )}
+          {version.status === 'DEPRECATED' && version.deprecatedAt ? (
+            <Notice tone="warn">
+              {t('deprecatedOn', { date: fmt.dateTime(version.deprecatedAt) })} {version.deprecationNote ?? ''}
+            </Notice>
+          ) : null}
+          {restore.error ? <ErrorNotice error={restore.error} /> : null}
           {publish.error ? <ErrorNotice error={publish.error} title={t('publishRefused')} /> : null}
           {publishIssues.length > 0 ? <IssuesList issues={publishIssues} /> : null}
           {publish.isSuccess ? <Notice tone="ok">{t('published')}</Notice> : null}
         </CardBody>
       </Card>
-      <Card>
-        <CardHeader title={t('source')} as="h3" description={t('sourceHint')} />
-        <CardBody>
-          <YamlViewer source={version.source} />
-        </CardBody>
-      </Card>
+      {editingDraft ? (
+        <DraftEditor templateId={template.id} version={version} onDone={() => setEditingDraft(false)} onSaved={refresh} />
+      ) : (
+        <Card>
+          <CardHeader
+            title={t('source')}
+            as="h3"
+            description={t('sourceHint')}
+            actions={
+              others.length > 0 ? (
+                <Select aria-label={t('compare')} value={compareId} onChange={(e) => setCompareId(e.target.value)} className="w-48">
+                  <option value="">{t('noCompare')}</option>
+                  {others.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {t('compare')} {o.version}
+                    </option>
+                  ))}
+                </Select>
+              ) : null
+            }
+          />
+          <CardBody>{compareWith ? <DiffView from={compareWith} to={version} /> : <YamlViewer source={version.source} />}</CardBody>
+        </Card>
+      )}
+      <Dialog open={deprecating} onClose={() => setDeprecating(false)} title={t('deprecateTitle', { version: version.version })} description={t('deprecateHint')}>
+        {deprecating ? (
+          <DeprecateForm
+            templateId={template.id}
+            versionId={version.id}
+            onDone={() => {
+              setDeprecating(false);
+              refresh();
+            }}
+          />
+        ) : null}
+      </Dialog>
     </div>
+  );
+}
+
+/** The older version on the left of the comparison, whichever was picked. */
+function DiffView({ from, to }: { from: TemplateVersionDto; to: TemplateVersionDto }) {
+  const t = useTranslations('templates.detail');
+  const [older, newer] = from.createdAt <= to.createdAt ? [from, to] : [to, from];
+  const lines = lineDiff(older.source, newer.source);
+  const added = lines.filter((l) => l.kind === 'added').length;
+  const removed = lines.filter((l) => l.kind === 'removed').length;
+  const title = t('diffTitle', { from: older.version, to: newer.version });
+  return (
+    <div className="space-y-2">
+      <p className="text-xs text-fg-muted">
+        {title} · {added + removed === 0 ? t('noChanges') : t('diffSummary', { added, removed })}
+      </p>
+      <pre className="max-h-[32rem] overflow-auto rounded-md border border-border bg-bg p-2 font-mono text-xs leading-5" aria-label={title}>
+        {lines.map((l, i) => (
+          <div key={i} className={cn('whitespace-pre-wrap px-1', l.kind === 'added' && 'bg-ok/12 text-ok-ink', l.kind === 'removed' && 'bg-danger/10 text-danger-ink')}>
+            <span aria-hidden className="select-none pr-2 text-fg-subtle">
+              {l.kind === 'added' ? '+' : l.kind === 'removed' ? '-' : ' '}
+            </span>
+            {l.text}
+          </div>
+        ))}
+      </pre>
+    </div>
+  );
+}
+
+function DraftEditor({ templateId, version, onDone, onSaved }: { templateId: string; version: TemplateVersionDto; onDone: () => void; onSaved: () => void }) {
+  const t = useTranslations('templates.detail');
+  const [source, setSource] = useState(version.source);
+  const save = useMutation({
+    mutationFn: () => apiSend<TemplateVersionDto>('PUT', `/templates/${templateId}/versions/${version.id}`, { source }),
+    onSuccess: onSaved,
+  });
+  const issues = issuesFromError(save.error);
+  return (
+    <Card>
+      <CardHeader title={t('editDraft')} as="h3" />
+      <CardBody className="space-y-3">
+        <Textarea aria-label={t('source')} value={source} onChange={(e) => setSource(e.target.value)} rows={24} spellCheck={false} className="font-mono text-xs" />
+        {save.error ? <ErrorNotice error={save.error} /> : null}
+        {issues.length > 0 ? <IssuesList issues={issues} /> : null}
+        {save.isSuccess ? <Notice tone="ok">{t('draftSaved')}</Notice> : null}
+        <div className="flex justify-end gap-2">
+          <Button onClick={onDone}>{t('cancelEdit')}</Button>
+          <Button variant="primary" onClick={() => save.mutate()} loading={save.isPending} disabled={source === version.source}>
+            <Save size={14} aria-hidden /> {t('saveDraft')}
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+  );
+}
+
+function DeprecateForm({ templateId, versionId, onDone }: { templateId: string; versionId: string; onDone: () => void }) {
+  const t = useTranslations('templates.detail');
+  const [note, setNote] = useState('');
+  const deprecate = useMutation({
+    mutationFn: () => apiSend('POST', `/templates/${templateId}/versions/${versionId}/deprecate`, note.trim() ? { note: note.trim() } : {}),
+    onSuccess: onDone,
+  });
+  return (
+    <form
+      className="space-y-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        deprecate.mutate();
+      }}
+    >
+      <Field label={t('deprecationNote')} htmlFor="dep-note">
+        <Input id="dep-note" value={note} maxLength={300} onChange={(e) => setNote(e.target.value)} placeholder={t('deprecationNotePlaceholder')} />
+      </Field>
+      {deprecate.error ? <ErrorNotice error={deprecate.error} /> : null}
+      <div className="flex justify-end gap-2 border-t border-border pt-3">
+        <Button onClick={onDone}>{t('cancelEdit')}</Button>
+        <Button type="submit" variant="primary" loading={deprecate.isPending}>
+          {t('deprecateSave')}
+        </Button>
+      </div>
+    </form>
   );
 }
 
