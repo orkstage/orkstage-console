@@ -69,7 +69,7 @@ export function CustomerOverview({ tenants }: { tenants: { id: string; name: str
         description={t('description', { tenant: q.data?.tenant.name ?? tenants.find((x) => x.id === tenantId)?.name ?? '' })}
         actions={
           tenants.length > 1 ? (
-            <Select aria-label={t('tenant')} value={tenantId} onChange={(e) => setTenantId(e.target.value)} className="w-56">
+            <Select aria-label={t('tenant')} value={tenantId} onChange={(e) => setTenantId(tenants.find((x) => x.id === e.target.value)?.id ?? tenantId)} className="w-56">
               {tenants.map((x) => (
                 <option key={x.id} value={x.id}>
                   {x.name}
@@ -130,10 +130,10 @@ export function CustomerOverview({ tenants }: { tenants: { id: string; name: str
                       </ul>
                     ) : null}
                     <div className="mt-3 flex gap-4 text-xs">
-                      <Link href={`/instances/${i.id}?tab=metrics`} className="inline-flex items-center gap-1 text-accent-ink hover:underline">
+                      <Link href={`/instances/${encodeURIComponent(i.id)}?tab=metrics`} className="inline-flex items-center gap-1 text-accent-ink hover:underline">
                         <LineChart size={12} aria-hidden /> {t('metrics')}
                       </Link>
-                      <Link href={`/status/${tenantId}`} className="inline-flex items-center gap-1 text-accent-ink hover:underline">
+                      <Link href={`/status/${encodeURIComponent(tenantId)}`} className="inline-flex items-center gap-1 text-accent-ink hover:underline">
                         <Activity size={12} aria-hidden /> {t('statusPage')}
                       </Link>
                     </div>
