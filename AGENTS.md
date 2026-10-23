@@ -86,4 +86,6 @@ bash scripts/spdx.sh --fix
 ## Git workflow
 
 Branch, pull request, squash merge when CI (`typecheck-build`) is green; then bump the pin in
-`orkstage-dev`. If the change needs a new API field, merge the `orkstage` change first.
+`orkstage-dev`. If the change needs a new API field, push the `orkstage` change on a branch with
+the same name as the console branch: console CI then builds against that branch instead of
+`main`. Merge the `orkstage` change first, then the console.
