@@ -51,7 +51,14 @@ export function DomainsPanel({
   const domains = useQuery({
     queryKey: key,
     queryFn: ({ signal }) => apiGet<DomainDto[]>(`/instances/${instanceId}/domains`, { signal }),
-    refetchInterval: (q) => (q.state.data?.some((d) => d.status === 'PENDING_VERIFICATION' || d.certificateStatus === 'PENDING_VALIDATION') ? 10_000 : false),
+    // Polls while a domain is pending, and while the list is empty on an instance that gets a
+    // platform subdomain: the worker records it on the first health tick after a deployment.
+    refetchInterval: (q) => {
+      const list = q.state.data;
+      if (!list) return false;
+      if (list.length === 0) return resourceIds.length > 0 ? 10_000 : false;
+      return list.some((d) => d.status === 'PENDING_VERIFICATION' || d.certificateStatus === 'PENDING_VALIDATION') ? 10_000 : false;
+    },
   });
   const refresh = () => void qc.invalidateQueries({ queryKey: key });
   const verify = useMutation({ mutationFn: (id: string) => apiSend('POST', `/domains/${id}/verify`), onSuccess: refresh });
