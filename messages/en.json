@@ -480,7 +480,8 @@
       "total": "Total",
       "confidence": "Confidence: {level}",
       "disclaimer": "Estimated monthly cost. It is an approximation, not an invoice: taxes, data transfer and usage based charges may differ.",
-      "none": "No cost estimate for this plan: estimates are turned off for this tenant, or nothing in it has a list price."
+      "none": "No cost estimate for this plan: estimates are turned off for this tenant, or nothing in it has a list price.",
+      "asOf": "(as of {date})"
     },
     "valid": "Valid: ready to deploy",
     "invalid": "Invalid: cannot deploy",
