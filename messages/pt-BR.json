@@ -1927,7 +1927,14 @@
     "defaults": "Padrões do template:",
     "noOverrides": "Este gatilho executa apenas com os parâmetros do template.",
     "webhookTitle": "Executar pelo CI",
-    "webhookBody": "Gatilhos liberados para chaves de API aceitam chamadas de uma chave com o escopo instances:deploy. Só os parâmetros que o template marca como sobrescrevíveis são aceitos."
+    "webhookBody": "Gatilhos liberados para chaves de API aceitam chamadas de uma chave com o escopo instances:deploy. Só os parâmetros que o template marca como sobrescrevíveis são aceitos.",
+    "risk": {
+      "safe": "seguro",
+      "disruptive": "disruptivo",
+      "destructive": "destrutivo"
+    },
+    "providerSpecific": "específico do provedor",
+    "requiredRole": "Roda com o papel {role} ou superior."
   },
   "featureFlags": {
     "title": "Feature flags",

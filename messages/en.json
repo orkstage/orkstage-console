@@ -1927,7 +1927,14 @@
     "defaults": "Template defaults:",
     "noOverrides": "This trigger runs with its template parameters only.",
     "webhookTitle": "Run from CI",
-    "webhookBody": "Triggers marked for API keys accept calls from an API key with the instances:deploy scope. Only the parameters the template lists as overridable are accepted."
+    "webhookBody": "Triggers marked for API keys accept calls from an API key with the instances:deploy scope. Only the parameters the template lists as overridable are accepted.",
+    "risk": {
+      "safe": "safe",
+      "disruptive": "disruptive",
+      "destructive": "destructive"
+    },
+    "providerSpecific": "provider specific",
+    "requiredRole": "Runs with the {role} role or higher."
   },
   "featureFlags": {
     "title": "Feature flags",
