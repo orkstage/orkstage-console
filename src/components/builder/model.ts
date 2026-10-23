@@ -3,7 +3,6 @@ import {
   connectivityRequirement,
   containerServiceResource,
   dnsResource,
-  environmentTemplate,
   ingressResource,
   networkResource,
   objectStorageResource,

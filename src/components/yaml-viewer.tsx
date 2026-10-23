@@ -14,7 +14,8 @@ export function YamlViewer({ source, className, label }: { source: string; class
       <div className="absolute right-2 top-2">
         <CopyButton value={source} label={t('copySource')} />
       </div>
-      <pre aria-label={label ?? t('source')} className="max-h-[36rem] overflow-auto py-2 font-mono text-xs leading-relaxed" tabIndex={0}>
+      {/* biome-ignore lint/a11y/noNoninteractiveTabindex: a scrollable region must be reachable from the keyboard. */}
+      <pre role="region" aria-label={label ?? t('source')} className="max-h-[36rem] overflow-auto py-2 font-mono text-xs leading-relaxed" tabIndex={0}>
         <code>
           {lines.map((line, i) => (
             <span key={i} className="flex">

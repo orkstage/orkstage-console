@@ -185,8 +185,9 @@ function AttentionRow({ label, count, href }: { label: string; count: number; hr
   return (
     <Link href={href} className="flex items-center justify-between rounded-md px-2 py-1.5 hover:bg-surface-2">
       <span className="text-fg-muted">{label}</span>
-      <span className={cn('tabular-nums font-semibold', count > 0 ? 'text-danger-ink' : 'text-ok-ink')} aria-label={t('attentionCount', { count })}>
-        {count}
+      <span className={cn('tabular-nums font-semibold', count > 0 ? 'text-danger-ink' : 'text-ok-ink')}>
+        <span aria-hidden="true">{count}</span>
+        <span className="sr-only">{t('attentionCount', { count })}</span>
       </span>
     </Link>
   );

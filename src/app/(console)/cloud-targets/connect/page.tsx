@@ -13,7 +13,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BookOpen, Check, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslations } from 'use-intl';
 import { docsFor, envNameFor, newExternalId, prepareFor, type PrepareInputKey } from '@/components/connect/prepare';
 import { docsUrl } from '@/components/getting-started';
@@ -534,6 +534,7 @@ function ValidateStep({ target, onEdit }: { target: CloudTargetDto; onEdit: () =
     onSettled: () => qc.invalidateQueries({ queryKey: ['cloud-targets'] }),
   });
   const { mutate } = validate;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: validate again when the target changes.
   useEffect(() => mutate(), [mutate, target.id]);
   const result = validate.data;
   return (

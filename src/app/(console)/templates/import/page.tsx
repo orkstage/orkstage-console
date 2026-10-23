@@ -65,6 +65,7 @@ function ImportView() {
   // `ork import` links here with ?importId=<id> so a scan made locally opens straight in review.
   const importId = useSearchParams().get('importId');
   const linked = useQuery({ queryKey: ['import', importId], queryFn: () => apiGet<ImportDto>(`/imports/${importId}`), enabled: Boolean(importId) });
+  // biome-ignore lint/correctness/useExhaustiveDependencies: show the linked import once it loads; show changes on every render.
   useEffect(() => {
     if (linked.data) show(linked.data);
   }, [linked.data]);

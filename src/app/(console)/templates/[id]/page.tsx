@@ -308,7 +308,7 @@ function DiffView({ from, to }: { from: TemplateVersionDto; to: TemplateVersionD
       <p className="text-xs text-fg-muted">
         {title} · {added + removed === 0 ? t('noChanges') : t('diffSummary', { added, removed })}
       </p>
-      <pre className="max-h-[32rem] overflow-auto rounded-md border border-border bg-bg p-2 font-mono text-xs leading-5" aria-label={title}>
+      <pre className="max-h-[32rem] overflow-auto rounded-md border border-border bg-bg p-2 font-mono text-xs leading-5" role="region" aria-label={title}>
         {lines.map((l, i) => (
           <div key={i} className={cn('whitespace-pre-wrap px-1', l.kind === 'added' && 'bg-ok/12 text-ok-ink', l.kind === 'removed' && 'bg-danger/10 text-danger-ink')}>
             <span aria-hidden className="select-none pr-2 text-fg-subtle">

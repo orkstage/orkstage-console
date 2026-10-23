@@ -48,6 +48,7 @@ export function Dialog({
   const width = { sm: 'w-[min(26rem,calc(100vw-2rem))]', md: 'w-[min(34rem,calc(100vw-2rem))]', lg: 'w-[min(46rem,calc(100vw-2rem))]', xl: 'w-[min(64rem,calc(100vw-2rem))]' }[size];
 
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents: a click on the backdrop closes the native dialog; Escape does it from the keyboard.
     <dialog
       ref={ref}
       aria-labelledby={titleId}

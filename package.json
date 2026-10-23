@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start --port 3000",
     "typecheck": "next typegen && tsc --noEmit",
+    "lint": "biome lint --error-on-warnings .",
     "test": "node scripts/check-i18n.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:spdx": "bash scripts/spdx.sh"
@@ -37,6 +38,7 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.5.15",
     "@iconify-json/logos": "1.2.17",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.19.1",

@@ -14,6 +14,7 @@ export function useSwitchLocale(): { switchLocale: (locale: AppLocale) => void; 
   const [pending, startTransition] = useTransition();
   const switchLocale = (locale: AppLocale) => {
     const secure = window.location.protocol === 'https:' ? '; secure' : '';
+    // biome-ignore lint/suspicious/noDocumentCookie: the Cookie Store API is not in every supported browser.
     document.cookie = `${LOCALE_COOKIE}=${encodeURIComponent(locale)}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax${secure}`;
     startTransition(() => router.refresh());
   };

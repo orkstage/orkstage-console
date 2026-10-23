@@ -94,6 +94,10 @@ jobs:
         run: |
           if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install --no-frozen-lockfile; fi
 
+      # Biome (biome.json): correctness, suspicious and accessibility rules; warnings fail too.
+      - name: Lint
+        run: pnpm lint
+
       - name: Typecheck
         run: pnpm typecheck
 

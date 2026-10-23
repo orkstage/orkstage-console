@@ -266,7 +266,7 @@ export default function TopologyDiagram({
 
   return (
     <div className="space-y-2">
-      <div className="bg-grid h-[560px] overflow-hidden rounded-md border border-border" aria-label={t('diagramLabel')}>
+      <div className="bg-grid h-[560px] overflow-hidden rounded-md border border-border" role="region" aria-label={t('diagramLabel')}>
         <ReactFlow
           nodes={nodes}
           edges={edges}
