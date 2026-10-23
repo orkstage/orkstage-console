@@ -45,3 +45,6 @@ __pycache__/
 coverage/
 .DS_Store
 Thumbs.db
+
+# Shared packages built from orkstage main by CI (.github/workflows/ci.yml).
+.core/
