@@ -294,7 +294,9 @@ function NewInstanceWizard() {
           ) : null}
 
           {step === 'review' && plan.data ? (
-            <p className="mb-3 text-sm font-medium">{t('plan.estimate', { amount: fmt.money(plan.data.cost.total) })}</p>
+            <p className="mb-3 text-sm font-medium">
+              {plan.data.cost.confidence === 'unavailable' ? t('plan.estimateNone') : t('plan.estimate', { amount: fmt.money(plan.data.cost.total) })}
+            </p>
           ) : null}
 
           {step === 'review' && doc && version ? (
