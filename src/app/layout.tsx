@@ -2,6 +2,7 @@
 import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import type { ReactNode } from 'react';
 import { messagesFor } from '@/i18n/messages';
 import { getLocale, getTranslator } from '@/i18n/server';
@@ -30,12 +31,14 @@ export const viewport: Viewport = {
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
+  // Set by src/proxy.ts for every page; the policy only runs scripts that carry it.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   return (
     // data-theme is set before paint by THEME_BOOTSTRAP; React must not fight it on hydration.
     <html lang={locale} data-theme="dark" suppressHydrationWarning>
       <head>
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant theme bootstrap script, no user input. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
       </head>
       <body>
         <Providers locale={locale} messages={messagesFor(locale)}>
