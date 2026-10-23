@@ -29,6 +29,7 @@ export function useDismiss(ref: RefObject<HTMLElement | null>, open: boolean, cl
  */
 export function useDocumentTitle(name: string | null | undefined) {
   const locale = useLocale();
+  // biome-ignore lint/correctness/useExhaustiveDependencies: apply the title again after a language switch.
   useEffect(() => {
     if (!name) return;
     let applied = '';

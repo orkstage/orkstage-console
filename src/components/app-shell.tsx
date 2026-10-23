@@ -137,6 +137,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [navOpen, setNavOpen] = useState(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: close the navigation after every route change.
   useEffect(() => {
     setNavOpen(false);
   }, [pathname]);

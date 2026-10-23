@@ -326,6 +326,7 @@ function EventLog({ events, active, error }: { events: DeploymentEventDto[]; act
   const ref = useRef<HTMLDivElement>(null);
   const [stick, setStick] = useState(true);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scroll to the end when new events arrive.
   useEffect(() => {
     const el = ref.current;
     if (el && stick) el.scrollTop = el.scrollHeight;

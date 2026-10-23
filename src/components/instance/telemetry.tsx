@@ -210,9 +210,9 @@ export function MetricsPanel({ instanceId, resources }: { instanceId: string; re
   const unit = queries.find((q) => q.data?.unit)?.data?.unit || def?.unit || '';
   // Stable identity between refetches so the chart keeps its zoom window and does not re-render needlessly.
   const dataKey = queries.map((q) => q.dataUpdatedAt).join(',');
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed by dataKey, so the series changes only when data does.
   const series: MetricSeries[] = useMemo(
     () => selected.map((s, i) => ({ id: s.id, slot: s.slot, label: s.id, points: queries[i]?.data?.points ?? [] })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [selected, dataKey],
   );
 

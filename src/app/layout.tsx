@@ -34,6 +34,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     // data-theme is set before paint by THEME_BOOTSTRAP; React must not fight it on hydration.
     <html lang={locale} data-theme="dark" suppressHydrationWarning>
       <head>
+        {/* biome-ignore lint/security/noDangerouslySetInnerHtml: a constant theme bootstrap script, no user input. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
       </head>
       <body>

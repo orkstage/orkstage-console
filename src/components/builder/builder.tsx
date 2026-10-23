@@ -690,6 +690,7 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
         {/* canvas */}
         <div
           className="bg-grid h-[620px] overflow-hidden rounded-md border border-border"
+          role="region"
           onDragOver={(e) => {
             if (readOnly) return;
             e.preventDefault();

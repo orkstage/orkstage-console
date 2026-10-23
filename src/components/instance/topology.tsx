@@ -197,7 +197,7 @@ function BackupState({ backup: b }: { backup: BackupStateDto }) {
   const t = useTranslations('topology');
   const fmt = useFormat();
   return (
-    <div className={cn('mt-1.5 rounded border px-2 py-1.5 text-xs', b.problem ? 'border-warn/40 bg-warn/8' : 'border-border')} aria-label={t('backups')}>
+    <div className={cn('mt-1.5 rounded border px-2 py-1.5 text-xs', b.problem ? 'border-warn/40 bg-warn/8' : 'border-border')} role="group" aria-label={t('backups')}>
       <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-fg-muted">
         <DatabaseBackup size={12} aria-hidden className="shrink-0" />
         <span className="font-medium text-fg">{t('backups')}</span>

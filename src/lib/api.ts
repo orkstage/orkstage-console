@@ -74,7 +74,7 @@ async function request<T>(method: Method, path: string, body?: unknown, opts: Re
 
   if (res.status === 204) return undefined as T;
   const text = await res.text();
-  let payload: unknown = undefined;
+  let payload: unknown;
   if (text) {
     try {
       payload = JSON.parse(text);
@@ -133,7 +133,7 @@ export function asItems<T>(data: T[] | Page<T> | { items?: T[] } | null | undefi
 
 /** True for paths that are safe to redirect to after login (same-origin, absolute path). */
 export function safeReturnTo(value: string | null | undefined): string {
-  if (!value || !value.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) return '/';
+  if (!value?.startsWith('/') || value.startsWith('//') || value.startsWith('/\\')) return '/';
   if (value.startsWith('/login') || value.startsWith('/api/')) return '/';
   return value;
 }

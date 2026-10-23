@@ -177,7 +177,7 @@ function ListingCard({ listing: l, showStatus }: { listing: ListingSummaryDto; s
       </div>
       <ListingBadges badges={l.badges} />
       <p className="flex-1 text-sm text-fg-muted">{l.summary}</p>
-      <div className="flex flex-wrap items-center gap-1.5" aria-label={t('providers')}>
+      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label={t('providers')}>
         {l.providers.length ? (
           l.providers.slice(0, 8).map((p) => (
             <span key={p} title={PROVIDER_INFO[p as keyof typeof PROVIDER_INFO]?.displayName ?? p}>

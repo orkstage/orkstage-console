@@ -76,6 +76,7 @@ export function Tabs<T extends string>({
 
 export function TabPanel({ id, idPrefix, children, className }: { id: string; idPrefix: string; children: ReactNode; className?: string }) {
   return (
+    // biome-ignore lint/a11y/noNoninteractiveTabindex: WAI-ARIA tabs pattern, the panel takes focus after its tab.
     <div role="tabpanel" id={`${idPrefix}-panel-${id}`} aria-labelledby={`${idPrefix}-tab-${id}`} tabIndex={0} className={cn('pt-4 focus-visible:outline-none', className)}>
       {children}
     </div>
