@@ -22,7 +22,7 @@ import { Table, TBody, TD, TH, THead, TR } from '@/components/ui/table';
 import { TabPanel, Tabs } from '@/components/ui/tabs';
 import { useFormat } from '@/i18n/format';
 import { useStatusLabel } from '@/i18n/labels';
-import { apiGet, apiSend, qs } from '@/lib/api';
+import { apiGet, apiGetAll, apiSend, qs } from '@/lib/api';
 import { isPlatformStaff, useMe } from '@/lib/ability';
 import { tenantNameMap, useTenants } from '@/lib/queries';
 
@@ -100,7 +100,7 @@ function ApiKeys({ tenantId, staff, tenantName }: { tenantId?: string; staff: bo
   const fmt = useFormat();
   const roles = useRoleLabels();
   const qc = useQueryClient();
-  const keys = useQuery({ queryKey: ['api-keys', tenantId ?? 'org'], queryFn: () => apiGet<ApiKeyDto[]>(`/api-keys${qs({ tenantId })}`) });
+  const keys = useQuery({ queryKey: ['api-keys', tenantId ?? 'org'], queryFn: () => apiGetAll<ApiKeyDto>(`/api-keys${qs({ tenantId })}`) });
   const [creating, setCreating] = useState(false);
   const [revoking, setRevoking] = useState<ApiKeyDto | null>(null);
   const visible = (keys.data ?? []).filter((k) => (tenantId ? k.tenantId === tenantId : k.tenantId === null));
@@ -309,7 +309,7 @@ function Webhooks({ tenantId }: { tenantId?: string }) {
   const tc = useTranslations('common');
   const qc = useQueryClient();
   const [deleting, setDeleting] = useState<WebhookDto | null>(null);
-  const hooks = useQuery({ queryKey: ['webhooks', tenantId ?? 'org'], queryFn: () => apiGet<WebhookDto[]>(`/webhooks${qs({ tenantId })}`) });
+  const hooks = useQuery({ queryKey: ['webhooks', tenantId ?? 'org'], queryFn: () => apiGetAll<WebhookDto>(`/webhooks${qs({ tenantId })}`) });
   const [creating, setCreating] = useState(false);
   const [secret, setSecret] = useState<{ title: string; value: string } | null>(null);
   const [inspecting, setInspecting] = useState<WebhookDto | null>(null);

@@ -124,6 +124,24 @@ export function qs(params: Record<string, string | number | boolean | null | und
   return s ? `?${s}` : '';
 }
 
+/**
+ * Every item of a list (open item 21), following `nextCursor` in pages of 100: for selectors and
+ * catalogs that show everything. Stops after `maxPages` pages.
+ */
+export async function apiGetAll<T>(path: string, opts?: RequestOptions, maxPages = 20): Promise<T[]> {
+  const items: T[] = [];
+  let cursor: string | null = null;
+  for (let i = 0; i < maxPages; i++) {
+    const sep = path.includes('?') ? '&' : '?';
+    const data: T[] | Page<T> = await apiGet<T[] | Page<T>>(`${path}${sep}limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`, opts);
+    if (Array.isArray(data)) return data;
+    items.push(...data.items);
+    cursor = data.nextCursor;
+    if (!cursor) break;
+  }
+  return items;
+}
+
 /** Lists may come as a bare array or as `Page<T>`; accept both. */
 export function asItems<T>(data: T[] | Page<T> | { items?: T[] } | null | undefined): T[] {
   if (!data) return [];
