@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 'use client';
 
-import type { InstanceDto, PreviewDto, ResourceDto } from '@orkstage/contracts';
+import type { BackupStateDto, InstanceDto, PreviewDto, ResourceDto } from '@orkstage/contracts';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { ClipboardCopy, FlaskConical, Layers, LayoutList, Workflow } from 'lucide-react';
+import { ClipboardCopy, DatabaseBackup, FlaskConical, Layers, LayoutList, Workflow } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslations } from 'use-intl';
@@ -192,6 +192,33 @@ function TopologyList({
 
 const KEY_OUTPUTS = 6;
 
+/** A database's backups as the worker last read them from the provider (open item 18). */
+function BackupState({ backup: b }: { backup: BackupStateDto }) {
+  const t = useTranslations('topology');
+  const fmt = useFormat();
+  return (
+    <div className={cn('mt-1.5 rounded border px-2 py-1.5 text-xs', b.problem ? 'border-warn/40 bg-warn/8' : 'border-border')} aria-label={t('backups')}>
+      <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-fg-muted">
+        <DatabaseBackup size={12} aria-hidden className="shrink-0" />
+        <span className="font-medium text-fg">{t('backups')}</span>
+        {b.enabled ? (
+          <>
+            <span>{b.lastBackupAt ? t('backupLast', { time: fmt.relative(b.lastBackupAt) }) : t('backupNone')}</span>
+            {b.nextBackupAt ? <span className="text-fg-subtle">· {t('backupNext', { time: fmt.relative(b.nextBackupAt) })}</span> : null}
+            {b.retentionDays ? <span className="text-fg-subtle">· {t('backupRetention', { count: b.retentionDays })}</span> : null}
+          </>
+        ) : (
+          <span>{t('backupOff')}</span>
+        )}
+      </p>
+      {b.enabled && b.earliestRestorableAt && b.latestRestorableAt ? (
+        <p className="mt-0.5 text-fg-subtle">{t('backupWindow', { from: fmt.dateTime(b.earliestRestorableAt), to: fmt.dateTime(b.latestRestorableAt) })}</p>
+      ) : null}
+      {b.problem ? <p className="mt-0.5 text-warn-ink">{b.problem}</p> : null}
+    </div>
+  );
+}
+
 function ResourceCard({ resource: r, instanceId, canSimulate }: { resource: ResourceDto; instanceId: string; canSimulate: boolean }) {
   const t = useTranslations('topology');
   const fmt = useFormat();
@@ -241,6 +268,7 @@ function ResourceCard({ resource: r, instanceId, canSimulate }: { resource: Reso
           {r.healthCheckedAt ? <span className="text-fg-subtle"> · {fmt.relative(r.healthCheckedAt)}</span> : null}
         </p>
       ) : null}
+      {r.backup ? <BackupState backup={r.backup} /> : null}
       {outputs.length > 0 ? (
         <dl className="mt-2 space-y-0.5 border-t border-border pt-2 text-xs">
           {outputs.slice(0, KEY_OUTPUTS).map(([k, v]) => {

@@ -881,7 +881,9 @@
     "upgradePlan": "Plano: {create} para criar, {update} para atualizar, {remove} para apagar (risco {risk}).",
     "upgradeDeletes": "Estes recursos não existem na versão escolhida e serão apagados: {list}.",
     "upgradeInvalid": "{count, plural, one {# problema impede} other {# problemas impedem}} esta versão nesta instância. Escolha uma versão válida.",
-    "upgradeHow": "Versões anteriores revertem a instância da mesma forma."
+    "upgradeHow": "Versões anteriores revertem a instância da mesma forma.",
+    "backupNotRecent": "{count, plural, one {{resources} não tem} other {{resources} não têm}} backup do último dia. Rode um trigger de backup ou espere o próximo backup, ou confirme abaixo.",
+    "withoutRecentBackup": "Destruir sem um backup recente. Um snapshot final ainda é feito quando o provedor permite."
   },
   "telemetry": {
     "loadingChart": "Carregando gráfico",
@@ -961,7 +963,14 @@
       "zoomIn": "Aproximar",
       "zoomOut": "Afastar",
       "fitView": "Ajustar à tela"
-    }
+    },
+    "backups": "Backups",
+    "backupLast": "último {time}",
+    "backupNone": "nenhum backup ainda",
+    "backupNext": "próximo {time}",
+    "backupRetention": "mantidos por {count, plural, one {# dia} other {# dias}}",
+    "backupOff": "desligados",
+    "backupWindow": "Restauração possível de {from} até {to}"
   },
   "templates": {
     "title": "Templates",

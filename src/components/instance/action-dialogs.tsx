@@ -11,7 +11,8 @@ import { useTranslations } from 'use-intl';
 import { useFormat } from '@/i18n/format';
 import { useEnvironmentLabel } from '@/i18n/labels';
 import { useZodResolver } from '@/i18n/zod';
-import { apiSend } from '@/lib/api';
+import { ApiError, apiSend } from '@/lib/api';
+import { staleDatabases } from '@/lib/backups';
 import { useTemplate } from '@/lib/queries';
 import { newIdempotencyKey } from '@/lib/utils';
 import { SimulatedBadge } from '../ui/badge';
@@ -94,8 +95,10 @@ function DestroyBody({ instance, onClose }: { instance: InstanceDto; onClose: ()
   );
   const form = useForm({ resolver: useZodResolver(schema), defaultValues: { confirm: '' }, mode: 'onChange' });
   const confirmValue = form.watch('confirm');
+  const [withoutBackup, setWithoutBackup] = useState(false);
   const destroy = useMutation({
-    mutationFn: (confirm: string) => apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/destroy`, { confirm }),
+    mutationFn: (confirm: string) =>
+      apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/destroy`, { confirm, ...(withoutBackup ? { withoutRecentBackup: true } : {}) }),
     onSuccess: (d) => {
       void qc.invalidateQueries({ queryKey: ['instance', instance.id] });
       void qc.invalidateQueries({ queryKey: ['instances'] });
@@ -103,6 +106,15 @@ function DestroyBody({ instance, onClose }: { instance: InstanceDto; onClose: ()
     },
   });
   const err = form.formState.errors.confirm?.message;
+  // Production data is destroyed only with a recent backup behind it, unless confirmed here; the
+  // API may also refuse with BACKUP_NOT_RECENT when its backup state is newer than this page's.
+  const refusal = destroy.error instanceof ApiError && destroy.error.code === 'BACKUP_NOT_RECENT' ? destroy.error : null;
+  const stale = [
+    ...new Set([
+      ...(instance.environment === 'production' ? staleDatabases(instance.resources ?? []) : []),
+      ...(Array.isArray(refusal?.details.resources) ? (refusal.details.resources as string[]) : []),
+    ]),
+  ];
 
   if (instance.protectedFromDestroy) {
     return (
@@ -128,10 +140,19 @@ function DestroyBody({ instance, onClose }: { instance: InstanceDto; onClose: ()
       >
         <Input id="destroy-confirm" autoComplete="off" spellCheck={false} className="font-mono" autoFocus {...describedBy('destroy-confirm', { error: confirmValue && err })} {...form.register('confirm')} />
       </Field>
-      {destroy.error ? <ErrorNotice error={destroy.error} /> : null}
+      {stale.length > 0 ? (
+        <Notice tone="warn" className="space-y-2">
+          <p>{t('backupNotRecent', { resources: stale.join(', '), count: stale.length })}</p>
+          <label htmlFor="destroy-without-backup" className="flex items-start gap-2">
+            <input id="destroy-without-backup" type="checkbox" checked={withoutBackup} onChange={(e) => setWithoutBackup(e.target.checked)} className="mt-0.5 accent-accent" />
+            <span>{t('withoutRecentBackup')}</span>
+          </label>
+        </Notice>
+      ) : null}
+      {destroy.error && !refusal ? <ErrorNotice error={destroy.error} /> : null}
       <div className="flex justify-end gap-2 border-t border-border pt-3">
         <Button onClick={onClose}>{tc('cancel')}</Button>
-        <Button type="submit" variant="danger" disabled={confirmValue !== instance.slug} loading={destroy.isPending}>
+        <Button type="submit" variant="danger" disabled={confirmValue !== instance.slug || (stale.length > 0 && !withoutBackup)} loading={destroy.isPending}>
           {t('destroy')}
         </Button>
       </div>

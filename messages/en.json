@@ -881,7 +881,9 @@
     "upgradePlan": "Plan: {create} to create, {update} to update, {remove} to delete (risk {risk}).",
     "upgradeDeletes": "These resources are not in the chosen version and will be deleted: {list}.",
     "upgradeInvalid": "{count, plural, one {# issue blocks} other {# issues block}} this version for this instance. Open the plan tab after choosing a valid version.",
-    "upgradeHow": "Older versions roll the instance back the same way."
+    "upgradeHow": "Older versions roll the instance back the same way.",
+    "backupNotRecent": "{count, plural, one {{resources} has} other {{resources} have}} no backup from the last day. Run a backup trigger or wait for the next backup, or confirm below.",
+    "withoutRecentBackup": "Destroy without a recent backup. A final snapshot is still taken where the provider supports it."
   },
   "telemetry": {
     "loadingChart": "Loading chart",
@@ -961,7 +963,14 @@
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out",
       "fitView": "Fit to view"
-    }
+    },
+    "backups": "Backups",
+    "backupLast": "last {time}",
+    "backupNone": "no backup yet",
+    "backupNext": "next {time}",
+    "backupRetention": "kept {count, plural, one {# day} other {# days}}",
+    "backupOff": "off",
+    "backupWindow": "Restorable from {from} to {to}"
   },
   "templates": {
     "title": "Templates",
