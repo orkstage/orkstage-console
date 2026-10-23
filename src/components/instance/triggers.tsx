@@ -9,6 +9,7 @@ import { useTranslations } from 'use-intl';
 import { useFormat } from '@/i18n/format';
 import { apiGet, apiSend, asItems } from '@/lib/api';
 import { useIdempotencyKey } from '@/lib/hooks';
+import { useRoleLabels } from '@/components/app-shell';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EmptyState } from '../ui/empty-state';
@@ -25,8 +26,11 @@ type ParamValue = string | number | boolean;
  * Template triggers of one instance: run them by hand with their overridable parameters, see how
  * CI can call them with an API key, and follow recent runs.
  */
+const RISK_TONE = { safe: 'neutral', disruptive: 'warn', destructive: 'danger' } as const;
+
 export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canRun: boolean }) {
   const t = useTranslations('triggers');
+  const roleLabel = useRoleLabels().role;
   const fmt = useFormat();
   const triggers = useQuery({
     queryKey: ['instance', instanceId, 'triggers'],
@@ -68,7 +72,13 @@ export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canR
                 <code className="font-mono text-xs">
                   {tr.resourceId}.{tr.action}
                 </code>
-                {tr.provider ? <div className="text-xs text-fg-subtle">{tr.provider}</div> : null}
+                <div className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-fg-subtle">
+                  {tr.provider ? <span>{tr.provider}</span> : null}
+                  {/* Risk from the action catalog (ADR 0009); the tooltip names the least role that may run it. */}
+                  <Badge tone={tr.catalogAction ? RISK_TONE[tr.catalogAction.risk] : 'warn'} title={t('requiredRole', { role: roleLabel(tr.requiredRole) })}>
+                    {tr.catalogAction ? t(`risk.${tr.catalogAction.risk}`) : t('providerSpecific')}
+                  </Badge>
+                </div>
               </TD>
               <TD>
                 <div className="flex flex-wrap gap-1">
