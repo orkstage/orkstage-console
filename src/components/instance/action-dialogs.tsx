@@ -15,6 +15,7 @@ import { ApiError, apiSend } from '@/lib/api';
 import { staleDatabases } from '@/lib/backups';
 import { useTemplate } from '@/lib/queries';
 import { newIdempotencyKey } from '@/lib/utils';
+import { useIdempotencyKey } from '@/lib/hooks';
 import { SimulatedBadge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Dialog } from '../ui/dialog';
@@ -96,9 +97,10 @@ function DestroyBody({ instance, onClose }: { instance: InstanceDto; onClose: ()
   const form = useForm({ resolver: useZodResolver(schema), defaultValues: { confirm: '' }, mode: 'onChange' });
   const confirmValue = form.watch('confirm');
   const [withoutBackup, setWithoutBackup] = useState(false);
+  const [idempotencyKey] = useIdempotencyKey();
   const destroy = useMutation({
     mutationFn: (confirm: string) =>
-      apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/destroy`, { confirm, ...(withoutBackup ? { withoutRecentBackup: true } : {}) }),
+      apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/destroy`, { confirm, ...(withoutBackup ? { withoutRecentBackup: true } : {}) }, { headers: { 'idempotency-key': idempotencyKey } }),
     onSuccess: (d) => {
       void qc.invalidateQueries({ queryKey: ['instance', instance.id] });
       void qc.invalidateQueries({ queryKey: ['instances'] });
@@ -184,8 +186,9 @@ function UpgradeBody({ instance, onClose, onUpgraded }: { instance: InstanceDto;
     queryFn: () => apiSend<PreviewDto>('POST', `/instances/${instance.id}/preview?templateVersionId=${selected}`),
     enabled: Boolean(selected),
   });
+  const [idempotencyKey] = useIdempotencyKey();
   const upgrade = useMutation({
-    mutationFn: (templateVersionId: string) => apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/upgrade`, { templateVersionId }),
+    mutationFn: (templateVersionId: string) => apiSend<DeploymentSummaryDto>('POST', `/instances/${instance.id}/upgrade`, { templateVersionId }, { headers: { 'idempotency-key': idempotencyKey } }),
     onSuccess: (deployment) => {
       void qc.invalidateQueries({ queryKey: ['instance', instance.id] });
       onUpgraded(deployment.id);

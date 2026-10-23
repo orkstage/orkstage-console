@@ -3,6 +3,7 @@
 
 import { useEffect, useState, type RefObject } from 'react';
 import { useLocale } from 'use-intl';
+import { newIdempotencyKey } from './utils';
 
 /** Closes a popover on outside pointer-down or Escape. */
 export function useDismiss(ref: RefObject<HTMLElement | null>, open: boolean, close: () => void) {
@@ -61,4 +62,13 @@ export function useNow(active: boolean, ms = 1000): number {
     return () => clearInterval(t);
   }, [active, ms]);
   return now;
+}
+
+/**
+ * The Idempotency-Key of one action (open item 21): retries and double clicks send the same key, so
+ * the API does the work once. Renew it after a success to start the next action.
+ */
+export function useIdempotencyKey(): [string, () => void] {
+  const [key, setKey] = useState(newIdempotencyKey);
+  return [key, () => setKey(newIdempotencyKey())];
 }

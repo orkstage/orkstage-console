@@ -39,6 +39,7 @@ import { apiSend } from '@/lib/api';
 import { useCloudTargets, useProfiles, useTemplate, useTemplates, useTenants } from '@/lib/queries';
 import { checkVariable, readTemplateDoc, type PlacementSlot, type TemplateDocView, type TemplateVariable, type VariableIssue } from '@/lib/template-doc';
 import { cn, slugify } from '@/lib/utils';
+import { useIdempotencyKey } from '@/lib/hooks';
 
 type StepId = 'tenant' | 'template' | 'placement' | 'variables' | 'details' | 'plan' | 'review';
 const STEPS: { id: StepId }[] = [{ id: 'tenant' }, { id: 'template' }, { id: 'placement' }, { id: 'variables' }, { id: 'details' }, { id: 'plan' }, { id: 'review' }];
@@ -173,8 +174,9 @@ function NewInstanceWizard() {
     if (next.environment !== 'any') setDetails((d) => ({ ...d, environment: next.environment as Details['environment'] }));
   };
 
+  const [idempotencyKey] = useIdempotencyKey();
   const create = useMutation({
-    mutationFn: (input: CreateInstanceInput) => apiSend<InstanceDto>('POST', '/instances', input),
+    mutationFn: (input: CreateInstanceInput) => apiSend<InstanceDto>('POST', '/instances', input, { headers: { 'idempotency-key': idempotencyKey } }),
     onSuccess: (instance) => {
       void qc.invalidateQueries({ queryKey: ['instances'] });
       router.push(`/instances/${instance.id}?tab=plan`);

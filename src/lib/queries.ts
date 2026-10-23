@@ -11,14 +11,14 @@ import type {
   TemplateDto,
   TenantDto,
 } from '@orkstage/contracts';
-import { apiGet, asItems, qs } from './api';
+import { apiGet, apiGetAll, asItems, qs } from './api';
 
 /** Shared list queries. Lists accept either a bare array or `Page<T>` from the API. */
 
 export function useTenants(enabled = true) {
   return useQuery({
     queryKey: ['tenants'],
-    queryFn: async ({ signal }) => asItems(await apiGet<TenantDto[] | Page<TenantDto>>('/tenants?limit=100', { signal })),
+    queryFn: ({ signal }) => apiGetAll<TenantDto>('/tenants', { signal }),
     enabled,
     staleTime: 30_000,
   });
@@ -27,7 +27,7 @@ export function useTenants(enabled = true) {
 export function useTemplates(enabled = true) {
   return useQuery({
     queryKey: ['templates'],
-    queryFn: async ({ signal }) => asItems(await apiGet<TemplateDto[] | Page<TemplateDto>>('/templates', { signal })),
+    queryFn: ({ signal }) => apiGetAll<TemplateDto>('/templates', { signal }),
     enabled,
     staleTime: 30_000,
   });
@@ -44,7 +44,7 @@ export function useTemplate(id: string | null | undefined) {
 export function useCloudTargets(enabled = true) {
   return useQuery({
     queryKey: ['cloud-targets'],
-    queryFn: async ({ signal }) => asItems(await apiGet<CloudTargetDto[] | Page<CloudTargetDto>>('/cloud/targets', { signal })),
+    queryFn: ({ signal }) => apiGetAll<CloudTargetDto>('/cloud/targets', { signal }),
     enabled,
     staleTime: 15_000,
   });

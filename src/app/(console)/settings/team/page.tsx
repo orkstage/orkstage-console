@@ -22,6 +22,7 @@ import { useFormat } from '@/i18n/format';
 import { apiGet, apiSend } from '@/lib/api';
 import { isPlatformStaff, useCan, useMe } from '@/lib/ability';
 import { useTenants } from '@/lib/queries';
+import { useIdempotencyKey } from '@/lib/hooks';
 
 /**
  * Members and invitations of a tenant. Owners invite by email and change roles; every member can
@@ -175,9 +176,11 @@ function InviteForm({ tenantId, onDone }: { tenantId: string; onDone: () => void
   const [email, setEmail] = useState('');
   const [role, setRole] = useState<(typeof TENANT_ROLES)[number]>('CustomerDeveloper');
   const [error, setError] = useState<string | null>(null);
+  const [idempotencyKey, renewKey] = useIdempotencyKey();
   const invite = useMutation({
-    mutationFn: (body: unknown) => apiSend<InvitationCreatedDto>('POST', `/tenants/${tenantId}/invitations`, body),
+    mutationFn: (body: unknown) => apiSend<InvitationCreatedDto>('POST', `/tenants/${tenantId}/invitations`, body, { headers: { 'idempotency-key': idempotencyKey } }),
     onSuccess: () => {
+      renewKey();
       setEmail('');
       onDone();
     },

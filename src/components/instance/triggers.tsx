@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useTranslations } from 'use-intl';
 import { useFormat } from '@/i18n/format';
 import { apiGet, apiSend, asItems } from '@/lib/api';
+import { useIdempotencyKey } from '@/lib/hooks';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { EmptyState } from '../ui/empty-state';
@@ -145,12 +146,14 @@ function RunForm({ instanceId, trigger, onDone }: { instanceId: string; trigger:
   const qc = useQueryClient();
   const editable = trigger.actionParams.filter((p) => trigger.overridable.includes(p.name));
   const [values, setValues] = useState<Record<string, ParamValue | undefined>>(() => Object.fromEntries(editable.map((p) => [p.name, trigger.params[p.name]])));
+  const [idempotencyKey, renewKey] = useIdempotencyKey();
   const run = useMutation({
     mutationFn: () => {
       const params = Object.fromEntries(Object.entries(values).filter(([, v]) => v !== undefined && v !== ''));
-      return apiSend<TriggerRunDto>('POST', `/instances/${instanceId}/triggers/${trigger.name}/runs`, { params });
+      return apiSend<TriggerRunDto>('POST', `/instances/${instanceId}/triggers/${trigger.name}/runs`, { params }, { headers: { 'idempotency-key': idempotencyKey } });
     },
     onSuccess: () => {
+      renewKey();
       void qc.invalidateQueries({ queryKey: ['instance', instanceId, 'trigger-runs'] });
       void qc.invalidateQueries({ queryKey: ['instance', instanceId, 'triggers'] });
       onDone();
