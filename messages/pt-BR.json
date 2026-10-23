@@ -480,7 +480,8 @@
       "total": "Total",
       "confidence": "Confiança: {level}",
       "disclaimer": "Custo mensal estimado. É uma aproximação, não uma fatura: impostos, transferência de dados e cobranças por uso podem variar.",
-      "none": "Sem estimativa de custo para este plano: as estimativas estão desligadas para este tenant, ou nada nele tem preço de lista."
+      "none": "Sem estimativa de custo para este plano: as estimativas estão desligadas para este tenant, ou nada nele tem preço de lista.",
+      "asOf": "(dados de {date})"
     },
     "valid": "Válido: pronto para deploy",
     "invalid": "Inválido: não é possível fazer deploy",

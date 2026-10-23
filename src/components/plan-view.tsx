@@ -134,6 +134,17 @@ export function CostTable({ cost }: { cost: PreviewDto['cost'] }) {
         </tfoot>
       </Table>
       <p className="px-3 py-2 text-xs text-fg-subtle">{t('disclaimer')}</p>
+      {/* Where the prices come from and how fresh they are (ADR 0010). */}
+      {cost.sources?.length ? (
+        <ul className="space-y-0.5 px-3 pb-2 text-xs text-fg-subtle">
+          {cost.sources.map((s) => (
+            <li key={`${s.source}|${s.asOf ?? ''}`}>
+              {s.source}
+              {s.asOf ? ` ${t('asOf', { date: fmt.date(s.asOf) })}` : ''}
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </div>
   );
 }
