@@ -133,7 +133,7 @@ export async function apiGetAll<T>(path: string, opts?: RequestOptions, maxPages
   let cursor: string | null = null;
   for (let i = 0; i < maxPages; i++) {
     const sep = path.includes('?') ? '&' : '?';
-    const data = await apiGet<T[] | Page<T>>(`${path}${sep}limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`, opts);
+    const data: T[] | Page<T> = await apiGet<T[] | Page<T>>(`${path}${sep}limit=100${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ''}`, opts);
     if (Array.isArray(data)) return data;
     items.push(...data.items);
     cursor = data.nextCursor;
