@@ -61,9 +61,10 @@ pnpm build && pnpm start
 
 > **Install status.** This repository depends on `@orkstage/contracts`, `@orkstage/authorization`,
 > `@orkstage/templates` and `@orkstage/domain` from GitHub Packages. They are not published yet,
-> so a standalone `pnpm install` fails today, and CI skips the build with a notice until they
-> are. Until then the console is developed together with the core packages in the development
-> workspace.
+> so a standalone `pnpm install` fails today. Until they are, CI builds the four packages from the
+> `orkstage` repository and links them (an `orkstage` branch with the same name as the console
+> branch, otherwise `main`), and the console is developed together with the core packages in the
+> development workspace.
 
 ## Related repositories
 

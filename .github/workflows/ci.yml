@@ -54,21 +54,30 @@ jobs:
             echo "available=true" >> "$GITHUB_OUTPUT"
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Shared packages from source::@orkstage/contracts is not published to GitHub Packages yet; building the console against orkstage main instead."
+            echo "@orkstage/contracts is not published to GitHub Packages yet; building against the orkstage repository."
           fi
 
       - uses: pnpm/action-setup@v6
         with:
           version: 12.5.1
 
-      # Until the shared packages are published, build them from orkstage main and link them, as
-      # the orkstage-dev workspace does, so every change is still installed, typechecked and built.
+      # Until the shared packages are published, build them from the orkstage repository and link
+      # them, as the orkstage-dev workspace does, so every change is still installed, typechecked
+      # and built. A console branch paired with an orkstage branch of the same name (a change that
+      # needs a new API field) builds against that branch; anything else builds against main.
       # `.core/` sits inside the checkout so Next.js resolves the links within its project root.
       - name: Shared packages from the orkstage repository
         if: steps.packages.outputs.available != 'true'
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
-          git clone --depth 1 https://github.com/orkstage/orkstage.git .core
-          echo "Core packages from orkstage@$(git -C .core rev-parse --short HEAD)"
+          core=https://github.com/orkstage/orkstage.git
+          ref=main
+          if [ "$BRANCH" != main ] && git ls-remote --exit-code --heads "$core" "refs/heads/$BRANCH" >/dev/null 2>&1; then
+            ref=$BRANCH
+          fi
+          git clone --depth 1 --branch "$ref" "$core" .core
+          echo "::notice title=Shared packages from source::orkstage $ref at $(git -C .core rev-parse --short HEAD)"
           (cd .core && pnpm install --frozen-lockfile \
             && pnpm --filter "@orkstage/contracts..." --filter "@orkstage/authorization..." \
               --filter "@orkstage/templates..." --filter "@orkstage/domain..." run build)
