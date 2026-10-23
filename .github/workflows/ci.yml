@@ -46,8 +46,7 @@ jobs:
           scope: '@orkstage'
 
       # The console depends on @orkstage/contracts, /authorization, /templates and /domain,
-      # published by the orkstage repository. Until they are published, there is nothing to
-      # install against: report it and skip the remaining steps instead of failing every run.
+      # published by the orkstage repository to GitHub Packages.
       - name: Check that the shared packages are published
         id: packages
         run: |
@@ -55,26 +54,45 @@ jobs:
             echo "available=true" >> "$GITHUB_OUTPUT"
           else
             echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Console build skipped::@orkstage/contracts is not published to GitHub Packages yet, so dependencies cannot be installed."
+            echo "::notice title=Shared packages from source::@orkstage/contracts is not published to GitHub Packages yet; building the console against orkstage main instead."
           fi
 
       - uses: pnpm/action-setup@v6
-        if: steps.packages.outputs.available == 'true'
         with:
           version: 12.5.1
 
+      # Until the shared packages are published, build them from orkstage main and link them, as
+      # the orkstage-dev workspace does, so every change is still installed, typechecked and built.
+      # `.core/` sits inside the checkout so Next.js resolves the links within its project root.
+      - name: Shared packages from the orkstage repository
+        if: steps.packages.outputs.available != 'true'
+        run: |
+          git clone --depth 1 https://github.com/orkstage/orkstage.git .core
+          echo "Core packages from orkstage@$(git -C .core rev-parse --short HEAD)"
+          (cd .core && pnpm install --frozen-lockfile \
+            && pnpm --filter "@orkstage/contracts..." --filter "@orkstage/authorization..." \
+              --filter "@orkstage/templates..." --filter "@orkstage/domain..." run build)
+          cat > pnpm-workspace.yaml <<'YAML'
+          overrides:
+            '@orkstage/domain': link:./.core/packages/domain
+            '@orkstage/contracts': link:./.core/packages/contracts
+            '@orkstage/authorization': link:./.core/packages/authorization
+            '@orkstage/templates': link:./.core/packages/templates
+          YAML
+
       # No lockfile is committed until the first install against the published packages.
       - name: Install
-        if: steps.packages.outputs.available == 'true'
         run: |
           if [ -f pnpm-lock.yaml ]; then pnpm install --frozen-lockfile; else pnpm install --no-frozen-lockfile; fi
 
       - name: Typecheck
-        if: steps.packages.outputs.available == 'true'
         run: pnpm typecheck
 
+      # Every message key exists in English and Brazilian Portuguese (scripts/check-i18n.mjs).
+      - name: Translations
+        run: pnpm test
+
       - name: Build
-        if: steps.packages.outputs.available == 'true'
         run: pnpm build
         env:
           API_INTERNAL_URL: http://localhost:4000
