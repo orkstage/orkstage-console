@@ -479,7 +479,8 @@
       "monthly": "Monthly",
       "total": "Total",
       "confidence": "Confidence: {level}",
-      "disclaimer": "Estimated monthly cost. It is an approximation, not an invoice: taxes, data transfer and usage based charges may differ."
+      "disclaimer": "Estimated monthly cost. It is an approximation, not an invoice: taxes, data transfer and usage based charges may differ.",
+      "none": "No cost estimate for this plan: estimates are turned off for this tenant, or nothing in it has a list price."
     },
     "valid": "Valid: ready to deploy",
     "invalid": "Invalid: cannot deploy",
@@ -797,7 +798,8 @@
       "loading": "Building the plan",
       "blocking": "Fix these issues before you create the instance.",
       "policyNote": "Policy failures do not stop the creation, but they block deployments until they are fixed.",
-      "estimate": "Estimated cost: {amount} a month"
+      "estimate": "Estimated cost: {amount} a month",
+      "estimateNone": "No cost estimate for this instance."
     }
   },
   "instance": {

@@ -97,6 +97,8 @@ export function CostTable({ cost }: { cost: PreviewDto['cost'] }) {
   const t = useTranslations('plan.cost');
   const fmt = useFormat();
   const statusLabel = useStatusLabel();
+  // No line priced: cost estimates are off for the tenant (COST_ESTIMATION), or nothing has a price.
+  if (cost.confidence === 'unavailable' && cost.lines.length === 0) return <p className="px-3 py-2 text-sm text-fg-muted">{t('none')}</p>;
   return (
     <div>
       <Table>
