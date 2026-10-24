@@ -3,13 +3,13 @@
 
 import type { InstanceDto, PreviewDto } from '@orkstage/contracts';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ClipboardCheck, FileSearch, Rocket, Trash2, ArrowUpCircle } from 'lucide-react';
+import { ClipboardCheck, FileSearch, Rocket, Trash2, ArrowUpCircle, Undo2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'use-intl';
 import { DeploymentsList } from '@/components/deployments-table';
-import { DeployDialog, DestroyDialog, UpgradeDialog } from '@/components/instance/action-dialogs';
+import { DeployDialog, DestroyDialog, RollbackDialog, UpgradeDialog } from '@/components/instance/action-dialogs';
 import { LogsPanel, MetricsPanel } from '@/components/instance/telemetry';
 import { Topology } from '@/components/instance/topology';
 import { DomainsPanel } from '@/components/instance/domains';
@@ -54,7 +54,7 @@ function InstanceView() {
   const search = useSearchParams();
   const initialTab = TAB_IDS.includes(search.get('tab') as TabId) ? (search.get('tab') as TabId) : 'overview';
   const [tab, setTab] = useState<TabId>(initialTab);
-  const [dialog, setDialog] = useState<'deploy' | 'destroy' | 'upgrade' | null>(null);
+  const [dialog, setDialog] = useState<'deploy' | 'destroy' | 'upgrade' | 'rollback' | null>(null);
   const can = useCan();
   const router = useRouter();
 
@@ -90,6 +90,8 @@ function InstanceView() {
   const canDeploy = can('deploy', 'Instance', inst.tenantId);
   const canDestroy = can('destroy', 'Instance', inst.tenantId);
   const canUpdate = can('update', 'Instance', inst.tenantId);
+  // Rollbacks and approvals of disruptive actions are for admins (ADR 0009).
+  const canApprove = can('approve', 'Instance', inst.tenantId);
   const busy = isDeploymentActive(inst.lastDeployment?.status) || isInstanceTransitional(inst.status);
   const destroyed = inst.status === 'DESTROYED';
   const resources = inst.resources ?? [];
@@ -143,6 +145,11 @@ function InstanceView() {
             {canUpdate ? (
               <Button onClick={() => setDialog('upgrade')} disabled={busy || destroyed}>
                 <ArrowUpCircle size={14} aria-hidden /> {t('upgrade')}
+              </Button>
+            ) : null}
+            {canApprove ? (
+              <Button onClick={() => setDialog('rollback')} disabled={busy || destroyed || !inst.lastDeployment}>
+                <Undo2 size={14} aria-hidden /> {t('rollback')}
               </Button>
             ) : null}
             {canDeploy ? (
@@ -261,7 +268,7 @@ function InstanceView() {
         <TabPanel id="triggers" idPrefix="inst">
           <Card>
             <CardBody>
-              <TriggersPanel instanceId={inst.id} canRun={canDeploy} />
+              <TriggersPanel instanceId={inst.id} canRun={canDeploy} canApprove={canApprove} />
             </CardBody>
           </Card>
         </TabPanel>
@@ -306,6 +313,7 @@ function InstanceView() {
 
       <DeployDialog instance={inst} open={dialog === 'deploy'} onClose={() => setDialog(null)} />
       <DestroyDialog instance={inst} open={dialog === 'destroy'} onClose={() => setDialog(null)} />
+      <RollbackDialog instance={inst} open={dialog === 'rollback'} onClose={() => setDialog(null)} />
       <UpgradeDialog
         instance={inst}
         open={dialog === 'upgrade'}

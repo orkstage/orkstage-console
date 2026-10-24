@@ -3,7 +3,8 @@
 
 import type { Page, TriggerDto, TriggerRunDto } from '@orkstage/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Play, Zap } from 'lucide-react';
+import { Ban, Play, ShieldCheck, Zap } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useTranslations } from 'use-intl';
 import { useFormat } from '@/i18n/format';
@@ -28,10 +29,11 @@ type ParamValue = string | number | boolean;
  */
 const RISK_TONE = { safe: 'neutral', disruptive: 'warn', destructive: 'danger' } as const;
 
-export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canRun: boolean }) {
+export function TriggersPanel({ instanceId, canRun, canApprove }: { instanceId: string; canRun: boolean; canApprove: boolean }) {
   const t = useTranslations('triggers');
   const roleLabel = useRoleLabels().role;
   const fmt = useFormat();
+  const qc = useQueryClient();
   const triggers = useQuery({
     queryKey: ['instance', instanceId, 'triggers'],
     queryFn: ({ signal }) => apiGet<TriggerDto[]>(`/instances/${instanceId}/triggers`, { signal }),
@@ -39,9 +41,23 @@ export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canR
   const runs = useQuery({
     queryKey: ['instance', instanceId, 'trigger-runs'],
     queryFn: ({ signal }) => apiGet<Page<TriggerRunDto>>(`/instances/${instanceId}/trigger-runs?limit=20`, { signal }),
-    refetchInterval: (q) => (asItems(q.state.data).some((r) => r.status === 'QUEUED' || r.status === 'RUNNING') ? 3000 : false),
+    // Fast while runs move; slower while one waits for someone else's approval.
+    refetchInterval: (q) => {
+      const items = asItems(q.state.data);
+      if (items.some((r) => r.status === 'QUEUED' || r.status === 'RUNNING')) return 3000;
+      return items.some((r) => r.status === 'AWAITING_APPROVAL') ? 15_000 : false;
+    },
   });
   const [open, setOpen] = useState<string | null>(null);
+  // Disruptive actions on production wait for an admin (ADR 0009).
+  const decide = useMutation({
+    mutationFn: ({ runId, decision }: { runId: string; decision: 'approve' | 'cancel' }) => apiSend<TriggerRunDto>('POST', `/instances/${instanceId}/trigger-runs/${runId}/${decision}`),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['instance', instanceId, 'trigger-runs'] });
+      void qc.invalidateQueries({ queryKey: ['instance', instanceId, 'triggers'] });
+      void qc.invalidateQueries({ queryKey: ['instance', instanceId] });
+    },
+  });
 
   if (triggers.isPending) return <PageSpinner />;
   if (triggers.error) return <ErrorNotice error={triggers.error} />;
@@ -113,6 +129,7 @@ export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canR
           {t('recentRuns')}
         </h3>
         {runs.error ? <ErrorNotice error={runs.error} /> : null}
+        {decide.error ? <ErrorNotice error={decide.error} /> : null}
         <Table>
           <THead>
             <TR>
@@ -121,6 +138,9 @@ export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canR
               <TH>{t('status')}</TH>
               <TH>{t('message')}</TH>
               <TH>{t('when')}</TH>
+              <TH className="text-right">
+                <span className="sr-only">{t('decision')}</span>
+              </TH>
             </TR>
           </THead>
           <TBody>
@@ -132,7 +152,14 @@ export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canR
                   <StatusBadge status={r.status} />
                 </TD>
                 <TD className="max-w-md text-xs">
-                  {r.url ? (
+                  {r.status === 'AWAITING_APPROVAL' ? (
+                    t('awaitingApproval')
+                  ) : r.url?.startsWith('/') ? (
+                    // Releases and rollbacks start a deployment of this console.
+                    <Link href={r.url} className="underline">
+                      {r.message ?? r.url}
+                    </Link>
+                  ) : r.url ? (
                     <a href={r.url} target="_blank" rel="noreferrer" className="underline">
                       {r.message ?? r.url}
                     </a>
@@ -141,6 +168,22 @@ export function TriggersPanel({ instanceId, canRun }: { instanceId: string; canR
                   )}
                 </TD>
                 <TD className="whitespace-nowrap text-xs text-fg-muted">{fmt.relative(r.queuedAt)}</TD>
+                <TD className="whitespace-nowrap text-right">
+                  {r.status === 'AWAITING_APPROVAL' ? (
+                    <div className="flex justify-end gap-1">
+                      {canApprove ? (
+                        <Button size="sm" variant="primary" loading={decide.isPending && decide.variables?.runId === r.id && decide.variables.decision === 'approve'} onClick={() => decide.mutate({ runId: r.id, decision: 'approve' })}>
+                          <ShieldCheck size={14} aria-hidden /> {t('approve')}
+                        </Button>
+                      ) : null}
+                      {canRun ? (
+                        <Button size="sm" loading={decide.isPending && decide.variables?.runId === r.id && decide.variables.decision === 'cancel'} onClick={() => decide.mutate({ runId: r.id, decision: 'cancel' })}>
+                          <Ban size={14} aria-hidden /> {t('cancelRun')}
+                        </Button>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </TD>
               </TR>
             ))}
           </TBody>
