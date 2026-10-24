@@ -84,7 +84,12 @@ export default function DeploymentPage() {
   const dep = useQuery({
     queryKey: ['deployment', id],
     queryFn: ({ signal }) => apiGet<DeploymentDto>(`/deployments/${id}`, { signal }),
-    refetchInterval: (query) => (!query.state.data || isDeploymentActive(query.state.data.status) ? POLL_MS : false),
+    // While a finished deployment is in its bake period, its verdict can still change.
+    refetchInterval: (query) => {
+      const d = query.state.data;
+      if (!d || isDeploymentActive(d.status)) return POLL_MS;
+      return d.bakeUntil && !d.verifiedAt && !d.bakeFailedAt ? 15_000 : false;
+    },
     refetchOnWindowFocus: false,
   });
 
@@ -186,6 +191,7 @@ export default function DeploymentPage() {
       />
 
       {mutationError ? <ErrorNotice error={mutationError} className="mb-4" /> : null}
+      <ReleaseStatus d={d} />
       {d.status === 'AWAITING_APPROVAL' ? (
         <div role="status" className="mb-4 rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-sm">
           {d.plan ? t('awaitingRisk', { risk: statusLabel(d.plan.risk).toLowerCase() }) : t('awaiting')} {canApprove ? t('reviewPlanApprove') : t('reviewPlan')}
@@ -414,5 +420,45 @@ function Outputs({ outputs }: { outputs: Record<string, Record<string, unknown>>
         ))}
       </CardBody>
     </Card>
+  );
+}
+
+/** How the release reaches traffic and what watching it found (ADR 0009). */
+function ReleaseStatus({ d }: { d: DeploymentDto }) {
+  const t = useTranslations('deployments.release');
+  const fmt = useFormat();
+  const r = d.release;
+  const watched = r && (r.strategy !== 'rolling' || r.bakeMinutes > 0);
+  if (!watched && !d.rollbackToId) return null;
+  const how = r?.strategy === 'canary' ? t('canary', { percent: r.trafficPercent }) : r?.strategy === 'blueGreen' ? t('blueGreen') : t('rolling');
+  return (
+    <div className="mb-4 space-y-2">
+      {d.rollbackToId ? (
+        <div role="note" className="rounded-md border border-info/40 bg-info/10 px-3 py-2 text-sm">
+          {t('rollbackOf')}{' '}
+          <Link href={`/deployments/${d.rollbackToId}`} className="font-mono underline">
+            {shortId(d.rollbackToId)}
+          </Link>
+          .
+        </div>
+      ) : null}
+      {watched && r ? (
+        <div role="status" className={cn('rounded-md border px-3 py-2 text-sm', d.bakeFailedAt ? 'border-warn/40 bg-warn/10' : d.verifiedAt ? 'border-ok/40 bg-ok/10' : 'border-border')}>
+          <p className="font-medium">
+            {how}
+            {r.bakeMinutes > 0 ? ` · ${t('bake', { minutes: r.bakeMinutes })}` : ''}
+          </p>
+          <p className="text-fg-muted">
+            {d.bakeFailedAt
+              ? d.bakeFailure
+              : d.verifiedAt
+                ? t('verified', { when: fmt.dateTime(d.verifiedAt) })
+                : d.bakeUntil
+                  ? t('watching', { until: fmt.time(d.bakeUntil), outcome: r.autoRollback ? t('rollsBack') : t('marksFailed') })
+                  : (d.bakeFailure ?? t('afterFinish'))}
+          </p>
+        </div>
+      ) : null}
+    </div>
   );
 }

@@ -565,6 +565,18 @@
       "outputsHint": "Secrets are shown only as references.",
       "hidden": "hidden",
       "copyOutput": "Copy {name}"
+    },
+    "release": {
+      "rolling": "Rolling update",
+      "canary": "Canary on {percent}% of traffic",
+      "blueGreen": "Blue/green: the old release is kept during the bake period",
+      "bake": "bake period {minutes} min",
+      "watching": "Watched until {until}: an incident or a failing service {outcome}.",
+      "rollsBack": "rolls it back automatically",
+      "marksFailed": "marks it as failed",
+      "verified": "Verified: healthy through its bake period ({when}).",
+      "afterFinish": "Watching starts when the deployment completes.",
+      "rollbackOf": "This deployment returns the instance to the configuration of deployment"
     }
   },
   "overview": {
@@ -855,7 +867,8 @@
     "editLabels": "Edit labels",
     "labelsField": "One per line as key=value",
     "labelsInvalid": "Write each label as key=value.",
-    "saveLabels": "Save labels"
+    "saveLabels": "Save labels",
+    "rollback": "Roll back"
   },
   "instanceDialogs": {
     "deployTitle": "Deploy {name}",
@@ -886,7 +899,34 @@
     "upgradeInvalid": "{count, plural, one {# issue blocks} other {# issues block}} this version for this instance. Open the plan tab after choosing a valid version.",
     "upgradeHow": "Older versions roll the instance back the same way.",
     "backupNotRecent": "{count, plural, one {{resources} has} other {{resources} have}} no backup from the last day. Run a backup trigger or wait for the next backup, or confirm below.",
-    "withoutRecentBackup": "Destroy without a recent backup. A final snapshot is still taken where the provider supports it."
+    "withoutRecentBackup": "Destroy without a recent backup. A final snapshot is still taken where the provider supports it.",
+    "releaseOptions": "Release options",
+    "releaseHint": "Empty fields keep the template setting.",
+    "strategy": "Strategy",
+    "templateSetting": "Template setting",
+    "strategies": {
+      "rolling": "Rolling update",
+      "canary": "Canary",
+      "blueGreen": "Blue/green"
+    },
+    "trafficPercent": "Canary traffic (%)",
+    "trafficHint": "Share of traffic the new release gets while it is watched, 1 to 50.",
+    "bakeMinutes": "Bake period (minutes)",
+    "bakeHint": "How long the release is watched after it is deployed. 0 turns watching off.",
+    "autoRollback": "Automatic rollback",
+    "autoRollbackOn": "On: roll back on an incident or a failing service",
+    "autoRollbackOff": "Off: only mark the release as failed",
+    "rollbackTitle": "Roll back {name}",
+    "rollbackDescription": "Deploys an earlier deployment's configuration again: its template version, image digests and variables.",
+    "rollbackTarget": "Deployment to return to",
+    "rollbackLastVerified": "The last verified deployment",
+    "rollbackLastVerifiedHint": "The newest one that stayed healthy through its bake period.",
+    "rollbackNoTargets": "No earlier deployment of this instance completed, so there is nothing to return to.",
+    "rollbackMigrations": "Database migrations are not undone. Production plans that delete or replace resources wait for approval.",
+    "verified": "verified",
+    "bakeFailed": "bake failed",
+    "notVerified": "not verified",
+    "rollback": "Roll back"
   },
   "telemetry": {
     "loadingChart": "Loading chart",
@@ -1935,7 +1975,11 @@
       "destructive": "destructive"
     },
     "providerSpecific": "provider specific",
-    "requiredRole": "Runs with the {role} role or higher."
+    "requiredRole": "Runs with the {role} role or higher.",
+    "decision": "Decision",
+    "approve": "Approve",
+    "cancelRun": "Cancel",
+    "awaitingApproval": "Waits for approval: a disruptive action on a production instance."
   },
   "featureFlags": {
     "title": "Feature flags",

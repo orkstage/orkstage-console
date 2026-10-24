@@ -565,6 +565,18 @@
       "outputsHint": "Secrets aparecem só como referências.",
       "hidden": "oculto",
       "copyOutput": "Copiar {name}"
+    },
+    "release": {
+      "rolling": "Atualização gradual",
+      "canary": "Canário com {percent}% do tráfego",
+      "blueGreen": "Azul/verde: a versão anterior é mantida durante a observação",
+      "bake": "observação de {minutes} min",
+      "watching": "Observado até {until}: um incidente ou serviço com falha {outcome}.",
+      "rollsBack": "reverte automaticamente",
+      "marksFailed": "marca como falha",
+      "verified": "Verificado: saudável durante todo o período de observação ({when}).",
+      "afterFinish": "A observação começa quando o deploy termina.",
+      "rollbackOf": "Este deploy devolve a instância à configuração do deploy"
     }
   },
   "overview": {
@@ -855,7 +867,8 @@
     "editLabels": "Editar rótulos",
     "labelsField": "Um por linha como chave=valor",
     "labelsInvalid": "Escreva cada rótulo como chave=valor.",
-    "saveLabels": "Salvar rótulos"
+    "saveLabels": "Salvar rótulos",
+    "rollback": "Reverter"
   },
   "instanceDialogs": {
     "deployTitle": "Fazer deploy de {name}",
@@ -886,7 +899,34 @@
     "upgradeInvalid": "{count, plural, one {# problema impede} other {# problemas impedem}} esta versão nesta instância. Escolha uma versão válida.",
     "upgradeHow": "Versões anteriores revertem a instância da mesma forma.",
     "backupNotRecent": "{count, plural, one {{resources} não tem} other {{resources} não têm}} backup do último dia. Rode um trigger de backup ou espere o próximo backup, ou confirme abaixo.",
-    "withoutRecentBackup": "Destruir sem um backup recente. Um snapshot final ainda é feito quando o provedor permite."
+    "withoutRecentBackup": "Destruir sem um backup recente. Um snapshot final ainda é feito quando o provedor permite.",
+    "releaseOptions": "Opções de lançamento",
+    "releaseHint": "Campos vazios mantêm a configuração do template.",
+    "strategy": "Estratégia",
+    "templateSetting": "Configuração do template",
+    "strategies": {
+      "rolling": "Atualização gradual",
+      "canary": "Canário",
+      "blueGreen": "Azul/verde"
+    },
+    "trafficPercent": "Tráfego do canário (%)",
+    "trafficHint": "Parte do tráfego que a nova versão recebe enquanto é observada, de 1 a 50.",
+    "bakeMinutes": "Período de observação (minutos)",
+    "bakeHint": "Por quanto tempo a versão é observada depois do deploy. 0 desliga a observação.",
+    "autoRollback": "Reversão automática",
+    "autoRollbackOn": "Ligada: reverte em um incidente ou serviço com falha",
+    "autoRollbackOff": "Desligada: apenas marca a versão como falha",
+    "rollbackTitle": "Reverter {name}",
+    "rollbackDescription": "Implanta de novo a configuração de um deploy anterior: versão do template, digests das imagens e variáveis.",
+    "rollbackTarget": "Deploy para o qual voltar",
+    "rollbackLastVerified": "O último deploy verificado",
+    "rollbackLastVerifiedHint": "O mais recente que se manteve saudável durante o período de observação.",
+    "rollbackNoTargets": "Nenhum deploy anterior desta instância foi concluído, então não há para onde voltar.",
+    "rollbackMigrations": "Migrações de banco de dados não são desfeitas. Planos de produção que excluem ou substituem recursos aguardam aprovação.",
+    "verified": "verificado",
+    "bakeFailed": "falhou na observação",
+    "notVerified": "não verificado",
+    "rollback": "Reverter"
   },
   "telemetry": {
     "loadingChart": "Carregando gráfico",
@@ -1935,7 +1975,11 @@
       "destructive": "destrutivo"
     },
     "providerSpecific": "específico do provedor",
-    "requiredRole": "Roda com o papel {role} ou superior."
+    "requiredRole": "Roda com o papel {role} ou superior.",
+    "decision": "Decisão",
+    "approve": "Aprovar",
+    "cancelRun": "Cancelar",
+    "awaitingApproval": "Aguarda aprovação: uma ação disruptiva em uma instância de produção."
   },
   "featureFlags": {
     "title": "Feature flags",
