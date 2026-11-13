@@ -520,7 +520,7 @@ function PlacementStep({
   const first = slots[0];
   const firstBinding = first ? bindings[first.name] : undefined;
 
-  const useSameForAll = () => {
+  const applySameForAll = () => {
     if (!firstBinding?.targetId) return;
     const compatible = slots.filter((slot) => eligible(slot).some((target) => target.id === firstBinding.targetId));
     const skipped = slots.filter((slot) => !compatible.includes(slot)).map((s) => s.name);
@@ -549,7 +549,7 @@ function PlacementStep({
       ) : null}
       {slots.length > 1 && !error ? (
         <div className="flex flex-wrap items-center gap-2">
-          <Button size="sm" onClick={useSameForAll} disabled={!firstBinding?.targetId}>
+          <Button size="sm" onClick={applySameForAll} disabled={!firstBinding?.targetId}>
             <Copy size={13} aria-hidden /> {t('useSame')}
           </Button>
           <span className="text-xs text-fg-subtle">{t('useSameHint', { slot: first?.name ?? '' })}</span>
