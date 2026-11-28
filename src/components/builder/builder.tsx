@@ -703,7 +703,7 @@ function BuilderInner({ template, baseVersion, initialSource, readOnly, readOnly
             nodes={nodes}
             edges={edges}
             nodeTypes={nodeTypes}
-            colorMode={theme}
+            className={theme}
             onNodesChange={onNodesChange}
             onNodeDragStop={onDragStop}
             onNodeClick={(_, n) => (n.id.startsWith('res:') ? select({ kind: 'resource', id: n.id.slice(4) }) : n.id !== 'lane:__unknown__' ? select({ kind: 'lane', name: n.id.slice(5) }) : null)}

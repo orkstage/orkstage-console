@@ -272,7 +272,7 @@ export default function TopologyDiagram({
           edges={edges}
           ariaLabelConfig={ariaLabelConfig}
           nodeTypes={nodeTypes}
-          colorMode={theme}
+          className={theme}
           fitView
           fitViewOptions={{ padding: 0.12 }}
           minZoom={0.2}
